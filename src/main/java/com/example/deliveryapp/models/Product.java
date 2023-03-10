@@ -57,4 +57,11 @@ public class Product {
     )
     @JsonBackReference
     private List<Cart> userCart;
+
+    @OneToMany(
+            fetch = FetchType.LAZY,
+            mappedBy = "product"
+    )
+    @JsonBackReference
+    private List<OrderItem> orderItems;
 }

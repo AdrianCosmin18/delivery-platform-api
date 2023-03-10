@@ -1,9 +1,11 @@
 package com.example.deliveryapp.models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -37,5 +39,40 @@ public class Order {
     @JsonBackReference
     private User user;
 
+    @OneToMany(
+            mappedBy = "order",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.EAGER
+    )
+    @JsonManagedReference
+    private List<OrderItem> orderItems;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(
+            name = "card_id",
+            referencedColumnName = "id",
+            foreignKey = @ForeignKey(name = "card_id_fk")
+    )
+    @JsonManagedReference
+    private Card card;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(
+            name = "address_id",
+            referencedColumnName = "id",
+            foreignKey = @ForeignKey(name = "address_id_fk")
+    )
+    @JsonManagedReference
+    private Address address;
+
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(
+            name = "courier_id",
+            referencedColumnName = "id",
+            foreignKey = @ForeignKey(name = "courier_id_fk")
+    )
+    @JsonManagedReference
+    private Courier courier;
 }

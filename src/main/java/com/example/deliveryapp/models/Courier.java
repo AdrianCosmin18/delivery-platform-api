@@ -1,11 +1,13 @@
 package com.example.deliveryapp.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -30,4 +32,9 @@ public class Courier {
     @NotEmpty
     @Column(name = "vehicle_type", nullable = false)
     private String vehicleType;
+
+
+    @OneToMany(mappedBy = "courier", fetch = FetchType.LAZY)
+    @JsonBackReference
+    private List<Order> orders;
 }

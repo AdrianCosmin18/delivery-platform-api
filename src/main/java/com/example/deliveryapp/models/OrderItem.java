@@ -1,4 +1,5 @@
 package com.example.deliveryapp.models;
+import com.example.deliveryapp.models.embeddedKey.OrderItemId;
 import lombok.*;
 
 import javax.persistence.*;
@@ -12,14 +13,32 @@ import javax.persistence.*;
 @Builder
 public class OrderItem {
 
-    @Id
-    @SequenceGenerator(name = "orderItem_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "orderItem_seq")
-    private Long id;
+    @EmbeddedId
+    private OrderItemId id;
 
     @Column(name = "price", nullable = false)
     private Double price;
 
     @Column(name = "quantity", nullable = false)
     private Integer quantity;
+
+
+    @ManyToOne
+    @JoinColumn(
+            name = "order_id",
+            foreignKey = @ForeignKey(name = "item_order_id_fk")
+    )
+    private Order order;
+
+    //sau asa
+//    @ManyToOne
+//    @MapsId("orderId")
+//    private Order order;
+
+    @ManyToOne
+    @JoinColumn(
+            name = "product_id",
+            foreignKey = @ForeignKey(name = "item_product_id_fk")
+    )
+    private Product product;
 }

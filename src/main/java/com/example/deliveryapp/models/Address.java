@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -49,4 +50,8 @@ public class Address {
     )
     @JsonBackReference
     private User user;
+
+    @OneToMany(mappedBy = "address", fetch = FetchType.LAZY)
+    @JsonBackReference
+    private List<Order> orders;
 }

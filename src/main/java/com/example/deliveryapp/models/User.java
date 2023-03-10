@@ -85,6 +85,6 @@ public class User {
             fetch = FetchType.LAZY,
             mappedBy = "user"
     )
-    @JsonBackReference
+    @JsonManagedReference
     private List<Cart> productCart;
 }

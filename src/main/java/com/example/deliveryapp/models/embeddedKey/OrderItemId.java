@@ -14,12 +14,11 @@ import java.io.Serializable;
 @Embeddable
 @AllArgsConstructor
 @NoArgsConstructor
-public class CartId implements Serializable {
+public class OrderItemId implements Serializable {
 
-    @Column(name = "user_id")
-    private Long userId;
+    @Column(name = "order_id")
+    private Long orderId;
 
     @Column(name = "product_id")
     private Long productId;
-
 }

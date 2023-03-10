@@ -23,17 +23,11 @@ public class Cart {
 
 
     @ManyToOne
-    @JoinColumn(
-            name = "user_id",
-            foreignKey = @ForeignKey(name = "cart_user_id_pk")
-    )
+    @MapsId("userId")
     private User user;
 
     @ManyToOne
-    @JoinColumn(
-            name = "product_id",
-            foreignKey = @ForeignKey(name = "cart_product_id_pk")
-    )
+    @MapsId("productId")
     private Product product;
 
 }

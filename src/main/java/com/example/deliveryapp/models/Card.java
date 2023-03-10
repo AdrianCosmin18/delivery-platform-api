@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -47,4 +48,8 @@ public class Card {
     )
     @JsonBackReference
     private User user;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "card")
+    @JsonBackReference
+    private List<Order> order;
 }
