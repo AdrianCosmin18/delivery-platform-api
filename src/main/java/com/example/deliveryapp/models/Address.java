@@ -42,14 +42,9 @@ public class Address {
     @JsonBackReference
     private City city;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(
-            name = "user_id",
-            referencedColumnName = "id",
-            foreignKey = @ForeignKey(name = "user_id_fk")
-    )
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "address")
     @JsonBackReference
-    private User user;
+    private List<User> user;
 
     @OneToMany(mappedBy = "address", fetch = FetchType.LAZY)
     @JsonBackReference
