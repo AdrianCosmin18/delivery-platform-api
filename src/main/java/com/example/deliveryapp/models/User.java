@@ -42,7 +42,7 @@ public class User {
 
 
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "wish_list",
             joinColumns = {@JoinColumn(name = "user_id")},
@@ -63,7 +63,7 @@ public class User {
     @OneToMany(
             cascade = CascadeType.ALL,
             orphanRemoval = true,
-            fetch = FetchType.EAGER,
+            fetch = FetchType.LAZY,
             mappedBy = "user"
     )
     @JsonManagedReference

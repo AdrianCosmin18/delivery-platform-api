@@ -28,7 +28,7 @@ public class Restaurant {
 
 
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "city_restaurant",
             joinColumns = {@JoinColumn(name = "restaurant_id")},
@@ -40,7 +40,7 @@ public class Restaurant {
             mappedBy = "restaurant",
             cascade = CascadeType.ALL,
             orphanRemoval = true,
-            fetch = FetchType.EAGER
+            fetch = FetchType.LAZY
     )
     @JsonManagedReference
     private List<Product> products;

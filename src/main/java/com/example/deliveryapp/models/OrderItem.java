@@ -24,18 +24,15 @@ public class OrderItem {
 
 
     @ManyToOne
+    @MapsId("orderId")
     @JoinColumn(
             name = "order_id",
             foreignKey = @ForeignKey(name = "item_order_id_fk")
     )
     private Order order;
 
-    //sau asa
-//    @ManyToOne
-//    @MapsId("orderId")
-//    private Order order;
-
     @ManyToOne
+    @MapsId("productId")
     @JoinColumn(
             name = "product_id",
             foreignKey = @ForeignKey(name = "item_product_id_fk")

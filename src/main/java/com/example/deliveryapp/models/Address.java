@@ -42,7 +42,7 @@ public class Address {
     @JsonBackReference
     private City city;
 
-    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "address")
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "addresses")
     @JsonBackReference
     private List<User> user;
 
