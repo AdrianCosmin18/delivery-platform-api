@@ -39,7 +39,6 @@ public class Product {
     private Byte[] picture;
 
 
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
             name = "restaurant_id",

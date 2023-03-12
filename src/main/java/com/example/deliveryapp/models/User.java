@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
 import java.util.List;
 
 @Data
@@ -37,6 +38,7 @@ public class User {
     @Column(name = "role", nullable = false)
     private String role;
 
+    @NotEmpty(message = "phone number is required")
     @Column(name = "phone", nullable = false, unique = true)
     private String phone;
 

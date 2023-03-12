@@ -66,7 +66,6 @@ public class Order {
     @JsonManagedReference
     private Address address;
 
-
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(
             name = "courier_id",
