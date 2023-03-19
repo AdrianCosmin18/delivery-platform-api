@@ -11,4 +11,6 @@ public interface UserService {
 
     List<User> getUsers();
     void addUser(UserDTO userDTO);
+    void addRestaurantToWishlist(String email, String restaurantName);
+    void removeRestaurantFromWishlist(String email, String restaurantName);
 }

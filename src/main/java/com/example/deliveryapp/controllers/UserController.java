@@ -28,4 +28,14 @@ public class UserController {
     public ResponseEntity<List<User>> getUsers(){
         return new ResponseEntity<List<User>>(this.userService.getUsers(), HttpStatus.OK);
     }
+
+    @PostMapping("/add-restaurant-to-wishlist")
+    public void addRestaurantToWishlist(@RequestParam(value = "email")String email, @RequestParam(value = "restaurantName")String restaurantName){
+        this.userService.addRestaurantToWishlist(email, restaurantName);
+    }
+
+    @DeleteMapping("/delete-restaurant-from-wishlist")
+    public void removeRestaurantFromWishlist(@RequestParam(value = "email")String email, @RequestParam(value = "restaurantName")String restaurantName){
+        this.userService.removeRestaurantFromWishlist(email, restaurantName);
+    }
 }
