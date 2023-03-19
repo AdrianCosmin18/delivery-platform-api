@@ -44,5 +44,8 @@ public class City {
     @JsonManagedReference
     private List<Address> addresses;
 
-
+    public City(String name, String country) {
+        this.name = name;
+        this.country = country;
+    }
 }
