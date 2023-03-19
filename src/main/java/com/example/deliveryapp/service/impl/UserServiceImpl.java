@@ -2,6 +2,7 @@ package com.example.deliveryapp.service.impl;
 
 import com.example.deliveryapp.DTOs.UserDTO;
 import com.example.deliveryapp.exceptions.DeliveryCustomException;
+import com.example.deliveryapp.models.Card;
 import com.example.deliveryapp.models.User;
 import com.example.deliveryapp.repos.UserRepo;
 import com.example.deliveryapp.service.UserService;
@@ -42,4 +43,5 @@ public class UserServiceImpl implements UserService {
         }
         userRepo.save(this.mapper.map(userDTO, User.class));
     }
+
 }

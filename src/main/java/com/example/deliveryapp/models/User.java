@@ -89,4 +89,22 @@ public class User {
     )
     @JsonManagedReference
     private List<Cart> productCart;
+
+
+    public void addAddress(Address address){
+        this.addresses.add(address);
+    }
+
+    public void deleteAddress(Address address){
+        this.addresses.remove(address);
+    }
+
+    public void addCard(Card card){
+        this.cards.add(card);
+    }
+
+    public void deleteCard(Card card){
+        this.cards.remove(card);
+    }
+
 }
