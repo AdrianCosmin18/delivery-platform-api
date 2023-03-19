@@ -27,7 +27,6 @@ public class Restaurant {
     private String name;
 
 
-
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "city_restaurant",
@@ -49,4 +48,20 @@ public class Restaurant {
     @JsonBackReference
     private List<User> users;
 
+
+    public Restaurant(String name) {
+        this.name = name;
+    }
+
+    public void addProduct(Product product){
+        this.products.add(product);
+    }
+
+    public void deleteProduct(Product product){
+        this.products.remove(product);
+    }
+
+    public void addCity(City city){ this.cities.add(city); }
+
+    public void removeFromCity(City city){ this.cities.remove(city); }
 }
