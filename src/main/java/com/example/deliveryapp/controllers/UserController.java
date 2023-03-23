@@ -1,6 +1,8 @@
 package com.example.deliveryapp.controllers;
 
+import com.example.deliveryapp.DTOs.AddressDTO;
 import com.example.deliveryapp.DTOs.UserDTO;
+import com.example.deliveryapp.models.Address;
 import com.example.deliveryapp.models.User;
 import com.example.deliveryapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,5 +39,20 @@ public class UserController {
     @DeleteMapping("/delete-restaurant-from-wishlist")
     public void removeRestaurantFromWishlist(@RequestParam(value = "email")String email, @RequestParam(value = "restaurantName")String restaurantName){
         this.userService.removeRestaurantFromWishlist(email, restaurantName);
+    }
+
+    @PostMapping("/add-address")
+    public void addAddress(@RequestParam(value = "email")String email, @RequestBody AddressDTO addressDTO){
+        this.userService.addAddress(email, addressDTO);
+    }
+
+    @GetMapping("/get-user-addresses/{email}")
+    public ResponseEntity<List<Address>> getUserAddresses(@PathVariable String email){
+        return new ResponseEntity<List<Address>>(this.userService.getUserAddresses(email), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/delete-address/{email}")
+    public void deleteAddress(@PathVariable String email, @RequestBody AddressDTO addressDTO){
+        this.userService.removeAddress(email, addressDTO);
     }
 }

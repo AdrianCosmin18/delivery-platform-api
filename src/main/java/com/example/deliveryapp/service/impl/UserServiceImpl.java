@@ -1,10 +1,10 @@
 package com.example.deliveryapp.service.impl;
 
+import com.example.deliveryapp.DTOs.AddressDTO;
 import com.example.deliveryapp.DTOs.UserDTO;
 import com.example.deliveryapp.exceptions.DeliveryCustomException;
-import com.example.deliveryapp.models.Card;
-import com.example.deliveryapp.models.Restaurant;
-import com.example.deliveryapp.models.User;
+import com.example.deliveryapp.models.*;
+import com.example.deliveryapp.repos.CityRepo;
 import com.example.deliveryapp.repos.RestaurantRepo;
 import com.example.deliveryapp.repos.UserRepo;
 import com.example.deliveryapp.service.UserService;
@@ -21,6 +21,9 @@ public class UserServiceImpl implements UserService {
     private UserRepo userRepo;
     @Autowired
     private RestaurantRepo restaurantRepo;
+    @Autowired
+    private CityRepo cityRepo;
+
     private ModelMapper mapper;
 
     public UserServiceImpl(){
@@ -78,6 +81,64 @@ public class UserServiceImpl implements UserService {
         }else{
             throw new DeliveryCustomException("User doesn't have this restaurant in his wishlist");
         }
+    }
+
+    @Override
+    public void addAddress(String email, AddressDTO addressDTO){
+
+        User user = this.userRepo.getUserByEmail(email)
+                .orElseThrow(() -> new DeliveryCustomException("There is no user with this email"));
+
+        List<Address> userAddresses = user.getAddresses();
+
+        City city = this.cityRepo.getCityByName(addressDTO.getCityName())
+                .orElseThrow(() -> new DeliveryCustomException("There is no city with this name in the db"));
+
+        Address address = new Address(addressDTO.getStreet(), addressDTO.getNumber());
+        if(addressDTO.getIsDefault()){
+
+            userAddresses.forEach(adr -> adr.setIsDefault(false));
+            address.setIsDefault(true);
+        }else{
+
+            address.setIsDefault(false);
+        }
+        address.setCity(city);
+        address.setUser(user);
+
+        if(userAddresses.stream().anyMatch(adr -> adr.compare(address))){
+            throw new DeliveryCustomException("User already has this address");
+        }
+
+        user.addAddress(address);
+        this.userRepo.save(user);
+    }
+
+    @Override
+    public void removeAddress(String email, AddressDTO addressDTO){
+
+        User user = this.userRepo.getUserByEmail(email)
+                .orElseThrow(() -> new DeliveryCustomException("There is no user with this email"));
+
+        City city = this.cityRepo.getCityByName(addressDTO.getCityName())
+                .orElseThrow(() -> new DeliveryCustomException("There is no city with this name in the db"));
+
+        Address address = Address.builder()
+                .street(addressDTO.getStreet())
+                .number(addressDTO.getNumber())
+                .city(city)
+                .build();
+
+        user.deleteAddress(address);
+        this.userRepo.save(user);
+    }
+
+    @Override
+    public List<Address> getUserAddresses(String email){
+        User user = this.userRepo.getUserByEmail(email)
+                .orElseThrow(() -> new DeliveryCustomException("There is no user with this email"));
+
+        return user.getAddresses();
     }
 
 

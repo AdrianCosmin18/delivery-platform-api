@@ -53,12 +53,11 @@ public class User {
     @JsonManagedReference
     private List<Restaurant> restaurants;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "user_address",
-            joinColumns = {@JoinColumn(name = "user_id")},
-            inverseJoinColumns = {@JoinColumn(name = "address_id")}
-    )
+    @OneToMany(
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.LAZY,
+            mappedBy = "user")
     @JsonManagedReference
     private List<Address> addresses;
 
