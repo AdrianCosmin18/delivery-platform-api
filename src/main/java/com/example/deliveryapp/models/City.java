@@ -38,10 +38,10 @@ public class City {
     @OneToMany(
             cascade = CascadeType.ALL,
             orphanRemoval = true,
-            fetch = FetchType.EAGER,
+            fetch = FetchType.LAZY,
             mappedBy = "city"
     )
-    @JsonManagedReference
+    @JsonBackReference
     private List<Address> addresses;
 
     public City(String name, String country) {
