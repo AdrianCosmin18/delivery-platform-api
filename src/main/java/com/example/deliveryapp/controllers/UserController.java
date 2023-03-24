@@ -1,6 +1,7 @@
 package com.example.deliveryapp.controllers;
 
 import com.example.deliveryapp.DTOs.AddressDTO;
+import com.example.deliveryapp.DTOs.CardDTO;
 import com.example.deliveryapp.DTOs.UserDTO;
 import com.example.deliveryapp.models.Address;
 import com.example.deliveryapp.models.User;
@@ -54,5 +55,20 @@ public class UserController {
     @DeleteMapping("/delete-address/{email}")
     public void deleteAddress(@PathVariable String email, @RequestBody AddressDTO addressDTO){
         this.userService.removeAddress(email, addressDTO);
+    }
+
+    @PostMapping("/add-card/{email}")
+    public void addCard(@PathVariable String email, @RequestBody CardDTO cardDTO){
+        this.userService.addCard(email, cardDTO);
+    }
+
+    @GetMapping("/get-user-cards/{email}")
+    public ResponseEntity<List<CardDTO>> getUserCards(@PathVariable String email){
+        return new ResponseEntity<>(this.userService.getUserCards(email), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/delete-card")
+    public void deleteCard(@RequestParam(value = "email")String email, @RequestParam(value = "cardNumber")String cardNumber){
+        this.userService.removeCard(email, cardNumber);
     }
 }

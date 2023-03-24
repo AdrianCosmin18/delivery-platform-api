@@ -1,9 +1,11 @@
 package com.example.deliveryapp.service.impl;
 
 import com.example.deliveryapp.DTOs.AddressDTO;
+import com.example.deliveryapp.DTOs.CardDTO;
 import com.example.deliveryapp.DTOs.UserDTO;
 import com.example.deliveryapp.exceptions.DeliveryCustomException;
 import com.example.deliveryapp.models.*;
+import com.example.deliveryapp.repos.CardRepo;
 import com.example.deliveryapp.repos.CityRepo;
 import com.example.deliveryapp.repos.RestaurantRepo;
 import com.example.deliveryapp.repos.UserRepo;
@@ -12,7 +14,10 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.YearMonth;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -23,6 +28,8 @@ public class UserServiceImpl implements UserService {
     private RestaurantRepo restaurantRepo;
     @Autowired
     private CityRepo cityRepo;
+    @Autowired
+    private CardRepo cardRepo;
 
     private ModelMapper mapper;
 
@@ -123,14 +130,20 @@ public class UserServiceImpl implements UserService {
         City city = this.cityRepo.getCityByName(addressDTO.getCityName())
                 .orElseThrow(() -> new DeliveryCustomException("There is no city with this name in the db"));
 
+        List<Address> userAddresses = user.getAddresses();
+
         Address address = Address.builder()
                 .street(addressDTO.getStreet())
                 .number(addressDTO.getNumber())
                 .city(city)
                 .build();
 
-        user.deleteAddress(address);
-        this.userRepo.save(user);
+        if(userAddresses.stream().anyMatch(adr -> adr.compare(address))){
+            user.deleteAddress(address);
+            this.userRepo.save(user);
+        }
+
+        throw new DeliveryCustomException("User does not have this address");
     }
 
     @Override
@@ -141,6 +154,72 @@ public class UserServiceImpl implements UserService {
         return user.getAddresses();
     }
 
+    @Override
+    public void addCard(String email, CardDTO cardDTO) {
 
+        User user = this.userRepo.getUserByEmail(email)
+                .orElseThrow(() -> new DeliveryCustomException("There is no user with this email"));
 
+        Card card = Card.builder()
+                .cardNumber(cardDTO.getCardNumber())
+                .cardHolderName(cardDTO.getCardHolderName())
+                .securityCode(cardDTO.getSecurityCode())
+                .expiryDate(cardDTO.getExpiryDate().atDay(1))
+                .build();
+
+        List<Card> cards = user.getCards();
+        if (cards.stream().anyMatch(c -> c.equals(card))){
+            throw new DeliveryCustomException("Already added this card");
+        }
+
+        card.setUser(user);
+        user.addCard(card);
+        this.userRepo.save(user);
+    }
+
+    @Override
+    public List<CardDTO> getUserCards(String email){
+
+        User user = this.userRepo.getUserByEmail(email)
+                .orElseThrow(() -> new DeliveryCustomException("There is no user with this email"));
+
+        if(user.getCards().isEmpty()){
+            return new ArrayList<>();
+        }
+
+        List<CardDTO> cardsDto = new ArrayList<>();
+        for(Card c: user.getCards()){
+
+            CardDTO cardDTO = CardDTO.builder()
+                    .cardHolderName(c.getCardHolderName())
+                    .cardNumber(c.getCardNumber())
+                    .securityCode(c.getSecurityCode())
+                    .expiryDate(YearMonth.of(c.getExpiryDate().getYear(), c.getExpiryDate().getMonth()))
+                    .build();
+
+            cardsDto.add(cardDTO);
+        }
+
+        return cardsDto;
+
+    }
+
+    @Override
+    public void removeCard(String email, String cardNumber){
+
+        User user = this.userRepo.getUserByEmail(email)
+                .orElseThrow(() -> new DeliveryCustomException("There is no user with this email"));
+
+        List<Card> userCards = user.getCards();
+
+        if(userCards.stream().anyMatch(card -> card.getCardNumber().equals(cardNumber))){
+
+            List<Card> cards = userCards.stream().filter(card1 -> card1.getCardNumber().equals(cardNumber)).collect(Collectors.toList());
+            user.deleteCard(cards.get(0));
+
+            this.userRepo.save(user);
+        }else{
+            throw new DeliveryCustomException("User does not own this card");
+        }
+    }
 }

@@ -2,17 +2,23 @@ package com.example.deliveryapp.models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.List;
+import java.util.Objects;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @Entity(name = "Card")
 @Table(name = "card")
 public class Card {
@@ -24,6 +30,7 @@ public class Card {
 
     @NotEmpty
     @Column(name = "card_number", nullable = false, unique = true)
+    @Size(min = 16, max = 16)
     private String cardNumber;
 
     @NotEmpty
@@ -32,9 +39,10 @@ public class Card {
 
     @NotEmpty
     @Column(name = "security_code", nullable = false)
+    @Size(min = 3, max = 3)
     private String securityCode;
 
-    @NotEmpty
+    @NotNull
     @Column(name = "expiry_date", nullable = false)
     private LocalDate expiryDate;
 
@@ -52,4 +60,18 @@ public class Card {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "card")
     @JsonBackReference
     private List<Order> order;
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Card)) return false;
+        Card card = (Card) o;
+        return Objects.equals(getCardNumber(), card.getCardNumber()) && Objects.equals(getCardHolderName(), card.getCardHolderName()) && Objects.equals(getSecurityCode(), card.getSecurityCode()) && Objects.equals(getExpiryDate(), card.getExpiryDate());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getCardNumber(), getCardHolderName(), getSecurityCode(), getExpiryDate());
+    }
 }
