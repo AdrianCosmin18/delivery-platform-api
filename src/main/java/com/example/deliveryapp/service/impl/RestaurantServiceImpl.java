@@ -10,11 +10,14 @@ import com.example.deliveryapp.repos.CityRepo;
 import com.example.deliveryapp.repos.ProductRepo;
 import com.example.deliveryapp.repos.RestaurantRepo;
 import com.example.deliveryapp.service.RestaurantService;
+import com.example.deliveryapp.utils.ImageUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,16 +68,17 @@ public class RestaurantServiceImpl implements RestaurantService {
 
 
     @Override
-    public void addProduct(ProductDTO productDTO) {
+    public void addProduct(MultipartFile file, ProductDTO productDTO) throws IOException {
         if (this.productRepo.getProductByNameAndRestaurantName(productDTO.getName(), productDTO.getRestaurantName()).isPresent()) {
             throw new DeliveryCustomException("Already exists this product in this restaurant");
         }
+
         Product product = Product.builder()
                 .name(productDTO.getName())
                 .description(productDTO.getDescription())
                 .price(productDTO.getPrice())
                 .type(productDTO.getType())
-                .picture(productDTO.getPicture())
+                .picture(ImageUtils.compressImage(file.getBytes()))
                 .ingredients(productDTO.getIngredients())
                 .build();
 
@@ -83,6 +87,38 @@ public class RestaurantServiceImpl implements RestaurantService {
 
         product.setRestaurant(restaurant);
         restaurant.addProduct(product);
+        this.restaurantRepo.save(restaurant);
+    }
+
+    @Override
+    public List<ProductDTO> getRestaurantProducts(String restaurantName){
+
+        Restaurant restaurant = this.restaurantRepo.getRestaurantByName(restaurantName)
+                .orElseThrow(() -> new DeliveryCustomException("There is no restaruant with this name"));
+
+        List<Product> products = restaurant.getProducts();
+        if(products.isEmpty()){
+            return new ArrayList<>();
+        }else{
+
+            List<ProductDTO> productDTOList = new ArrayList<>();
+            for(Product p: products){
+
+                ProductDTO productDTO = ProductDTO.builder()
+                        .name(p.getName())
+                        .price(p.getPrice())
+                        .type(p.getType())
+                        .description(p.getDescription())
+                        .ingredients(p.getIngredients())
+                        .picture(ImageUtils.decompressImage(p.getPicture()))
+                        .restaurantName(restaurant.getName())
+                        .build();
+
+                productDTOList.add(productDTO);
+            }
+
+            return productDTOList;
+        }
     }
 
     @Override

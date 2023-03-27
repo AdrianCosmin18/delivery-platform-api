@@ -35,8 +35,9 @@ public class Product {
     @Column(name = "ingredients")
     private String ingredients;
 
-    @Column(name = "picture", nullable = false)
-    private Byte[] picture;
+    @Lob
+    @Column(name = "picture", length = 1000)
+    private byte[] picture;
 
 
     @ManyToOne(fetch = FetchType.LAZY)

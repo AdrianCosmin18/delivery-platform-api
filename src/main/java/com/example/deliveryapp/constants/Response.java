@@ -1,6 +1,17 @@
 package com.example.deliveryapp.constants;
 
-public class Response<T> {
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.http.HttpStatus;
 
-    StatusAddress addressInDB;
+import java.net.http.HttpResponse;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class Response {
+
+    private String message;
+    private HttpStatus status;
 }

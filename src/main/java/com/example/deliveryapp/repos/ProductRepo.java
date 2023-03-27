@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ProductRepo extends JpaRepository<Product, Long> {
@@ -17,4 +18,12 @@ public interface ProductRepo extends JpaRepository<Product, Long> {
 
     @Query("select p from Product p where p.restaurant = :name and p.type = :type")
     List<Product> getProductsByRestaurantNameAndType(@Param("name")String name, @Param("type")String type);
+
+    @Query("delete from Product p where p.name = :productName and p.restaurant.name = :restaurantName")
+    void deleteProductByNameAndRestaurant(@Param("productName") String productName, @Param("restaurantName") String restaurantName);
+
+    @Query("select p from Product p where p.name = :productName and p.restaurant.name = :restaurantName")
+    Optional<Product> getProductByNameAndRestaurantName(@Param("productName") String productName, @Param("restaurantName") String restaurantName);
+
+
 }

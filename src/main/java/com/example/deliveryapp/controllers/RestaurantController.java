@@ -1,12 +1,18 @@
 package com.example.deliveryapp.controllers;
 
+import com.example.deliveryapp.DTOs.ProductDTO;
 import com.example.deliveryapp.DTOs.RestaurantDTO;
+import com.example.deliveryapp.constants.Response;
+import com.example.deliveryapp.exceptions.InsertPictureException;
+import com.example.deliveryapp.models.Product;
 import com.example.deliveryapp.service.RestaurantService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -41,6 +47,21 @@ public class RestaurantController {
         this.restaurantService.removeRestaurantFromCity(restaurantName, cityName);
     }
 
+
+    @PostMapping("/add-product")
+    public Response addProduct(@RequestParam(value = "photo")MultipartFile file, @RequestBody ProductDTO productDTO) throws IOException{
+        try{
+            this.restaurantService.addProduct(file, productDTO);
+            return new Response("added with succes", HttpStatus.OK);
+        }catch (IOException e){
+            return new Response("Error on adding a product", HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/get-products/{restaurantName}")
+    public ResponseEntity<List<ProductDTO>> getProducts(@PathVariable String restaurantName){
+        return new ResponseEntity<List<ProductDTO>>(this.restaurantService.getRestaurantProducts(restaurantName), HttpStatus.OK);
+    }
 
 
 }
