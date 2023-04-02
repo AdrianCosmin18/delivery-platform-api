@@ -13,9 +13,18 @@ public class ProductDTO {
 
     private String name;
     private Double price;
-    private Integer type;
+    private String type;
     private String description;
     private String ingredients;
     private byte[] picture;
     private String restaurantName;
+
+    public ProductDTO(String name, Double price, String type, String description, String ingredients, String restaurantName) {
+        this.name = name;
+        this.price = price;
+        this.type = type;
+        this.description = description;
+        this.ingredients = ingredients;
+        this.restaurantName = restaurantName;
+    }
 }

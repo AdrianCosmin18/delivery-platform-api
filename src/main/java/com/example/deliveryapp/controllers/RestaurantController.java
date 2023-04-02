@@ -6,8 +6,11 @@ import com.example.deliveryapp.constants.Response;
 import com.example.deliveryapp.exceptions.InsertPictureException;
 import com.example.deliveryapp.models.Product;
 import com.example.deliveryapp.service.RestaurantService;
+import jdk.jfr.ContentType;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -49,19 +52,46 @@ public class RestaurantController {
 
 
     @PostMapping("/add-product")
-    public Response addProduct(@RequestParam(value = "photo")MultipartFile file, @RequestBody ProductDTO productDTO) throws IOException{
+    public Response addProduct(@RequestParam(value = "photo")MultipartFile file,
+                               @RequestParam(value = "name") String name,
+                               @RequestParam(value = "price") Double price,
+                               @RequestParam(value = "type") String type,
+                               @RequestParam(value = "description") String description,
+                               @RequestParam(value = "ingredients") String ingredients,
+                               @RequestParam(value = "restaurantName") String restaurantName) throws IOException {
         try{
-            this.restaurantService.addProduct(file, productDTO);
+            this.restaurantService.addProduct(file, name, price, type, description, ingredients, restaurantName);
             return new Response("added with succes", HttpStatus.OK);
+
         }catch (IOException e){
             return new Response("Error on adding a product", HttpStatus.BAD_REQUEST);
         }
     }
 
-    @GetMapping("/get-products/{restaurantName}")
-    public ResponseEntity<List<ProductDTO>> getProducts(@PathVariable String restaurantName){
+    @GetMapping(value = "/get-restaurant-products/{restaurantName}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<ProductDTO>> getRestaurantProducts(@PathVariable String restaurantName){
+
+        List<ProductDTO> products = this.restaurantService.getRestaurantProducts(restaurantName);
+//        ResponseEntity<List<ProductDTO>> response = new ResponseEntity<>()
+        for(ProductDTO product : products){
+
+            byte[] imageData = product .getPicture();
+            if (imageData != null && imageData.length > 0) {
+                HttpHeaders headers = new HttpHeaders();
+                headers.setContentType(MediaType.IMAGE_PNG);
+                return new ResponseEntity<>(products, headers, HttpStatus.OK);
+            }
+        }
+
         return new ResponseEntity<List<ProductDTO>>(this.restaurantService.getRestaurantProducts(restaurantName), HttpStatus.OK);
     }
+
+    @GetMapping("/get-product-photo")
+    public ResponseEntity<?> getProductImage(@RequestParam(value = "restaurantName") String restaurantName, @RequestParam(value = "productName") String productName){
+        byte [] image = this.restaurantService.getImageProduct(restaurantName, productName);
+        return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.valueOf("image/png")).body(image);
+    }
+
 
 
 }

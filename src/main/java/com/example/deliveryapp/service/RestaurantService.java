@@ -10,10 +10,12 @@ import java.util.List;
 
 public interface RestaurantService {
 
-    void addProduct(MultipartFile file, ProductDTO productDTO) throws IOException;
+
+    void addProduct(MultipartFile file, String name, Double price, String type, String description, String ingredients, String restaurantName) throws IOException;
+
+    byte[] getImageProduct(String restaurantName, String productName);
 
     List<ProductDTO> getRestaurantProducts(String restaurantName);
-
     void deleteProduct(String productName, String restaurantName);
     void addRestaurant(String restaurantName);
     void deleteRestaurant(String name);

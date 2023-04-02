@@ -27,7 +27,7 @@ public class Product {
     private Double price;
 
     @Column(name = "type", nullable = false)
-    private Integer type;
+    private String type;
 
     @Column(name = "description")
     private String description;

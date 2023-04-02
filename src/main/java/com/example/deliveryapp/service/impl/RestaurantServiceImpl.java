@@ -68,26 +68,35 @@ public class RestaurantServiceImpl implements RestaurantService {
 
 
     @Override
-    public void addProduct(MultipartFile file, ProductDTO productDTO) throws IOException {
-        if (this.productRepo.getProductByNameAndRestaurantName(productDTO.getName(), productDTO.getRestaurantName()).isPresent()) {
+    public void addProduct(MultipartFile file, String name, Double price, String type, String description, String ingredients, String restaurantName) throws IOException {
+        if (this.productRepo.getProductByNameAndRestaurantName(name, restaurantName).isPresent()) {
             throw new DeliveryCustomException("Already exists this product in this restaurant");
         }
 
         Product product = Product.builder()
-                .name(productDTO.getName())
-                .description(productDTO.getDescription())
-                .price(productDTO.getPrice())
-                .type(productDTO.getType())
+                .name(name)
+                .description(description)
+                .price(price)
+                .type(type)
                 .picture(ImageUtils.compressImage(file.getBytes()))
-                .ingredients(productDTO.getIngredients())
+                .ingredients(ingredients)
                 .build();
 
-        Restaurant restaurant = this.restaurantRepo.getRestaurantByName(productDTO.getRestaurantName())
+        Restaurant restaurant = this.restaurantRepo.getRestaurantByName(restaurantName)
                 .orElseThrow(() -> new DeliveryCustomException("There is no restaurant with this name"));
 
         product.setRestaurant(restaurant);
+
         restaurant.addProduct(product);
         this.restaurantRepo.save(restaurant);
+    }
+
+    @Override
+    public byte[] getImageProduct(String restaurantName, String productName){
+
+        Product product = this.productRepo.getProductByNameAndRestaurantName(productName, restaurantName)
+                .orElseThrow(() -> new DeliveryCustomException("No product from this restaurant"));
+        return ImageUtils.decompressImage(product.getPicture());
     }
 
     @Override
