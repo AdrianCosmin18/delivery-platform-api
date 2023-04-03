@@ -80,14 +80,14 @@ public class User {
     @JsonManagedReference
     private List<Order> orders;
 
-    @OneToMany(
-            cascade = CascadeType.ALL,
-            orphanRemoval = true,
-            fetch = FetchType.LAZY,
-            mappedBy = "user"
-    )
-    @JsonManagedReference
-    private List<Cart> productCart;
+//    @OneToMany(
+//            cascade = CascadeType.ALL,
+//            orphanRemoval = true,
+//            fetch = FetchType.LAZY,
+//            mappedBy = "user"
+//    )
+//    @JsonManagedReference
+//    private List<Cart> productCart;
 
 
     public void addAddress(Address address){
@@ -110,12 +110,12 @@ public class User {
     public void removeRestaurant(Restaurant restaurant){ this.restaurants.remove(restaurant); }
 
 
-    public void addProductCart(Cart cart){
-        this.productCart.add(cart);
-    }
-
-    public void removeProductCart(Cart cart){
-        this.productCart.remove(cart);
-    }
+//    public void addProductCart(Cart cart){
+//        this.productCart.add(cart);
+//    }
+//
+//    public void removeProductCart(Cart cart){
+//        this.productCart.remove(cart);
+//    }
 
 }

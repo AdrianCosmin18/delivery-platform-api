@@ -2,6 +2,7 @@ package com.example.deliveryapp.controllers;
 
 import com.example.deliveryapp.DTOs.AddressDTO;
 import com.example.deliveryapp.DTOs.CardDTO;
+import com.example.deliveryapp.DTOs.CreateOrderRequest;
 import com.example.deliveryapp.DTOs.UserDTO;
 import com.example.deliveryapp.models.Address;
 import com.example.deliveryapp.models.User;
@@ -72,13 +73,18 @@ public class UserController {
         this.userService.removeCard(email, cardNumber);
     }
 
-    @PostMapping("/add-product-to-cart/{email}")
-    public void addProductToCart(
-            @PathVariable String email,
-            @RequestParam(value = "restaurantName") String restaurantName,
-            @RequestParam(value = "productName") String productName,
-            @RequestParam(value = "quantity") Integer quantity){
+//    @PostMapping("/add-product-to-cart/{email}")
+//    public void addProductToCart(
+//            @PathVariable String email,
+//            @RequestParam(value = "restaurantName") String restaurantName,
+//            @RequestParam(value = "productName") String productName,
+//            @RequestParam(value = "quantity") Integer quantity){
+//
+//        this.userService.addProductToUserCart(email, restaurantName, productName, quantity);
+//    }
 
-        this.userService.addProductToUserCart(email, restaurantName, productName, quantity);
+    @PostMapping("/place-order")
+    public void placeOrder(@RequestBody CreateOrderRequest orderRequest){
+        this.userService.placeOrder(orderRequest);
     }
 }

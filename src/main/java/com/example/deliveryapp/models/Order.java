@@ -74,4 +74,10 @@ public class Order {
     )
     @JsonManagedReference
     private Courier courier;
+
+
+    public Order(Double amount, String status) {
+        this.amount = amount;
+        this.status = status;
+    }
 }

@@ -52,14 +52,14 @@ public class Product {
     @JsonBackReference
     private Restaurant restaurant;
 
-    @OneToMany(
-            cascade = CascadeType.ALL,
-            orphanRemoval = true,
-            fetch = FetchType.LAZY,
-            mappedBy = "product"
-    )
-    @JsonBackReference
-    private List<Cart> userCart;
+//    @OneToMany(
+//            cascade = CascadeType.ALL,
+//            orphanRemoval = true,
+//            fetch = FetchType.LAZY,
+//            mappedBy = "product"
+//    )
+//    @JsonBackReference
+//    private List<Cart> userCart;
 
     @OneToMany(
             fetch = FetchType.LAZY,
@@ -68,11 +68,16 @@ public class Product {
     @JsonBackReference
     private List<OrderItem> orderItems;
 
-    public void addUserCart(Cart cart){
-        this.userCart.add(cart);
-    }
+//    public void addUserCart(Cart cart){
+//        this.userCart.add(cart);
+//    }
+//
+//    public void removeUserCart(Cart cart){
+//        this.userCart.remove(cart);
+//    }
 
-    public void removeUserCart(Cart cart){
-        this.userCart.remove(cart);
+    public void addOrderItem(OrderItem item){
+        this.orderItems.add(item);
+        item.setProduct(this);
     }
 }
