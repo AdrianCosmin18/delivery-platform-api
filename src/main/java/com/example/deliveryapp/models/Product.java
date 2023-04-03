@@ -2,8 +2,11 @@ package com.example.deliveryapp.models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
+import java.awt.*;
+import java.sql.Blob;
 import java.util.List;
 
 @Data
@@ -64,4 +67,12 @@ public class Product {
     )
     @JsonBackReference
     private List<OrderItem> orderItems;
+
+    public void addUserCart(Cart cart){
+        this.userCart.add(cart);
+    }
+
+    public void removeUserCart(Cart cart){
+        this.userCart.remove(cart);
+    }
 }

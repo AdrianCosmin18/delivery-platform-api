@@ -5,10 +5,8 @@ import com.example.deliveryapp.DTOs.CardDTO;
 import com.example.deliveryapp.DTOs.UserDTO;
 import com.example.deliveryapp.exceptions.DeliveryCustomException;
 import com.example.deliveryapp.models.*;
-import com.example.deliveryapp.repos.CardRepo;
-import com.example.deliveryapp.repos.CityRepo;
-import com.example.deliveryapp.repos.RestaurantRepo;
-import com.example.deliveryapp.repos.UserRepo;
+import com.example.deliveryapp.models.embeddedKey.CartId;
+import com.example.deliveryapp.repos.*;
 import com.example.deliveryapp.service.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +28,10 @@ public class UserServiceImpl implements UserService {
     private CityRepo cityRepo;
     @Autowired
     private CardRepo cardRepo;
+    @Autowired
+    private ProductRepo productRepo;
+    @Autowired
+    private CartRepo cartRepo;
 
     private ModelMapper mapper;
 
@@ -40,11 +42,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> getUsers(){
 
-        try{
-            return this.userRepo.findAll();
-        }catch (Exception e){
-            throw new DeliveryCustomException("Something went wrong");
-        }
+        return this.userRepo.findAll();
     }
 
     @Override
@@ -220,6 +218,69 @@ public class UserServiceImpl implements UserService {
             this.userRepo.save(user);
         }else{
             throw new DeliveryCustomException("User does not own this card");
+        }
+    }
+
+    @Override
+    public boolean areProductsFromOtherRestaurantInCart(String email, String restaurantName, String currentProductName){
+
+        User user = this.userRepo.getUserByEmail(email)
+                .orElseThrow(() -> new DeliveryCustomException("No user with this email"));
+
+        if(user.getProductCart().isEmpty()){
+            return false;
+        }
+
+        Product product = this.productRepo.getProductByNameAndRestaurantName(currentProductName, restaurantName)
+                .orElseThrow(() -> new DeliveryCustomException("No product with this name in this restaurant"));
+
+        List<Cart> userCart = user.getProductCart();
+        return !userCart.get(0).getProduct().getRestaurant().getName().equals(product.getRestaurant().getName());
+    }
+
+    //daca cosul e gol, adaugam in el produsul
+    //daca nu e gol, verificam daca este un produs de la un alt restaurant
+    //  daca este, atunci golim cosul si adaugam acest produs produs
+    //daca nu e gol si este un produs de la acelasi restaurant, verificam daca este cumva acelasi produs
+    //  cu cel pe care incercam sa il adaugam acum, daca sunt identice, doar crestem cantitea cu cat am mai adaugat
+    //  daca nu este acelasi produs, atunci doar il adaugam
+    @Override
+    public void addProductToUserCart(String email, String restaurantName, String currentProductName, Integer quantity){
+
+        User user = this.userRepo.getUserByEmail(email)
+                .orElseThrow(() -> new DeliveryCustomException("No user with this email"));
+
+        Product product = this.productRepo.getProductByNameAndRestaurantName(currentProductName, restaurantName)
+                .orElseThrow(() -> new DeliveryCustomException("No product with this name in this restaurant"));
+
+        List<Cart> userCart = user.getProductCart();
+
+        if(user.getProductCart().isEmpty()){
+
+            CartId cartId = new CartId(user.getId(), product.getId());
+            Cart cart = new Cart(cartId, quantity, user, product);
+            this.cartRepo.save(cart);
+
+        } else if (this.areProductsFromOtherRestaurantInCart(email, restaurantName, currentProductName)) {
+
+            user.setProductCart(new ArrayList<>());
+            CartId cartId = new CartId(user.getId(), product.getId());
+            Cart cart = new Cart(cartId, quantity, user, product);
+            user.addProductCart(cart);
+            product.addUserCart(cart);
+            this.cartRepo.save(cart);
+
+        } else if (userCart.stream().map(c -> c.getProduct()).equals(product)) {
+
+            Cart cart = userCart.stream().filter(c -> c.getProduct().equals(product)).collect(Collectors.toList()).get(0);
+            cart.setQuantity(cart.getQuantity() + quantity);
+            this.cartRepo.save(cart);
+
+        } else if (!userCart.stream().map(c -> c.getProduct()).equals(product)) {
+
+            CartId cartId = new CartId(user.getId(), product.getId());
+            Cart cart = new Cart(cartId, quantity, user, product);
+            this.cartRepo.save(cart);
         }
     }
 }

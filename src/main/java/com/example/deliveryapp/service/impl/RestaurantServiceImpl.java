@@ -11,6 +11,7 @@ import com.example.deliveryapp.repos.ProductRepo;
 import com.example.deliveryapp.repos.RestaurantRepo;
 import com.example.deliveryapp.service.RestaurantService;
 import com.example.deliveryapp.utils.ImageUtils;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,7 +33,14 @@ public class RestaurantServiceImpl implements RestaurantService {
     private CityRepo cityRepo;
     private ModelMapper mapper;
 
-    public RestaurantServiceImpl() {this.mapper = new ModelMapper();}
+    private ObjectMapper objectMapper;
+
+
+    public RestaurantServiceImpl() {this.mapper = new ModelMapper();
+
+        this.objectMapper= new ObjectMapper();
+
+    }
 
     @Override
     public void addRestaurant(String restaurantName){

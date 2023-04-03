@@ -18,6 +18,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
 
+import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
+
 @RestController
 @RequestMapping("delivery-app/restaurant")
 public class RestaurantController {
@@ -51,8 +53,8 @@ public class RestaurantController {
     }
 
 
-    @PostMapping("/add-product")
-    public Response addProduct(@RequestParam(value = "photo")MultipartFile file,
+    @PostMapping(value = "/add-product", consumes = MULTIPART_FORM_DATA_VALUE)
+    public Response addProduct(@RequestParam(value = "photo") MultipartFile file,
                                @RequestParam(value = "name") String name,
                                @RequestParam(value = "price") Double price,
                                @RequestParam(value = "type") String type,
@@ -61,7 +63,7 @@ public class RestaurantController {
                                @RequestParam(value = "restaurantName") String restaurantName) throws IOException {
         try{
             this.restaurantService.addProduct(file, name, price, type, description, ingredients, restaurantName);
-            return new Response("added with succes", HttpStatus.OK);
+            return new Response("added with success", HttpStatus.OK);
 
         }catch (IOException e){
             return new Response("Error on adding a product", HttpStatus.BAD_REQUEST);
@@ -75,7 +77,7 @@ public class RestaurantController {
 //        ResponseEntity<List<ProductDTO>> response = new ResponseEntity<>()
         for(ProductDTO product : products){
 
-            byte[] imageData = product .getPicture();
+            byte[] imageData = product.getPicture();
             if (imageData != null && imageData.length > 0) {
                 HttpHeaders headers = new HttpHeaders();
                 headers.setContentType(MediaType.IMAGE_PNG);

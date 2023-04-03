@@ -71,4 +71,14 @@ public class UserController {
     public void deleteCard(@RequestParam(value = "email")String email, @RequestParam(value = "cardNumber")String cardNumber){
         this.userService.removeCard(email, cardNumber);
     }
+
+    @PostMapping("/add-product-to-cart/{email}")
+    public void addProductToCart(
+            @PathVariable String email,
+            @RequestParam(value = "restaurantName") String restaurantName,
+            @RequestParam(value = "productName") String productName,
+            @RequestParam(value = "quantity") Integer quantity){
+
+        this.userService.addProductToUserCart(email, restaurantName, productName, quantity);
+    }
 }

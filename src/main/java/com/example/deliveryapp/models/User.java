@@ -109,4 +109,13 @@ public class User {
     public void addRestaurant(Restaurant restaurant){ this.restaurants.add(restaurant); }
     public void removeRestaurant(Restaurant restaurant){ this.restaurants.remove(restaurant); }
 
+
+    public void addProductCart(Cart cart){
+        this.productCart.add(cart);
+    }
+
+    public void removeProductCart(Cart cart){
+        this.productCart.remove(cart);
+    }
+
 }

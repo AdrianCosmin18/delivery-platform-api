@@ -18,8 +18,8 @@ public class Cart {
     @EmbeddedId
     private CartId id;
 
-    @Column(name = "name", nullable = false)
-    private String quantity;
+    @Column(name = "quantity", nullable = false)
+    private Integer quantity;
 
 
     @ManyToOne
