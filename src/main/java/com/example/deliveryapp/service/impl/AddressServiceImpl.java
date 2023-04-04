@@ -53,11 +53,4 @@ public class AddressServiceImpl implements AddressService {
         return addressDTOList;
     }
 
-    public AddressRepo getAddressRepo() {
-        return addressRepo;
-    }
-
-    public void setAddressRepo(AddressRepo addressRepo) {
-        this.addressRepo = addressRepo;
-    }
 }
