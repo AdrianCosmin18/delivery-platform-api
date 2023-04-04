@@ -1,6 +1,7 @@
 package com.example.deliveryapp.service.impl;
 
 import com.example.deliveryapp.DTOs.AddressDTO;
+import com.example.deliveryapp.constants.Constants;
 import com.example.deliveryapp.constants.StatusAddress;
 import com.example.deliveryapp.exceptions.DeliveryCustomException;
 import com.example.deliveryapp.models.Address;
@@ -26,7 +27,7 @@ public class AddressServiceImpl implements AddressService {
     public void deleteAddresses(AddressDTO addressDTO) {
 
         if(this.addressRepo.getFullAddress(addressDTO.getCityName(), addressDTO.getStreet(), addressDTO.getNumber()).isEmpty()){
-            throw new DeliveryCustomException("There is no address like this in db");
+            throw new DeliveryCustomException(Constants.ADDRESS_NOT_FOUND_EXCEPTION.getMessage());
         }
         this.addressRepo.deleteAddresses(addressDTO.getCityName(), addressDTO.getStreet(), addressDTO.getNumber());
     }

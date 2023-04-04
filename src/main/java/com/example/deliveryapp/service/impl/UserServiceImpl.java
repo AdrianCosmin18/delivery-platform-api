@@ -1,6 +1,7 @@
 package com.example.deliveryapp.service.impl;
 
 import com.example.deliveryapp.DTOs.*;
+import com.example.deliveryapp.constants.Constants;
 import com.example.deliveryapp.exceptions.DeliveryCustomException;
 import com.example.deliveryapp.models.*;
 import com.example.deliveryapp.models.embeddedKey.OrderItemId;
@@ -54,10 +55,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public void addUser(UserDTO userDTO){
         if(this.userRepo.getUserByEmail(userDTO.getEmail()).isPresent()){
-            throw new DeliveryCustomException("Already exists a user with this email");
+            throw new DeliveryCustomException(Constants.USER_ALREADY_EXISTS_BY_EMAIL_EXCEPTION.getMessage());
         }
         if(this.userRepo.getUserByPhone(userDTO.getPhone()).isPresent()){
-            throw new DeliveryCustomException("This phone number belongs to someone else");
+            throw new DeliveryCustomException(Constants.USER_ALREADY_EXISTS_PHONE_EXCEPTION.getMessage());
         }
         userRepo.save(this.mapper.map(userDTO, User.class));
     }
@@ -65,13 +66,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public void addRestaurantToWishlist(String email, String restaurantName){
         User user = this.userRepo.getUserByEmail(email)
-                .orElseThrow(() -> new DeliveryCustomException("There is no user with this email"));
+                .orElseThrow(() -> new DeliveryCustomException(Constants.USER_ALREADY_EXISTS_BY_EMAIL_EXCEPTION.getMessage()));
 
         Restaurant restaurant = this.restaurantRepo.getRestaurantByName(restaurantName)
-                .orElseThrow(() -> new DeliveryCustomException("There is no restaurant with this name"));
+                .orElseThrow(() -> new DeliveryCustomException(Constants.RESTAURANT_NOT_FOUND_BY_NAME_EXCEPTION.getMessage()));
 
         if(user.getRestaurants().stream().anyMatch(r -> r.getName().toLowerCase().equals(restaurantName.toLowerCase()))){
-            throw new DeliveryCustomException("User already has this restaurant in his wishlist");
+            throw new DeliveryCustomException(Constants.WISHLIST_EXIST_EXCEPTION.getMessage());
         }
 
         user.addRestaurant(restaurant);
@@ -81,16 +82,16 @@ public class UserServiceImpl implements UserService {
     @Override
     public void removeRestaurantFromWishlist(String email, String restaurantName){
         User user = this.userRepo.getUserByEmail(email)
-                .orElseThrow(() -> new DeliveryCustomException("There is no user with this email"));
+                .orElseThrow(() -> new DeliveryCustomException(Constants.USER_ALREADY_EXISTS_BY_EMAIL_EXCEPTION.getMessage()));
 
         Restaurant restaurant = this.restaurantRepo.getRestaurantByName(restaurantName)
-                .orElseThrow(() -> new DeliveryCustomException("There is no restaurant with this name"));
+                .orElseThrow(() -> new DeliveryCustomException(Constants.RESTAURANT_NOT_FOUND_BY_NAME_EXCEPTION.getMessage()));
 
         if(user.getRestaurants().stream().anyMatch(r -> r.getName().toLowerCase().equals(restaurantName.toLowerCase()))){
             user.removeRestaurant(restaurant);
             userRepo.save(user);
         }else{
-            throw new DeliveryCustomException("User doesn't have this restaurant in his wishlist");
+            throw new DeliveryCustomException(Constants.WISHLIST_NOT_EXIST_EXCEPTION.getMessage());
         }
     }
 
@@ -98,12 +99,12 @@ public class UserServiceImpl implements UserService {
     public void addAddress(String email, AddressDTO addressDTO){
 
         User user = this.userRepo.getUserByEmail(email)
-                .orElseThrow(() -> new DeliveryCustomException("There is no user with this email"));
+                .orElseThrow(() -> new DeliveryCustomException(Constants.USER_ALREADY_EXISTS_BY_EMAIL_EXCEPTION.getMessage()));
 
         List<Address> userAddresses = user.getAddresses();
 
         City city = this.cityRepo.getCityByName(addressDTO.getCityName())
-                .orElseThrow(() -> new DeliveryCustomException("There is no city with this name in the db"));
+                .orElseThrow(() -> new DeliveryCustomException(Constants.CITY_NOT_FOUND_EXCEPTION.getMessage()));
 
         Address address = new Address(addressDTO.getStreet(), addressDTO.getNumber());
         if(addressDTO.getIsDefault()){
@@ -118,7 +119,7 @@ public class UserServiceImpl implements UserService {
         address.setUser(user);
 
         if(userAddresses.stream().anyMatch(adr -> adr.compare(address))){
-            throw new DeliveryCustomException("User already has this address");
+            throw new DeliveryCustomException(Constants.USER_ALREADY_OWN_ADDRESS_EXCEPTION.getMessage());
         }
 
         user.addAddress(address);
@@ -129,10 +130,10 @@ public class UserServiceImpl implements UserService {
     public void removeAddress(String email, AddressDTO addressDTO){
 
         User user = this.userRepo.getUserByEmail(email)
-                .orElseThrow(() -> new DeliveryCustomException("There is no user with this email"));
+                .orElseThrow(() -> new DeliveryCustomException(Constants.USER_ALREADY_EXISTS_BY_EMAIL_EXCEPTION.getMessage()));
 
         City city = this.cityRepo.getCityByName(addressDTO.getCityName())
-                .orElseThrow(() -> new DeliveryCustomException("There is no city with this name in the db"));
+                .orElseThrow(() -> new DeliveryCustomException(Constants.CITY_NOT_FOUND_EXCEPTION.getMessage()));
 
         List<Address> userAddresses = user.getAddresses();
 
@@ -147,13 +148,13 @@ public class UserServiceImpl implements UserService {
             this.userRepo.save(user);
         }
 
-        throw new DeliveryCustomException("User does not have this address");
+        throw new DeliveryCustomException(Constants.USER_NOT_OWN_ADDRESS_EXCEPTION.getMessage());
     }
 
     @Override
     public List<Address> getUserAddresses(String email){
         User user = this.userRepo.getUserByEmail(email)
-                .orElseThrow(() -> new DeliveryCustomException("There is no user with this email"));
+                .orElseThrow(() -> new DeliveryCustomException(Constants.USER_ALREADY_EXISTS_BY_EMAIL_EXCEPTION.getMessage()));
 
         return user.getAddresses();
     }
@@ -162,7 +163,7 @@ public class UserServiceImpl implements UserService {
     public void addCard(String email, CardDTO cardDTO) {
 
         User user = this.userRepo.getUserByEmail(email)
-                .orElseThrow(() -> new DeliveryCustomException("There is no user with this email"));
+                .orElseThrow(() -> new DeliveryCustomException(Constants.USER_ALREADY_EXISTS_BY_EMAIL_EXCEPTION.getMessage()));
 
         Card card = Card.builder()
                 .cardNumber(cardDTO.getCardNumber())
@@ -173,7 +174,7 @@ public class UserServiceImpl implements UserService {
 
         List<Card> cards = user.getCards();
         if (cards.stream().anyMatch(c -> c.equals(card))){
-            throw new DeliveryCustomException("Already added this card");
+            throw new DeliveryCustomException(Constants.USER_CARD_ALREADY_EXISTS_EXCEPTION.getMessage());
         }
 
         card.setUser(user);
@@ -185,7 +186,7 @@ public class UserServiceImpl implements UserService {
     public List<CardDTO> getUserCards(String email){
 
         User user = this.userRepo.getUserByEmail(email)
-                .orElseThrow(() -> new DeliveryCustomException("There is no user with this email"));
+                .orElseThrow(() -> new DeliveryCustomException(Constants.USER_ALREADY_EXISTS_BY_EMAIL_EXCEPTION.getMessage()));
 
         if(user.getCards().isEmpty()){
             return new ArrayList<>();
@@ -212,7 +213,7 @@ public class UserServiceImpl implements UserService {
     public void removeCard(String email, String cardNumber){
 
         User user = this.userRepo.getUserByEmail(email)
-                .orElseThrow(() -> new DeliveryCustomException("There is no user with this email"));
+                .orElseThrow(() -> new DeliveryCustomException(Constants.USER_ALREADY_EXISTS_BY_EMAIL_EXCEPTION.getMessage()));
 
         List<Card> userCards = user.getCards();
 
@@ -223,7 +224,7 @@ public class UserServiceImpl implements UserService {
 
             this.userRepo.save(user);
         }else{
-            throw new DeliveryCustomException("User does not own this card");
+            throw new DeliveryCustomException(Constants.USER_CARD_NOT_OWN_EXCEPTION.getMessage());
         }
     }
 
@@ -295,7 +296,7 @@ public class UserServiceImpl implements UserService {
     public void placeOrder(CreateOrderRequest orderRequest){
 
         User user = this.userRepo.getUserByEmail(orderRequest.getEmailUser())
-                .orElseThrow(() -> new DeliveryCustomException("There is no user with this email"));
+                .orElseThrow(() -> new DeliveryCustomException(Constants.USER_ALREADY_EXISTS_BY_EMAIL_EXCEPTION.getMessage()));
 
 
         List<OrderItem> orderItems = new ArrayList<>();
@@ -304,7 +305,7 @@ public class UserServiceImpl implements UserService {
         for(ProductCart pc: orderRequest.getProductsInCart()){
 
             Product product = this.productRepo.getProductByNameAndRestaurantName( pc.getProductName(), pc.getRestaurantName())
-                    .orElseThrow(() -> new DeliveryCustomException("No product from this restaurant"));
+                    .orElseThrow(() -> new DeliveryCustomException(Constants.PRODUCT_NOT_FOUND_BY_RESTAURANT_AND_NAME.getMessage()));
 
             OrderItemId orderItemId = new OrderItemId(currentOrder.getId(), product.getId());
             OrderItem orderItem = OrderItem.builder()
@@ -325,10 +326,10 @@ public class UserServiceImpl implements UserService {
 
 
         Card userCard = this.cardRepo.getCardByCardNumber(orderRequest.getCardNumber())
-                .orElseThrow(() -> new DeliveryCustomException("No card in db with this number"));
+                .orElseThrow(() -> new DeliveryCustomException(Constants.CARD_NOT_FOUND_BY_NUMBER_EXCEPTION.getMessage()));
 
         if(user.getCards().stream().noneMatch(card -> card.equals(userCard))){
-            throw new DeliveryCustomException("Problems with user card, it seems that this card isn't assigned to this user");
+            throw new DeliveryCustomException(Constants.USER_CARD_NOT_OWN_EXCEPTION.getMessage());
         }
 
         currentOrder.setCard(userCard);
@@ -338,10 +339,10 @@ public class UserServiceImpl implements UserService {
                 orderRequest.getAddressDTO().getCityName(),
                 orderRequest.getAddressDTO().getStreet(),
                 orderRequest.getAddressDTO().getNumber())
-                .orElseThrow(() -> new DeliveryCustomException("There is no address like this in db"));
+                .orElseThrow(() -> new DeliveryCustomException(Constants.ADDRESS_NOT_FOUND_EXCEPTION.getMessage()));
 
         if(user.getAddresses().stream().noneMatch(address -> address.equals(userAddress))){
-            throw new DeliveryCustomException("Problems with user address, it seems that user doesn't have this address in his list");
+            throw new DeliveryCustomException(Constants.USER_NOT_OWN_ADDRESS_EXCEPTION.getMessage());
         }
         currentOrder.setAddress(userAddress);
 

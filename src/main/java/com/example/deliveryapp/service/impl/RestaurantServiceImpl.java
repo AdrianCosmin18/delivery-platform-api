@@ -2,6 +2,7 @@ package com.example.deliveryapp.service.impl;
 
 import com.example.deliveryapp.DTOs.ProductDTO;
 import com.example.deliveryapp.DTOs.RestaurantDTO;
+import com.example.deliveryapp.constants.Constants;
 import com.example.deliveryapp.exceptions.DeliveryCustomException;
 import com.example.deliveryapp.models.City;
 import com.example.deliveryapp.models.Product;
@@ -31,21 +32,18 @@ public class RestaurantServiceImpl implements RestaurantService {
     private ProductRepo productRepo;
     @Autowired
     private CityRepo cityRepo;
+    @Autowired
     private ModelMapper mapper;
 
+    @Autowired
     private ObjectMapper objectMapper;
 
 
-    public RestaurantServiceImpl() {this.mapper = new ModelMapper();
-
-        this.objectMapper= new ObjectMapper();
-
-    }
 
     @Override
     public void addRestaurant(String restaurantName){
         if(this.restaurantRepo.getRestaurantByName(restaurantName).isPresent()){
-            throw new DeliveryCustomException("Already exists this restaurant in the db");
+            throw new DeliveryCustomException(Constants.RESTAURANT_NAME_ALREADY_EXISTS_EXCEPTION.getMessage());
         }
         this.restaurantRepo.save(new Restaurant(restaurantName));
     }
@@ -54,7 +52,7 @@ public class RestaurantServiceImpl implements RestaurantService {
     @Transactional
     public void deleteRestaurant(String name){
         if(this.restaurantRepo.getRestaurantByName(name).isEmpty()){
-            throw new DeliveryCustomException("There is no restaurant in the db with this name");
+            throw new DeliveryCustomException(Constants.RESTAURANT_NOT_FOUND_BY_NAME_EXCEPTION.getMessage());
         }
         this.restaurantRepo.deleteRestaurantByName(name);
     }
@@ -78,7 +76,7 @@ public class RestaurantServiceImpl implements RestaurantService {
     @Override
     public void addProduct(MultipartFile file, String name, Double price, String type, String description, String ingredients, String restaurantName) throws IOException {
         if (this.productRepo.getProductByNameAndRestaurantName(name, restaurantName).isPresent()) {
-            throw new DeliveryCustomException("Already exists this product in this restaurant");
+            throw new DeliveryCustomException(Constants.PRODUCT_ALREADY_EXISTS_IN_RESTAURANT_EXCEPTION.getMessage());
         }
 
         Product product = Product.builder()
@@ -91,7 +89,7 @@ public class RestaurantServiceImpl implements RestaurantService {
                 .build();
 
         Restaurant restaurant = this.restaurantRepo.getRestaurantByName(restaurantName)
-                .orElseThrow(() -> new DeliveryCustomException("There is no restaurant with this name"));
+                .orElseThrow(() -> new DeliveryCustomException(Constants.RESTAURANT_NOT_FOUND_BY_NAME_EXCEPTION.getMessage()));
 
         product.setRestaurant(restaurant);
 
@@ -103,7 +101,7 @@ public class RestaurantServiceImpl implements RestaurantService {
     public byte[] getImageProduct(String restaurantName, String productName){
 
         Product product = this.productRepo.getProductByNameAndRestaurantName(productName, restaurantName)
-                .orElseThrow(() -> new DeliveryCustomException("No product from this restaurant"));
+                .orElseThrow(() -> new DeliveryCustomException(Constants.PRODUCT_NOT_FOUND_BY_RESTAURANT_AND_NAME.getMessage()));
         return ImageUtils.decompressImage(product.getPicture());
     }
 
@@ -111,7 +109,7 @@ public class RestaurantServiceImpl implements RestaurantService {
     public List<ProductDTO> getRestaurantProducts(String restaurantName){
 
         Restaurant restaurant = this.restaurantRepo.getRestaurantByName(restaurantName)
-                .orElseThrow(() -> new DeliveryCustomException("There is no restaruant with this name"));
+                .orElseThrow(() -> new DeliveryCustomException(Constants.RESTAURANT_NOT_FOUND_BY_NAME_EXCEPTION.getMessage()));
 
         List<Product> products = restaurant.getProducts();
         if(products.isEmpty()){
@@ -146,13 +144,13 @@ public class RestaurantServiceImpl implements RestaurantService {
     public void putRestaurantInACity(String restaurantName, String cityName){
 
         Restaurant restaurant = this.restaurantRepo.getRestaurantByName(restaurantName)
-                .orElseThrow(() -> new DeliveryCustomException("There is no restaurant with this name"));
+                .orElseThrow(() -> new DeliveryCustomException(Constants.RESTAURANT_NOT_FOUND_BY_NAME_EXCEPTION.getMessage()));
 
         City city = this.cityRepo.getCityByName(cityName)
-                .orElseThrow(() -> new DeliveryCustomException("There is no city with this name"));
+                .orElseThrow(() -> new DeliveryCustomException(Constants.CITY_NOT_FOUND_EXCEPTION.getMessage()));
 
         if(restaurant.getCities().stream().anyMatch(c -> c.getName().toLowerCase().equals(city.getName().toLowerCase()))){
-            throw new DeliveryCustomException("There is already this restaurant in this city");
+            throw new DeliveryCustomException(Constants.RESTAURANT_ALREADY_EXISTS_IN_CITY_EXCEPTION.getMessage());
         }
 
         restaurant.addCity(city);
@@ -162,17 +160,17 @@ public class RestaurantServiceImpl implements RestaurantService {
     public void removeRestaurantFromCity(String restaurantName, String cityName){
 
         Restaurant restaurant = this.restaurantRepo.getRestaurantByName(restaurantName)
-                .orElseThrow(() -> new DeliveryCustomException("There is no restaurant with this name"));
+                .orElseThrow(() -> new DeliveryCustomException(Constants.RESTAURANT_NOT_FOUND_BY_NAME_EXCEPTION.getMessage()));
 
         City city = this.cityRepo.getCityByName(cityName)
-                .orElseThrow(() -> new DeliveryCustomException("There is no city with this name"));
+                .orElseThrow(() -> new DeliveryCustomException(Constants.CITY_NOT_FOUND_EXCEPTION.getMessage()));
 
         List<City> cityList = restaurant.getCities();
         if(cityList.stream().anyMatch(c -> c.getName().toLowerCase().equals(cityName.toLowerCase()))){
             restaurant.removeFromCity(city);
             restaurantRepo.save(restaurant);
         }else{
-            throw new DeliveryCustomException("This restaurant isn't present in this city");
+            throw new DeliveryCustomException(Constants.RESTAURANT_NOT_PRESENT_IN_CITY_EXCEPTION.getMessage());
         }
     }
 }

@@ -1,6 +1,7 @@
 package com.example.deliveryapp.service.impl;
 
 import com.example.deliveryapp.DTOs.CourierDTO;
+import com.example.deliveryapp.constants.Constants;
 import com.example.deliveryapp.exceptions.DeliveryCustomException;
 import com.example.deliveryapp.models.Courier;
 import com.example.deliveryapp.repos.CourierRepo;
@@ -17,7 +18,6 @@ public class CourierServiceImpl implements CourierService {
 
     @Autowired
     private CourierRepo courierRepo;
-
     @Autowired
     private ModelMapper mapper;
 
@@ -26,7 +26,7 @@ public class CourierServiceImpl implements CourierService {
     public void addCourier(CourierDTO courierDTO) {
 
         if(this.courierRepo.getCourierByPhone(courierDTO.getPhone()).isPresent()){
-            throw new DeliveryCustomException("Already a courier with this phone");
+            throw new DeliveryCustomException(Constants.PHONE_COURIER_ALREADY_EXISTS_EXCEPTION.getMessage());
         }
 
         this.courierRepo.save(this.mapper.map(courierDTO, Courier.class));

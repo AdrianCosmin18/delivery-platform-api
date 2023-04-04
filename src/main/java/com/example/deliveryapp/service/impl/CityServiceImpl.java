@@ -1,6 +1,7 @@
 package com.example.deliveryapp.service.impl;
 
 import com.example.deliveryapp.DTOs.CityDTO;
+import com.example.deliveryapp.constants.Constants;
 import com.example.deliveryapp.exceptions.DeliveryCustomException;
 import com.example.deliveryapp.models.City;
 import com.example.deliveryapp.repos.CityRepo;
@@ -17,16 +18,14 @@ public class CityServiceImpl implements CityService {
 
     @Autowired
     private CityRepo cityRepo;
+    @Autowired
     private ModelMapper mapper;
 
-    public CityServiceImpl() {
-        this.mapper = new ModelMapper();
-    }
 
     @Override
     public void addCity(CityDTO cityDTO){
         if(this.cityRepo.getCityByName(cityDTO.getName()).isPresent()){
-            throw new DeliveryCustomException("Already exists this city in db");
+            throw new DeliveryCustomException(Constants.CITY_ALREADY_EXITS_EXCEPTION.getMessage());
         }
         this.cityRepo.save(this.mapper.map(cityDTO, City.class));
     }
@@ -36,7 +35,7 @@ public class CityServiceImpl implements CityService {
         if(this.cityRepo.getCityByName(name).isPresent()){
             this.cityRepo.deleteCityByName(name);
         }else{
-            throw new DeliveryCustomException("There is no city with this name in db");
+            throw new DeliveryCustomException(Constants.CITY_NOT_FOUND_EXCEPTION.getMessage());
         }
     }
 

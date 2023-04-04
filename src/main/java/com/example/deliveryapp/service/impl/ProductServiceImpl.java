@@ -11,9 +11,10 @@ public class ProductServiceImpl implements ProductService {
 
     @Autowired
     private ProductRepo productRepo;
+    @Autowired
     private ModelMapper mapper;
 
-    public ProductServiceImpl(){ this.mapper = new ModelMapper(); }
+
 
 
 
