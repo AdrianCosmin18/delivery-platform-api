@@ -37,4 +37,9 @@ public class Courier {
     @OneToMany(mappedBy = "courier", fetch = FetchType.LAZY)
     @JsonBackReference
     private List<Order> orders;
+
+    public void addOrder(Order order){
+        this.orders.add(order);
+        order.setCourier(this);
+    }
 }

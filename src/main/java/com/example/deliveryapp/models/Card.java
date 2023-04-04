@@ -59,7 +59,7 @@ public class Card {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "card")
     @JsonBackReference
-    private List<Order> order;
+    private List<Order> orders;
 
 
     @Override
@@ -73,5 +73,10 @@ public class Card {
     @Override
     public int hashCode() {
         return Objects.hash(getCardNumber(), getCardHolderName(), getSecurityCode(), getExpiryDate());
+    }
+
+    public void addOrder(Order order){
+        this.orders.add(order);
+        order.setCard(this);
     }
 }

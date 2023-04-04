@@ -48,4 +48,9 @@ public class City {
         this.name = name;
         this.country = country;
     }
+
+    public void addAddress(Address address){
+        this.addresses.add(address);
+        address.setCity(this);
+    }
 }

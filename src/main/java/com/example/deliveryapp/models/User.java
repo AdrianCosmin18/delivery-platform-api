@@ -91,7 +91,9 @@ public class User {
 
 
     public void addAddress(Address address){
+
         this.addresses.add(address);
+        address.setUser(this);
     }
 
     public void deleteAddress(Address address){
@@ -99,7 +101,9 @@ public class User {
     }
 
     public void addCard(Card card){
+
         this.cards.add(card);
+        card.setUser(this);
     }
 
     public void deleteCard(Card card){
@@ -109,6 +113,10 @@ public class User {
     public void addRestaurant(Restaurant restaurant){ this.restaurants.add(restaurant); }
     public void removeRestaurant(Restaurant restaurant){ this.restaurants.remove(restaurant); }
 
+    public void addOrder(Order order){
+        this.orders.add(order);
+        order.setUser(this);
+    }
 
 //    public void addProductCart(Cart cart){
 //        this.productCart.add(cart);

@@ -55,6 +55,7 @@ public class Restaurant {
 
     public void addProduct(Product product){
         this.products.add(product);
+        product.setRestaurant(this);
     }
 
     public void deleteProduct(Product product){

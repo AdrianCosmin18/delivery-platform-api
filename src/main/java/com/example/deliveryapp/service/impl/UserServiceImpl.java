@@ -115,12 +115,12 @@ public class UserServiceImpl implements UserService {
 
             address.setIsDefault(false);
         }
-        address.setCity(city);
-        address.setUser(user);
+
 
         if(userAddresses.stream().anyMatch(adr -> adr.compare(address))){
             throw new DeliveryCustomException(Constants.USER_ALREADY_OWN_ADDRESS_EXCEPTION.getMessage());
         }
+        address.setCity(city);
 
         user.addAddress(address);
         this.userRepo.save(user);
@@ -177,7 +177,6 @@ public class UserServiceImpl implements UserService {
             throw new DeliveryCustomException(Constants.USER_CARD_ALREADY_EXISTS_EXCEPTION.getMessage());
         }
 
-        card.setUser(user);
         user.addCard(card);
         this.userRepo.save(user);
     }
@@ -296,7 +295,7 @@ public class UserServiceImpl implements UserService {
     public void placeOrder(CreateOrderRequest orderRequest){
 
         User user = this.userRepo.getUserByEmail(orderRequest.getEmailUser())
-                .orElseThrow(() -> new DeliveryCustomException(Constants.USER_ALREADY_EXISTS_BY_EMAIL_EXCEPTION.getMessage()));
+                .orElseThrow(() -> new DeliveryCustomException(Constants.USER_NOT_FOUND_BY_EMAIL.getMessage()));
 
 
         List<OrderItem> orderItems = new ArrayList<>();
@@ -315,14 +314,17 @@ public class UserServiceImpl implements UserService {
                     .build();
 
             product.addOrderItem(orderItem);
-            orderItem.setOrder(currentOrder);
-            orderItem.setProduct(product);
+            // orderItem.setProduct(product);
+            //orderItem.setOrder(currentOrder);
+            currentOrder.addOrderItem(orderItem);
 
             orderItems.add(orderItem);
         }
 
-        currentOrder.setUser(user);
-        currentOrder.setOrderItems(orderItems);
+
+        user.addOrder(currentOrder);
+        //currentOrder.setUser(user);
+        //currentOrder.setOrderItems(orderItems);
 
 
         Card userCard = this.cardRepo.getCardByCardNumber(orderRequest.getCardNumber())
@@ -332,7 +334,8 @@ public class UserServiceImpl implements UserService {
             throw new DeliveryCustomException(Constants.USER_CARD_NOT_OWN_EXCEPTION.getMessage());
         }
 
-        currentOrder.setCard(userCard);
+        //currentOrder.setCard(userCard);
+        userCard.addOrder(currentOrder);
         currentOrder.setAmount(orderItems.stream().mapToDouble(OrderItem::getPrice).sum());
 
         Address userAddress = this.addressRepo.getFullAddress(
@@ -344,11 +347,13 @@ public class UserServiceImpl implements UserService {
         if(user.getAddresses().stream().noneMatch(address -> address.equals(userAddress))){
             throw new DeliveryCustomException(Constants.USER_NOT_OWN_ADDRESS_EXCEPTION.getMessage());
         }
-        currentOrder.setAddress(userAddress);
+        //currentOrder.setAddress(userAddress);
+        userAddress.addOrder(currentOrder);
 
         List<Courier> couriers = this.courierRepo.findAll();
         Courier randomCourier = couriers.get(new Random().nextInt(couriers.size()));
-        currentOrder.setCourier(randomCourier);
+        //currentOrder.setCourier(randomCourier);
+        randomCourier.addOrder(currentOrder);
 
         currentOrder.setStatus("Comanda este in preparare, cand va fi gata, curierul o va ridica");
         currentOrder.setDeliverTime(LocalDateTime.now().plusMinutes(45));

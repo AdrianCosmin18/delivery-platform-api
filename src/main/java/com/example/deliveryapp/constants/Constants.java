@@ -16,6 +16,7 @@ public enum Constants {
     PRODUCT_NOT_FOUND_BY_RESTAURANT_AND_NAME("There is no product from this restaurant with this name"),
     USER_ALREADY_EXISTS_BY_EMAIL_EXCEPTION("Already exists a user with this email"),
     USER_ALREADY_EXISTS_PHONE_EXCEPTION("This phone number belongs to someone else"),
+    USER_NOT_FOUND_BY_EMAIL("There is no user with this email"),
     WISHLIST_EXIST_EXCEPTION("User already has this restaurant in his wishlist"),
     WISHLIST_NOT_EXIST_EXCEPTION("User doesn't have this restaurant in his wishlist"),
     USER_ALREADY_OWN_ADDRESS_EXCEPTION("User already has this address"),

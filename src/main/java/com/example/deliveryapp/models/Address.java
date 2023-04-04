@@ -95,4 +95,9 @@ public class Address{
     public int hashCode() {
         return Objects.hash(getStreet(), getNumber(), getCity());
     }
+
+    public void addOrder(Order order){
+        this.orders.add(order);
+        order.setAddress(this);
+    }
 }

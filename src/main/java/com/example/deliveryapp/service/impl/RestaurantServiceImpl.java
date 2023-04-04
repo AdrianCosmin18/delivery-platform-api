@@ -91,7 +91,6 @@ public class RestaurantServiceImpl implements RestaurantService {
         Restaurant restaurant = this.restaurantRepo.getRestaurantByName(restaurantName)
                 .orElseThrow(() -> new DeliveryCustomException(Constants.RESTAURANT_NOT_FOUND_BY_NAME_EXCEPTION.getMessage()));
 
-        product.setRestaurant(restaurant);
 
         restaurant.addProduct(product);
         this.restaurantRepo.save(restaurant);

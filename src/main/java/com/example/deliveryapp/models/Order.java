@@ -80,4 +80,9 @@ public class Order {
         this.amount = amount;
         this.status = status;
     }
+
+    public void addOrderItem(OrderItem item){
+        item.setOrder(this);
+        this.orderItems.add(item);
+    }
 }
