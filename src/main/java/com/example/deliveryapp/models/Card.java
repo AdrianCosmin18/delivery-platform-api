@@ -29,7 +29,7 @@ public class Card {
     private Long id;
 
     @NotEmpty
-    @Column(name = "card_number", nullable = false, unique = true)
+    @Column(name = "card_number", nullable = false)
     @Size(min = 16, max = 16)
     private String cardNumber;
 

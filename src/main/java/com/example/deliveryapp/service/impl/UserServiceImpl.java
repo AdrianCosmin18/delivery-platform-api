@@ -163,7 +163,7 @@ public class UserServiceImpl implements UserService {
     public void addCard(String email, CardDTO cardDTO) {
 
         User user = this.userRepo.getUserByEmail(email)
-                .orElseThrow(() -> new DeliveryCustomException(Constants.USER_ALREADY_EXISTS_BY_EMAIL_EXCEPTION.getMessage()));
+                .orElseThrow(() -> new DeliveryCustomException(Constants.USER_NOT_FOUND_BY_EMAIL.getMessage()));
 
         Card card = Card.builder()
                 .cardNumber(cardDTO.getCardNumber())
@@ -185,7 +185,7 @@ public class UserServiceImpl implements UserService {
     public List<CardDTO> getUserCards(String email){
 
         User user = this.userRepo.getUserByEmail(email)
-                .orElseThrow(() -> new DeliveryCustomException(Constants.USER_ALREADY_EXISTS_BY_EMAIL_EXCEPTION.getMessage()));
+                .orElseThrow(() -> new DeliveryCustomException(Constants.USER_NOT_FOUND_BY_EMAIL.getMessage()));
 
         if(user.getCards().isEmpty()){
             return new ArrayList<>();
@@ -212,7 +212,7 @@ public class UserServiceImpl implements UserService {
     public void removeCard(String email, String cardNumber){
 
         User user = this.userRepo.getUserByEmail(email)
-                .orElseThrow(() -> new DeliveryCustomException(Constants.USER_ALREADY_EXISTS_BY_EMAIL_EXCEPTION.getMessage()));
+                .orElseThrow(() -> new DeliveryCustomException(Constants.USER_NOT_FOUND_BY_EMAIL.getMessage()));
 
         List<Card> userCards = user.getCards();
 
@@ -300,6 +300,7 @@ public class UserServiceImpl implements UserService {
 
         List<OrderItem> orderItems = new ArrayList<>();
         Order currentOrder = this.orderRepo.saveAndFlush(new Order(0D, "creating"));
+        currentOrder.setOrderItems(new ArrayList<>());
 
         for(ProductCart pc: orderRequest.getProductsInCart()){
 
@@ -327,10 +328,11 @@ public class UserServiceImpl implements UserService {
         //currentOrder.setOrderItems(orderItems);
 
 
-        Card userCard = this.cardRepo.getCardByCardNumber(orderRequest.getCardNumber())
-                .orElseThrow(() -> new DeliveryCustomException(Constants.CARD_NOT_FOUND_BY_NUMBER_EXCEPTION.getMessage()));
+//        Card userCard = this.cardRepo.getCardByCardNumber(orderRequest.getCardNumber())
+//                .orElseThrow(() -> new DeliveryCustomException(Constants.CARD_NOT_FOUND_BY_NUMBER_EXCEPTION.getMessage()));
 
-        if(user.getCards().stream().noneMatch(card -> card.equals(userCard))){
+        Card userCard = user.getCards().stream().filter(card -> card.getCardNumber().equals(orderRequest.getCardNumber())).collect(Collectors.toList()).get(0);
+        if(userCard == null){
             throw new DeliveryCustomException(Constants.USER_CARD_NOT_OWN_EXCEPTION.getMessage());
         }
 
@@ -338,16 +340,26 @@ public class UserServiceImpl implements UserService {
         userCard.addOrder(currentOrder);
         currentOrder.setAmount(orderItems.stream().mapToDouble(OrderItem::getPrice).sum());
 
-        Address userAddress = this.addressRepo.getFullAddress(
-                orderRequest.getAddressDTO().getCityName(),
-                orderRequest.getAddressDTO().getStreet(),
-                orderRequest.getAddressDTO().getNumber())
-                .orElseThrow(() -> new DeliveryCustomException(Constants.ADDRESS_NOT_FOUND_EXCEPTION.getMessage()));
+        Address userAddress = user.getAddresses().stream().filter(
+                address -> address.getCity().getName().equals(orderRequest.getAddressDTO().getCityName()) &&
+                        address.getStreet().equals(orderRequest.getAddressDTO().getStreet()) &&
+                        address.getNumber().equals(orderRequest.getAddressDTO().getNumber())).collect(Collectors.toList()).get(0);
 
-        if(user.getAddresses().stream().noneMatch(address -> address.equals(userAddress))){
+        if(userAddress == null){
             throw new DeliveryCustomException(Constants.USER_NOT_OWN_ADDRESS_EXCEPTION.getMessage());
         }
+
+//        Address userAddress = this.addressRepo.getFullAddress(
+//                orderRequest.getAddressDTO().getCityName(),
+//                orderRequest.getAddressDTO().getStreet(),
+//                orderRequest.getAddressDTO().getNumber())
+//                .orElseThrow(() -> new DeliveryCustomException(Constants.ADDRESS_NOT_FOUND_EXCEPTION.getMessage()));
+//
+//        if(user.getAddresses().stream().noneMatch(address -> address.equals(userAddress))){
+//            throw new DeliveryCustomException(Constants.USER_NOT_OWN_ADDRESS_EXCEPTION.getMessage());
+//        }
         //currentOrder.setAddress(userAddress);
+
         userAddress.addOrder(currentOrder);
 
         List<Courier> couriers = this.courierRepo.findAll();
