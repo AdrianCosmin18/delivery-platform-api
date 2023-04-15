@@ -71,21 +71,20 @@ public class RestaurantController {
     }
 
     @GetMapping(value = "/get-restaurant-products/{restaurantName}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<ProductDTO>> getRestaurantProducts(@PathVariable String restaurantName){
+    public ResponseEntity<List<ProductDTO>> getRestaurantProducts(@PathVariable String restaurantName, @RequestParam(value = "type")String type){
 
-        List<ProductDTO> products = this.restaurantService.getRestaurantProducts(restaurantName);
+//        List<ProductDTO> products = this.restaurantService.getRestaurantProducts(restaurantName, type);
 //        ResponseEntity<List<ProductDTO>> response = new ResponseEntity<>()
-        for(ProductDTO product : products){
-
-            byte[] imageData = product.getPicture();
-            if (imageData != null && imageData.length > 0) {
-                HttpHeaders headers = new HttpHeaders();
-                headers.setContentType(MediaType.IMAGE_PNG);
-                return new ResponseEntity<>(products, headers, HttpStatus.OK);
-            }
-        }
-
-        return new ResponseEntity<List<ProductDTO>>(this.restaurantService.getRestaurantProducts(restaurantName), HttpStatus.OK);
+//        for(ProductDTO product : products){
+//
+//            byte[] imageData = product.getPicture();
+//            if (imageData != null && imageData.length > 0) {
+//                HttpHeaders headers = new HttpHeaders();
+//                headers.setContentType(MediaType.IMAGE_PNG);
+//                return new ResponseEntity<>(products, headers, HttpStatus.OK);
+//            }
+//        }
+        return new ResponseEntity<List<ProductDTO>>(this.restaurantService.getRestaurantProducts(restaurantName, type), HttpStatus.OK);
     }
 
     @GetMapping("/get-product-photo")

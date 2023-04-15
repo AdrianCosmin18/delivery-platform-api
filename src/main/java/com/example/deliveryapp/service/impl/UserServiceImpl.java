@@ -348,16 +348,6 @@ public class UserServiceImpl implements UserService {
         if(userAddress == null){
             throw new DeliveryCustomException(Constants.USER_NOT_OWN_ADDRESS_EXCEPTION.getMessage());
         }
-
-//        Address userAddress = this.addressRepo.getFullAddress(
-//                orderRequest.getAddressDTO().getCityName(),
-//                orderRequest.getAddressDTO().getStreet(),
-//                orderRequest.getAddressDTO().getNumber())
-//                .orElseThrow(() -> new DeliveryCustomException(Constants.ADDRESS_NOT_FOUND_EXCEPTION.getMessage()));
-//
-//        if(user.getAddresses().stream().noneMatch(address -> address.equals(userAddress))){
-//            throw new DeliveryCustomException(Constants.USER_NOT_OWN_ADDRESS_EXCEPTION.getMessage());
-//        }
         //currentOrder.setAddress(userAddress);
 
         userAddress.addOrder(currentOrder);

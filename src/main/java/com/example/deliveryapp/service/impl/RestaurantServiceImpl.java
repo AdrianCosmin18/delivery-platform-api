@@ -22,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class RestaurantServiceImpl implements RestaurantService {
@@ -105,12 +106,12 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
-    public List<ProductDTO> getRestaurantProducts(String restaurantName){
+    public List<ProductDTO> getRestaurantProducts(String restaurantName, String foodType){
 
         Restaurant restaurant = this.restaurantRepo.getRestaurantByName(restaurantName)
                 .orElseThrow(() -> new DeliveryCustomException(Constants.RESTAURANT_NOT_FOUND_BY_NAME_EXCEPTION.getMessage()));
 
-        List<Product> products = restaurant.getProducts();
+        List<Product> products = restaurant.getProducts().stream().filter(product -> product.getType().equals(foodType)).collect(Collectors.toList());
         if(products.isEmpty()){
             return new ArrayList<>();
         }else{

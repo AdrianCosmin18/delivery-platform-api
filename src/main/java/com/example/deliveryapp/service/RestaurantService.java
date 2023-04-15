@@ -15,7 +15,7 @@ public interface RestaurantService {
 
     byte[] getImageProduct(String restaurantName, String productName);
 
-    List<ProductDTO> getRestaurantProducts(String restaurantName);
+    List<ProductDTO> getRestaurantProducts(String restaurantName, String type);
     void deleteProduct(String productName, String restaurantName);
     void addRestaurant(String restaurantName);
     void deleteRestaurant(String name);
