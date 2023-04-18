@@ -22,6 +22,7 @@ import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 
 @RestController
 @RequestMapping("delivery-app/restaurant")
+@CrossOrigin()
 public class RestaurantController {
 
     @Autowired
@@ -53,8 +54,8 @@ public class RestaurantController {
     }
 
 
-    @PostMapping(value = "/add-product", consumes = MULTIPART_FORM_DATA_VALUE)
-    public Response addProduct(@RequestParam(value = "photo") MultipartFile file,
+    @PostMapping(value = "/add-product")
+    public Response addProduct(@RequestParam(value = "photo") String file,
                                @RequestParam(value = "name") String name,
                                @RequestParam(value = "price") Double price,
                                @RequestParam(value = "type") String type,
@@ -70,7 +71,7 @@ public class RestaurantController {
         }
     }
 
-    @GetMapping(value = "/get-restaurant-products/{restaurantName}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/get-restaurant-products/{restaurantName}")
     public ResponseEntity<List<ProductDTO>> getRestaurantProducts(@PathVariable String restaurantName, @RequestParam(value = "type")String type){
 
 //        List<ProductDTO> products = this.restaurantService.getRestaurantProducts(restaurantName, type);
@@ -87,11 +88,11 @@ public class RestaurantController {
         return new ResponseEntity<List<ProductDTO>>(this.restaurantService.getRestaurantProducts(restaurantName, type), HttpStatus.OK);
     }
 
-    @GetMapping("/get-product-photo")
-    public ResponseEntity<?> getProductImage(@RequestParam(value = "restaurantName") String restaurantName, @RequestParam(value = "productName") String productName){
-        byte [] image = this.restaurantService.getImageProduct(restaurantName, productName);
-        return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.valueOf("image/png")).body(image);
-    }
+//    @GetMapping("/get-product-photo")
+//    public ResponseEntity<?> getProductImage(@RequestParam(value = "restaurantName") String restaurantName, @RequestParam(value = "productName") String productName){
+//        byte [] image = this.restaurantService.getImageProduct(restaurantName, productName);
+//        return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.valueOf("image/png")).body(image);
+//    }
 
 
 
