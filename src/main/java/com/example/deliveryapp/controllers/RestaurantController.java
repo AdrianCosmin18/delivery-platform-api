@@ -94,6 +94,11 @@ public class RestaurantController {
 //        return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.valueOf("image/png")).body(image);
 //    }
 
+    @GetMapping("/get-product-by-restaurant-and-product-Name/{restaurantName}")
+    public ProductDTO getProductByRestaurantAndProductName(@PathVariable String restaurantName, @RequestParam(value = "productName")String productName){
+        return this.restaurantService.getProductByName(restaurantName,productName);
+    }
+
 
 
 }

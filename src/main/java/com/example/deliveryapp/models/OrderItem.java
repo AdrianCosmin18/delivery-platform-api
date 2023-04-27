@@ -3,6 +3,7 @@ import com.example.deliveryapp.models.embeddedKey.OrderItemId;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -22,6 +23,11 @@ public class OrderItem {
     @Column(name = "quantity", nullable = false)
     private Integer quantity;
 
+    @Column(name = "extraIngredients")
+    private String extraIngredients;// "sos Big Mac,salata verde,rosii" - lista cu ingrediente extra
+
+    @Column(name = "lessIngredients")
+    private String lessIngredients;// "ceapa, castraveti murati" - lista cu ingredientele pe care le scoatem din burger
 
     @ManyToOne
     @MapsId("orderId")

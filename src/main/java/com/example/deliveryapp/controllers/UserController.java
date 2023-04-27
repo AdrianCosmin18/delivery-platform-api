@@ -17,6 +17,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("delivery-app/user")
+@CrossOrigin()
 public class UserController {
 
     @Autowired
@@ -31,6 +32,11 @@ public class UserController {
     @GetMapping()
     public ResponseEntity<List<User>> getUsers(){
         return new ResponseEntity<List<User>>(this.userService.getUsers(), HttpStatus.OK);
+    }
+
+    @GetMapping("/get-user/{email}")
+    public ResponseEntity<UserDTO> getUserByEmail(@PathVariable String email){
+        return new ResponseEntity<>(this.userService.getUserByEmail(email), HttpStatus.OK);
     }
 
     @PostMapping("/add-restaurant-to-wishlist")

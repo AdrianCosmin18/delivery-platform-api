@@ -1,14 +1,18 @@
 package com.example.deliveryapp.models;
 
+import com.example.deliveryapp.security.security.UserRole;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
+import java.util.Collection;
 import java.util.List;
 
 @Data
@@ -16,7 +20,7 @@ import java.util.List;
 @NoArgsConstructor
 @Entity(name = "User")
 @Table(name = "user")
-public class User {
+public class User implements UserDetails {
 
     @Id
     @SequenceGenerator(name = "user_seq", allocationSize = 1)
@@ -34,6 +38,10 @@ public class User {
     @NotEmpty
     @Column(name = "email", length = 50, nullable = false, unique = true)
     private String email;
+
+    @NotEmpty
+    @Column(name = "password", nullable = false)
+    private String password;
 
     @Column(name = "role", nullable = false)
     private String role;
@@ -125,5 +133,41 @@ public class User {
 //    public void removeProductCart(Cart cart){
 //        this.productCart.remove(cart);
 //    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        //ii dam rolul de user creat in UserRole pe baza lui UserPermission
+        return UserRole.USER.getGrantedAuthorities();
+    }
+
+    @Override
+    public String getPassword() {
+        return this.password;
+    }
+
+    @Override
+    public String getUsername() {
+        return this.email;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 
 }

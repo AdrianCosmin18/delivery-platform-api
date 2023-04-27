@@ -363,5 +363,14 @@ public class UserServiceImpl implements UserService {
         this.orderRepo.saveAndFlush(currentOrder);
     }
 
+    @Override
+    public UserDTO getUserByEmail(String email){
+
+        User user = this.userRepo.getUserByEmail(email)
+                .orElseThrow(() -> new DeliveryCustomException(Constants.USER_NOT_FOUND_BY_EMAIL.getMessage()));
+
+        return this.mapper.map(user, UserDTO.class);
+    }
+
 
 }
