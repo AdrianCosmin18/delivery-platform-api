@@ -11,6 +11,12 @@ public class Util {
     public static final String TOKEN_PREFIX = "Bearer ";
     public static final String FORBIDDEN_MESSAGE = "You need to log in to access this page";
     public static final String ACCESS_DENIED_MESSAGE = "You do not have permission to access this page";
-    public static final String[] PUBLIC_URLS = { "/user/login", "/user/register"}; //trebuie modificat aici cum va fi in aplicatia mea
+    public static final String[] PUBLIC_URLS = {
+            "/user/login",
+            "/user/register",
+            "/delivery-app/restaurant/get-restaurant-products/*",
+            "/delivery-app/user/get-user/*",
+            "/delivery-app/restaurant/get-product-by-restaurant-and-product-Name/*",
+    }; //trebuie modificat aici cum va fi in aplicatia mea
     public static final String JWT_TOKEN_HEADER = "Jwt-Token";
 }
