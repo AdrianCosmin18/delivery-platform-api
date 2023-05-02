@@ -17,6 +17,7 @@ public class Util {
             "/delivery-app/restaurant/get-restaurant-products/*",
             "/delivery-app/user/get-user/*",
             "/delivery-app/restaurant/get-product-by-restaurant-and-product-Name/*",
+            "/delivery-app/restaurant/add-product"
     }; //trebuie modificat aici cum va fi in aplicatia mea
     public static final String JWT_TOKEN_HEADER = "Jwt-Token";
 }
