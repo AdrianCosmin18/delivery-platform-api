@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
@@ -43,12 +44,21 @@ public class User implements UserDetails {
     @Column(name = "password", nullable = false)
     private String password;
 
-    @Column(name = "role", nullable = false)
-    private String role;
+    @Enumerated(EnumType.STRING)
+    private UserRole userRole = UserRole.USER;
 
     @NotEmpty(message = "phone number is required")
     @Column(name = "phone", nullable = false, unique = true)
     private String phone;
+
+    @Column(name = "isAccountNonExpired")
+    private boolean isAccountNonExpired = true;
+    @Column(name = "isAccountNonLocked")
+    private boolean isAccountNonLocked = true;
+    @Column(name = "isCredentialsNonExpired")
+    private boolean isCredentialsNonExpired = true;
+    @Column(name = "isEnabled")
+    private boolean isEnabled = true;
 
 
 
@@ -88,7 +98,15 @@ public class User implements UserDetails {
     @JsonManagedReference
     private List<Order> orders;
 
-//    @OneToMany(
+    public User(String lastName, String firstName, String email, String password, String phone) {
+        this.lastName = lastName;
+        this.firstName = firstName;
+        this.email = email;
+        this.password = new BCryptPasswordEncoder().encode(password);
+        this.phone = phone;
+    }
+
+    //    @OneToMany(
 //            cascade = CascadeType.ALL,
 //            orphanRemoval = true,
 //            fetch = FetchType.LAZY,
@@ -152,22 +170,22 @@ public class User implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        return true;
+        return this.isAccountNonExpired;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return this.isAccountNonLocked;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return true;
+        return this.isCredentialsNonExpired;
     }
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return this.isEnabled;
     }
 
 }

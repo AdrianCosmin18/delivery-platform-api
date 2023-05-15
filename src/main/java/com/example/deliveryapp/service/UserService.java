@@ -34,6 +34,12 @@ public interface UserService {
 
     UserDTO getUserByEmail(String email);
 
+    User findByEmail(String email);
+
+    Long findIdByUsername(String email);
+
+    String findFirstNameByUsername(String email);
+
 //    boolean areProductsFromOtherRestaurantInCart(String email, String restaurantName, String currentProductName);
 
 //    void addProductToUserCart(String email, String restaurantName, String currentProductName, Integer quantity);

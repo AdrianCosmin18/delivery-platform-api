@@ -15,5 +15,10 @@ public interface UserRepo extends JpaRepository<User, Long> {
     Optional<User> getUserByEmail(String email);
 
     Optional<User> getUserByPhone(String phone);
+    @Query("select u.id from User u where u.email = ?1")
+    Optional<Long> findIdByUsername(String email);
+
+    @Query("select u.lastName from User u where u.email = ?1")
+    Optional<String> findFirstNameByUsername(String email);
 
 }

@@ -9,6 +9,7 @@ import com.example.deliveryapp.repos.*;
 import com.example.deliveryapp.service.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -60,7 +61,9 @@ public class UserServiceImpl implements UserService {
         if(this.userRepo.getUserByPhone(userDTO.getPhone()).isPresent()){
             throw new DeliveryCustomException(Constants.USER_ALREADY_EXISTS_PHONE_EXCEPTION.getMessage());
         }
-        userRepo.save(this.mapper.map(userDTO, User.class));
+
+        User user = new User(userDTO.getLastName(), userDTO.getFirstName(), userDTO.getEmail(), userDTO.getPassword(), userDTO.getPhone());
+        userRepo.saveAndFlush(user);
     }
 
     @Override
@@ -372,5 +375,21 @@ public class UserServiceImpl implements UserService {
         return this.mapper.map(user, UserDTO.class);
     }
 
+    public User findByEmail(String email){
 
+        return this.userRepo.getUserByEmail(email)
+                .orElseThrow(() -> new DeliveryCustomException(Constants.USER_NOT_FOUND_BY_EMAIL.getMessage()));
+    }
+
+    @Override
+    public Long findIdByUsername(String email){
+        return this.userRepo.findIdByUsername(email)
+                .orElseThrow(() -> new UsernameNotFoundException(Constants.USER_NOT_FOUND_BY_EMAIL.getMessage()));
+    }
+
+    @Override
+    public String findFirstNameByUsername(String email){
+        return this.userRepo.findFirstNameByUsername(email)
+                .orElseThrow(() -> new UsernameNotFoundException(Constants.USER_NOT_FOUND_BY_EMAIL.getMessage()));
+    }
 }

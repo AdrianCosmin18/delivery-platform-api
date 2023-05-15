@@ -13,14 +13,16 @@ import static com.example.deliveryapp.security.security.UserPermission.*;
 @AllArgsConstructor
 public enum UserRole {
 
-    USER(Sets.newHashSet(
-            ADD_PRODUCT_TO_WISHLIST,
-            DELETE_FROM_WISHLIST,
-            ADD_ADDRESS,
-            DELETE_ADDRESS,
-            ADD_CARD,
-            REMOVE_CARD,
-            PLACE_ORDER));
+    USER(
+        Sets.newHashSet(
+        ADD_PRODUCT_TO_WISHLIST,
+        DELETE_FROM_WISHLIST,
+        ADD_ADDRESS,
+        DELETE_ADDRESS,
+        ADD_CARD,
+        REMOVE_CARD,
+        PLACE_ORDER)
+    );
 
     private final Set<UserPermission> permissions;
 
