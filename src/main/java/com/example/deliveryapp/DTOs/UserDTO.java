@@ -11,14 +11,13 @@ import javax.validation.constraints.NotEmpty;
 @NoArgsConstructor
 public class UserDTO {
 
-    @NotEmpty
+//    @NotEmpty
     private String lastName;
-    @NotEmpty
+//    @NotEmpty
     private String firstName;
-    @NotEmpty
+//    @NotEmpty
     private String email;
-    @NotEmpty
-    private String role;
-    @NotEmpty(message = "phone number is required")
+//    @NotEmpty(message = "phone number is required")
     private String phone;
+    private String password;
 }
