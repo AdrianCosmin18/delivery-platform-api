@@ -40,6 +40,8 @@ public interface UserService {
 
     String findFirstNameByUsername(String email);
 
+    void updateUser(String email, UserDTO userDTO);
+
 //    boolean areProductsFromOtherRestaurantInCart(String email, String restaurantName, String currentProductName);
 
 //    void addProductToUserCart(String email, String restaurantName, String currentProductName, Integer quantity);

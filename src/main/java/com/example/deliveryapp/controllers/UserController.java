@@ -139,8 +139,13 @@ public class UserController {
     @PostMapping("/place-order")
     @PreAuthorize("hasAnyRole('ROLE_USER')")
     public void placeOrder(@RequestBody CreateOrderRequest orderRequest){
-
         this.userService.placeOrder(orderRequest);
+    }
+
+    @PutMapping("/update-user/{email}")
+    @PreAuthorize("hasAnyRole('ROLE_USER')")
+    public void updateUser(@PathVariable String email, @RequestBody UserDTO userDTO){
+        this.userService.updateUser(email, userDTO);
     }
 
 

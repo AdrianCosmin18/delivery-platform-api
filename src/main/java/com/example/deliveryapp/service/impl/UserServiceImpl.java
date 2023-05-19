@@ -392,4 +392,17 @@ public class UserServiceImpl implements UserService {
         return this.userRepo.findFirstNameByUsername(email)
                 .orElseThrow(() -> new UsernameNotFoundException(Constants.USER_NOT_FOUND_BY_EMAIL.getMessage()));
     }
+
+    @Override
+    public void updateUser(String email, UserDTO userDTO){
+        User user = this.userRepo.getUserByEmail(email)
+                .orElseThrow(() -> new DeliveryCustomException(Constants.USER_NOT_FOUND_BY_EMAIL.getMessage()));
+
+        user.setLastName(userDTO.getLastName());
+        user.setFirstName(userDTO.getFirstName());
+        user.setEmail(userDTO.getEmail());
+        user.setPhone(userDTO.getPhone());
+
+        this.userRepo.saveAndFlush(user);
+    }
 }
