@@ -21,7 +21,9 @@ public interface UserService {
 
     void removeAddress(String email, AddressDTO addressDTO);
 
-    List<Address> getUserAddresses(String email);
+    List<AddressDTO> getUserAddresses(String email);
+
+    void setAsMainAddress(String email, long addressId);
 
     void addCard(String email, CardDTO cardDTO);
 

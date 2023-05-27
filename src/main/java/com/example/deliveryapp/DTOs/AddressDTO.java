@@ -11,8 +11,15 @@ import lombok.NoArgsConstructor;
 @Builder
 public class AddressDTO {
 
+    private Long id;
     private String street;
     private Integer number;
+    private String block;
+    private String staircase;
+    private int floor;
+    private int apartment;
+    private String interphone;
+    private String details;
     private Boolean isDefault;
     private String cityName;
 

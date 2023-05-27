@@ -11,13 +11,11 @@ import com.example.deliveryapp.repos.CityRepo;
 import com.example.deliveryapp.repos.ProductRepo;
 import com.example.deliveryapp.repos.RestaurantRepo;
 import com.example.deliveryapp.service.RestaurantService;
-import com.example.deliveryapp.utils.ImageUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -75,7 +73,7 @@ public class RestaurantServiceImpl implements RestaurantService {
 
 
     @Override
-    public void addProduct(MultipartFile file, String name, Double price, String type, String description, String ingredients, String restaurantName) throws IOException {
+    public void addProduct(String file, String name, Double price, String type, String description, String ingredients, String restaurantName) throws IOException {
         if (this.productRepo.getProductByNameAndRestaurantName(name, restaurantName).isPresent()) {
             throw new DeliveryCustomException(Constants.PRODUCT_ALREADY_EXISTS_IN_RESTAURANT_EXCEPTION.getMessage());
         }
@@ -85,7 +83,7 @@ public class RestaurantServiceImpl implements RestaurantService {
                 .description(description)
                 .price(price)
                 .type(type)
-                .picture(ImageUtils.compressImage(file.getBytes()))
+                .picture(file)
                 .ingredients(ingredients)
                 .build();
 
@@ -97,13 +95,13 @@ public class RestaurantServiceImpl implements RestaurantService {
         this.restaurantRepo.save(restaurant);
     }
 
-    @Override
-    public byte[] getImageProduct(String restaurantName, String productName){
-
-        Product product = this.productRepo.getProductByNameAndRestaurantName(productName, restaurantName)
-                .orElseThrow(() -> new DeliveryCustomException(Constants.PRODUCT_NOT_FOUND_BY_RESTAURANT_AND_NAME.getMessage()));
-        return ImageUtils.decompressImage(product.getPicture());
-    }
+//    @Override
+//    public byte[] getImageProduct(String restaurantName, String productName){
+//
+//        Product product = this.productRepo.getProductByNameAndRestaurantName(productName, restaurantName)
+//                .orElseThrow(() -> new DeliveryCustomException(Constants.PRODUCT_NOT_FOUND_BY_RESTAURANT_AND_NAME.getMessage()));
+//        return ImageUtils.decompressImage(product.getPicture());
+//    }
 
     @Override
     public List<ProductDTO> getRestaurantProducts(String restaurantName, String foodType){
@@ -125,7 +123,7 @@ public class RestaurantServiceImpl implements RestaurantService {
                         .type(p.getType())
                         .description(p.getDescription())
                         .ingredients(p.getIngredients())
-                        .picture(ImageUtils.decompressImage(p.getPicture()))
+                        .picture(p.getPicture())
                         .restaurantName(restaurant.getName())
                         .build();
 
@@ -172,5 +170,27 @@ public class RestaurantServiceImpl implements RestaurantService {
         }else{
             throw new DeliveryCustomException(Constants.RESTAURANT_NOT_PRESENT_IN_CITY_EXCEPTION.getMessage());
         }
+    }
+    @Override
+    public ProductDTO getProductByName(String restaurantName, String productName){
+
+        Restaurant restaurant = this.restaurantRepo.getRestaurantByName(restaurantName)
+                .orElseThrow(() -> new DeliveryCustomException(Constants.RESTAURANT_NOT_FOUND_BY_NAME_EXCEPTION.getMessage()));
+        List<Product> products = restaurant.getProducts().stream().filter(product -> product.getName().equals(productName)).collect(Collectors.toList());
+
+        if(products.size() == 1){
+            Product p = products.get(0);
+            return ProductDTO.builder()
+                    .name(p.getName())
+                    .price(p.getPrice())
+                    .type(p.getType())
+                    .description(p.getDescription())
+                    .ingredients(p.getIngredients())
+                    .picture(p.getPicture())
+                    .restaurantName(restaurant.getName())
+                    .build();
+        }
+
+        throw new DeliveryCustomException("No product in this restaurant with this name");
     }
 }

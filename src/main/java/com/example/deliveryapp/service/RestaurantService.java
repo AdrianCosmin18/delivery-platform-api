@@ -11,9 +11,9 @@ import java.util.List;
 public interface RestaurantService {
 
 
-    void addProduct(MultipartFile file, String name, Double price, String type, String description, String ingredients, String restaurantName) throws IOException;
+    void addProduct(String file, String name, Double price, String type, String description, String ingredients, String restaurantName) throws IOException;
 
-    byte[] getImageProduct(String restaurantName, String productName);
+    // byte[] getImageProduct(String restaurantName, String productName);
 
     List<ProductDTO> getRestaurantProducts(String restaurantName, String type);
     void deleteProduct(String productName, String restaurantName);
@@ -22,4 +22,6 @@ public interface RestaurantService {
     List<RestaurantDTO> getRestaurants();
     void putRestaurantInACity(String restaurantName, String cityName);
     void removeRestaurantFromCity(String restaurantName, String cityName);
+
+    ProductDTO getProductByName(String restaurantName, String productName);
 }

@@ -84,6 +84,7 @@ public class UserController {
     }
 
     @GetMapping("/get-user/{email}")
+    @PreAuthorize("hasAnyRole('ROLE_USER')")
     public ResponseEntity<UserDTO> getUserByEmail(@PathVariable String email){
         return new ResponseEntity<>(this.userService.getUserByEmail(email), HttpStatus.OK);
     }
@@ -108,14 +109,20 @@ public class UserController {
 
     @GetMapping("/get-user-addresses/{email}")
     @PreAuthorize("hasAnyRole('ROLE_USER')")
-    public ResponseEntity<List<Address>> getUserAddresses(@PathVariable String email){
-        return new ResponseEntity<List<Address>>(this.userService.getUserAddresses(email), HttpStatus.OK);
+    public ResponseEntity<List<AddressDTO>> getUserAddresses(@PathVariable String email){
+        return new ResponseEntity<List<AddressDTO>>(this.userService.getUserAddresses(email), HttpStatus.OK);
     }
 
     @DeleteMapping("/delete-address/{email}")
     @PreAuthorize("hasAnyRole('ROLE_USER')")
     public void deleteAddress(@PathVariable String email, @RequestBody AddressDTO addressDTO){
         this.userService.removeAddress(email, addressDTO);
+    }
+
+    @PutMapping("/set-as-main-address/{email}/{addressId}")
+    @PreAuthorize("hasAnyRole('ROLE_USER')")
+    public void setAsMainAddress(@PathVariable String email, @PathVariable long addressId){
+        this.userService.setAsMainAddress(email, addressId);
     }
 
     @PostMapping("/add-card/{email}")

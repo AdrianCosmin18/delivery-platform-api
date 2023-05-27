@@ -26,10 +26,25 @@ public class AddressServiceImpl implements AddressService {
     @Override
     public void deleteAddresses(AddressDTO addressDTO) {
 
-        if(this.addressRepo.getFullAddress(addressDTO.getCityName(), addressDTO.getStreet(), addressDTO.getNumber()).isEmpty()){
+        if(this.addressRepo.getFullAddress(
+                addressDTO.getCityName(),
+                addressDTO.getStreet(),
+                addressDTO.getNumber(),
+                addressDTO.getBlock(),
+                addressDTO.getStaircase(),
+                addressDTO.getFloor(),
+                addressDTO.getApartment())
+                .isEmpty()){
             throw new DeliveryCustomException(Constants.ADDRESS_NOT_FOUND_EXCEPTION.getMessage());
         }
-        this.addressRepo.deleteAddresses(addressDTO.getCityName(), addressDTO.getStreet(), addressDTO.getNumber());
+        this.addressRepo.deleteAddresses(
+                addressDTO.getCityName(),
+                addressDTO.getStreet(),
+                addressDTO.getNumber(),
+                addressDTO.getBlock(),
+                addressDTO.getStaircase(),
+                addressDTO.getFloor(),
+                addressDTO.getApartment());
     }
 
     public List<AddressDTO> getAddresses(){

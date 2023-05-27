@@ -109,7 +109,16 @@ public class UserServiceImpl implements UserService {
         City city = this.cityRepo.getCityByName(addressDTO.getCityName())
                 .orElseThrow(() -> new DeliveryCustomException(Constants.CITY_NOT_FOUND_EXCEPTION.getMessage()));
 
-        Address address = new Address(addressDTO.getStreet(), addressDTO.getNumber());
+        Address address = new Address(
+                addressDTO.getStreet(),
+                addressDTO.getNumber(),
+                addressDTO.getBlock(),
+                addressDTO.getStaircase(),
+                addressDTO.getFloor(),
+                addressDTO.getApartment(),
+                addressDTO.getInterphone(),
+                addressDTO.getDetails(),
+                addressDTO.getIsDefault());
         if(addressDTO.getIsDefault()){
 
             userAddresses.forEach(adr -> adr.setIsDefault(false));
@@ -155,11 +164,55 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<Address> getUserAddresses(String email){
+    public List<AddressDTO> getUserAddresses(String email){
         User user = this.userRepo.getUserByEmail(email)
                 .orElseThrow(() -> new DeliveryCustomException(Constants.USER_ALREADY_EXISTS_BY_EMAIL_EXCEPTION.getMessage()));
 
-        return user.getAddresses();
+        List<AddressDTO> addressDTOList = new ArrayList<>();
+        for (Address address: user.getAddresses()){
+
+            AddressDTO addressDTO = AddressDTO.builder()
+                    .id(address.getId())
+                    .street(address.getStreet())
+                    .number(address.getNumber())
+                    .cityName(address.getCity().getName())
+                    .apartment(address.getApartment())
+                    .block(address.getBlock())
+                    .staircase(address.getStaircase())
+                    .floor(address.getFloor())
+                    .interphone(address.getInterphone())
+                    .details(address.getDetails())
+                    .isDefault(address.getIsDefault())
+            .build();
+
+            addressDTOList.add(addressDTO);
+        }
+        return addressDTOList;
+    }
+
+    @Override
+    public void setAsMainAddress(String email, long addressId){
+        //functie care seteaza o adresa ca fiind principala =>
+        //celelalte vor deveni neprincipale
+
+
+        User user = this.userRepo.getUserByEmail(email)
+                .orElseThrow(() -> new DeliveryCustomException(Constants.USER_ALREADY_EXISTS_BY_EMAIL_EXCEPTION.getMessage()));
+
+        List<Address> userAddresses = user.getAddresses();
+        if(!userAddresses.stream().anyMatch(address -> address.getId() == addressId)){
+            throw new DeliveryCustomException(Constants.ADDRESS_NOT_FOUND_EXCEPTION.getMessage());
+        }else{
+
+            userAddresses.forEach(adr -> adr.setIsDefault(false));
+            userAddresses.forEach(adr -> {
+                if(adr.getId() == addressId){
+                    adr.setIsDefault(true);
+                }
+            });
+
+            this.userRepo.saveAndFlush(user);
+        }
     }
 
     @Override
