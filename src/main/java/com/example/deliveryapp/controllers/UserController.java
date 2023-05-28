@@ -125,6 +125,12 @@ public class UserController {
         this.userService.setAsMainAddress(email, addressId);
     }
 
+    @PutMapping("/update-address/{email}/{addressId}")
+    @PreAuthorize("hasAnyRole('ROLE_USER')")
+    public void updateAddress(@PathVariable String email, @PathVariable long addressId, @RequestBody AddressDTO addressDTO){
+        this.userService.updateAddress(email, addressId, addressDTO);
+    }
+
     @PostMapping("/add-card/{email}")
     @PreAuthorize("hasAnyRole('ROLE_USER')")
     public void addCard(@PathVariable String email, @RequestBody CardDTO cardDTO){

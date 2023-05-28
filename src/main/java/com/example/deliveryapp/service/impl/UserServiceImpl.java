@@ -164,6 +164,41 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public void updateAddress(String email, long addressId, AddressDTO addressDTO){
+
+        User user = this.userRepo.getUserByEmail(email)
+                .orElseThrow(() -> new DeliveryCustomException(Constants.USER_ALREADY_EXISTS_BY_EMAIL_EXCEPTION.getMessage()));
+
+        List<Address> addresses = user.getAddresses().stream().filter(adr -> adr.getId() == addressId).collect(Collectors.toList());
+        if (addresses.size() > 1){
+            throw new DeliveryCustomException("Error: there are more addresses with the same id");
+        }
+
+        Address userAddress = addresses.get(0);
+
+//        if(user.getAddresses().stream().filter(address -> address.compare(addressDTO)).collect(Collectors.toList()).size() != 1){
+//            throw new DeliveryCustomException("Exista deja aceasta adresa inregistrata");
+//        }
+
+        userAddress.setIsDefault(addressDTO.getIsDefault());
+        userAddress.setStreet(addressDTO.getStreet());
+        userAddress.setNumber(addressDTO.getNumber());
+        userAddress.setBlock(addressDTO.getBlock());
+        userAddress.setStaircase(addressDTO.getStaircase());
+        userAddress.setFloor(addressDTO.getFloor());
+        userAddress.setApartment(addressDTO.getApartment());
+        userAddress.setInterphone(addressDTO.getInterphone());
+        userAddress.setDetails(addressDTO.getDetails());
+        userAddress.setIsDefault(addressDTO.getIsDefault());
+
+        if(userAddress.getIsDefault()){
+            addresses.forEach(address -> address.setIsDefault(false));
+        }
+
+        this.userRepo.saveAndFlush(user);
+    }
+
+    @Override
     public List<AddressDTO> getUserAddresses(String email){
         User user = this.userRepo.getUserByEmail(email)
                 .orElseThrow(() -> new DeliveryCustomException(Constants.USER_ALREADY_EXISTS_BY_EMAIL_EXCEPTION.getMessage()));

@@ -1,5 +1,6 @@
 package com.example.deliveryapp.models;
 
+import com.example.deliveryapp.DTOs.AddressDTO;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -111,6 +112,16 @@ public class Address{
         return this.street.equals(otherAddress.street) &&
                 this.number.equals(otherAddress.number) &&
                 this.city.getName().equals(otherAddress.getCity().getName()) &&
+                this.block.equals(otherAddress.getBlock()) &&
+                this.staircase.equals(otherAddress.getStaircase()) &&
+                this.floor == otherAddress.getFloor() &&
+                this.apartment == otherAddress.getApartment();
+    }
+
+    public boolean compare(AddressDTO otherAddress){
+        return this.street.equals(otherAddress.getStreet()) &&
+                this.number.equals(otherAddress.getNumber()) &&
+                this.city.getName().equals(otherAddress.getCityName()) &&
                 this.block.equals(otherAddress.getBlock()) &&
                 this.staircase.equals(otherAddress.getStaircase()) &&
                 this.floor == otherAddress.getFloor() &&
