@@ -167,7 +167,7 @@ public class UserServiceImpl implements UserService {
     public void removeAddress(String email, long addressId){
 
         User user = this.userRepo.getUserByEmail(email)
-                .orElseThrow(() -> new DeliveryCustomException(Constants.USER_ALREADY_EXISTS_BY_EMAIL_EXCEPTION.getMessage()));
+                .orElseThrow(() -> new DeliveryCustomException(Constants.USER_NOT_FOUND_BY_EMAIL.getMessage()));
 
         List<Address> addresses = user.getAddresses()
                 .stream()
@@ -178,9 +178,24 @@ public class UserServiceImpl implements UserService {
             throw new DeliveryCustomException("Error: there are more addresses with the same id");
         }
 
-        user.setAddresses(user.getAddresses().stream().filter(address -> address.getId() != addressId).collect(Collectors.toList()));
-        this.userRepo.saveAndFlush(user);
+        List<Address> addressList = user.getAddresses();
+        int index = this.indexAddress(addressId, addressList);
+        if(index != -1){
+            addressList.remove(index);
+            this.userRepo.saveAndFlush(user);
 
+        }else{
+            throw new RuntimeException("Eroare");
+        }
+    }
+
+    public int indexAddress(long addressId, List<Address> addresses){
+        for(int i = 0; i < addresses.size(); i++){
+            if(addresses.get(i).getId() == addressId){
+                return i;
+            }
+        }
+        return -1;
     }
 
     @Override
