@@ -119,6 +119,7 @@ public class UserServiceImpl implements UserService {
                 addressDTO.getInterphone(),
                 addressDTO.getDetails(),
                 addressDTO.getIsDefault());
+        address.setCity(city);
         if(addressDTO.getIsDefault()){
 
             userAddresses.forEach(adr -> adr.setIsDefault(false));
@@ -132,7 +133,6 @@ public class UserServiceImpl implements UserService {
         if(userAddresses.stream().anyMatch(adr -> adr.compare(address))){
             throw new DeliveryCustomException(Constants.USER_ALREADY_OWN_ADDRESS_EXCEPTION.getMessage());
         }
-        address.setCity(city);
 
         user.addAddress(address);
         this.userRepo.save(user);
@@ -164,10 +164,33 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public void removeAddress(String email, long addressId){
+
+        User user = this.userRepo.getUserByEmail(email)
+                .orElseThrow(() -> new DeliveryCustomException(Constants.USER_ALREADY_EXISTS_BY_EMAIL_EXCEPTION.getMessage()));
+
+        List<Address> addresses = user.getAddresses()
+                .stream()
+                .filter(adr -> adr.getId() == addressId)
+                .collect(Collectors.toList());
+
+        if (addresses.size() > 1){
+            throw new DeliveryCustomException("Error: there are more addresses with the same id");
+        }
+
+        user.setAddresses(user.getAddresses().stream().filter(address -> address.getId() != addressId).collect(Collectors.toList()));
+        this.userRepo.saveAndFlush(user);
+
+    }
+
+    @Override
     public void updateAddress(String email, long addressId, AddressDTO addressDTO){
 
         User user = this.userRepo.getUserByEmail(email)
                 .orElseThrow(() -> new DeliveryCustomException(Constants.USER_ALREADY_EXISTS_BY_EMAIL_EXCEPTION.getMessage()));
+
+        City city = this.cityRepo.getCityByName(addressDTO.getCityName())
+                .orElseThrow(() -> new DeliveryCustomException(Constants.CITY_NOT_FOUND_EXCEPTION.getMessage()));
 
         List<Address> addresses = user.getAddresses().stream().filter(adr -> adr.getId() == addressId).collect(Collectors.toList());
         if (addresses.size() > 1){
@@ -176,9 +199,9 @@ public class UserServiceImpl implements UserService {
 
         Address userAddress = addresses.get(0);
 
-//        if(user.getAddresses().stream().filter(address -> address.compare(addressDTO)).collect(Collectors.toList()).size() != 1){
-//            throw new DeliveryCustomException("Exista deja aceasta adresa inregistrata");
-//        }
+        if(addressDTO.getIsDefault()){
+            user.getAddresses().forEach(address -> address.setIsDefault(false));
+        }
 
         userAddress.setIsDefault(addressDTO.getIsDefault());
         userAddress.setStreet(addressDTO.getStreet());
@@ -190,10 +213,7 @@ public class UserServiceImpl implements UserService {
         userAddress.setInterphone(addressDTO.getInterphone());
         userAddress.setDetails(addressDTO.getDetails());
         userAddress.setIsDefault(addressDTO.getIsDefault());
-
-        if(userAddress.getIsDefault()){
-            addresses.forEach(address -> address.setIsDefault(false));
-        }
+        userAddress.setCity(city);
 
         this.userRepo.saveAndFlush(user);
     }

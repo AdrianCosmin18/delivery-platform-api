@@ -119,6 +119,12 @@ public class UserController {
         this.userService.removeAddress(email, addressDTO);
     }
 
+    @DeleteMapping("/delete-address/{email}/{addressId}")
+    @PreAuthorize("hasAnyRole('ROLE_USER')")
+    public void deleteAddress(@PathVariable String email, @PathVariable long addressId){
+        this.userService.removeAddress(email, addressId);
+    }
+
     @PutMapping("/set-as-main-address/{email}/{addressId}")
     @PreAuthorize("hasAnyRole('ROLE_USER')")
     public void setAsMainAddress(@PathVariable String email, @PathVariable long addressId){

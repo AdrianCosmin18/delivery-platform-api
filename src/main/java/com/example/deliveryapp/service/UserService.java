@@ -21,6 +21,8 @@ public interface UserService {
 
     void removeAddress(String email, AddressDTO addressDTO);
 
+    void removeAddress(String email, long addressId);
+
     void updateAddress(String email, long addressId, AddressDTO addressDTO);
 
     List<AddressDTO> getUserAddresses(String email);
