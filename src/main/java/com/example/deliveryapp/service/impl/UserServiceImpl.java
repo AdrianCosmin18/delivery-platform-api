@@ -291,6 +291,7 @@ public class UserServiceImpl implements UserService {
         User user = this.userRepo.getUserByEmail(email)
                 .orElseThrow(() -> new DeliveryCustomException(Constants.USER_NOT_FOUND_BY_EMAIL.getMessage()));
 
+        List<Card> userCards = user.getCards();
         Card card = Card.builder()
                 .cardNumber(cardDTO.getCardNumber())
                 .cardHolderName(cardDTO.getCardHolderName())
@@ -298,8 +299,14 @@ public class UserServiceImpl implements UserService {
                 .expiryDate(cardDTO.getExpiryDate().atDay(1))
                 .build();
 
-        List<Card> cards = user.getCards();
-        if (cards.stream().anyMatch(c -> c.equals(card))){
+        if(cardDTO.getIsDefault()){
+            userCards.forEach(c -> c.setIsDefault(false));
+            card.setIsDefault(true);
+        }else{
+            card.setIsDefault(false);
+        }
+
+        if (userCards.stream().anyMatch(c -> c.equals(card))){
             throw new DeliveryCustomException(Constants.USER_CARD_ALREADY_EXISTS_EXCEPTION.getMessage());
         }
 
@@ -325,6 +332,7 @@ public class UserServiceImpl implements UserService {
                     .cardNumber(c.getCardNumber())
                     .securityCode(c.getSecurityCode())
                     .expiryDate(YearMonth.of(c.getExpiryDate().getYear(), c.getExpiryDate().getMonth()))
+                    .isDefault(c.getIsDefault())
                     .build();
 
             cardsDto.add(cardDTO);

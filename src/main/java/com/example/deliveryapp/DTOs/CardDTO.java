@@ -17,4 +17,6 @@ public class CardDTO {
     private String cardHolderName;
     private String securityCode;
     private YearMonth expiryDate; //date must be: 04.2043 or 04-2024
+    private Boolean isDefault;
+
 }

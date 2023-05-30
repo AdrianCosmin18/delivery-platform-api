@@ -46,6 +46,10 @@ public class Card {
     @Column(name = "expiry_date", nullable = false)
     private LocalDate expiryDate;
 
+    @NotNull
+    @Column(name = "is_default", nullable = false)
+    private Boolean isDefault;
+
 
 
     @ManyToOne(fetch = FetchType.LAZY)
