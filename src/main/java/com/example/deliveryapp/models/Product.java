@@ -2,11 +2,10 @@ package com.example.deliveryapp.models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
-import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
-import java.awt.*;
-import java.sql.Blob;
+import java.io.File;
+import java.io.FileInputStream;
 import java.util.List;
 
 @Data
@@ -38,9 +37,13 @@ public class Product {
     @Column(name = "ingredients")
     private String ingredients;
 
-    @Lob
-    @Column(name = "picture", length = 1000)
-    private byte[] picture;
+//    @Lob
+//    @Column(name = "picture", length = 1000)
+//    private byte[] picture;
+
+    @OneToOne
+    @JoinColumn(name = "image_id")
+    private Image image;
 
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -5,20 +5,31 @@ import com.example.deliveryapp.DTOs.RestaurantDTO;
 import com.example.deliveryapp.constants.Constants;
 import com.example.deliveryapp.exceptions.DeliveryCustomException;
 import com.example.deliveryapp.models.City;
+import com.example.deliveryapp.models.Image;
 import com.example.deliveryapp.models.Product;
 import com.example.deliveryapp.models.Restaurant;
 import com.example.deliveryapp.repos.CityRepo;
 import com.example.deliveryapp.repos.ProductRepo;
 import com.example.deliveryapp.repos.RestaurantRepo;
 import com.example.deliveryapp.service.RestaurantService;
+import com.example.deliveryapp.utils.ImageUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Base64Utils;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -74,8 +85,13 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     @Override
     public void addProduct(String file, String name, Double price, String type, String description, String ingredients, String restaurantName) throws IOException {
+
+    }
+
+    @Override
+    public void addProduct(MultipartFile file, String name, Double price, String type, String description, String ingredients, String restaurantName) throws IOException {
         if (this.productRepo.getProductByNameAndRestaurantName(name, restaurantName).isPresent()) {
-            throw new DeliveryCustomException(Constants.PRODUCT_ALREADY_EXISTS_IN_RESTAURANT_EXCEPTION.getMessage());
+            throw new DeliveryCustomException("Already exists this product in this restaurant");
         }
 
         Product product = Product.builder()
@@ -83,25 +99,27 @@ public class RestaurantServiceImpl implements RestaurantService {
                 .description(description)
                 .price(price)
                 .type(type)
-                .picture(file)
+//                .picture(ImageUtils.compressImage(file.getBytes()))
                 .ingredients(ingredients)
                 .build();
 
         Restaurant restaurant = this.restaurantRepo.getRestaurantByName(restaurantName)
-                .orElseThrow(() -> new DeliveryCustomException(Constants.RESTAURANT_NOT_FOUND_BY_NAME_EXCEPTION.getMessage()));
+                .orElseThrow(() -> new DeliveryCustomException("There is no restaurant with this name"));
 
+        product.setRestaurant(restaurant);
 
         restaurant.addProduct(product);
         this.restaurantRepo.save(restaurant);
     }
 
-//    @Override
-//    public byte[] getImageProduct(String restaurantName, String productName){
-//
-//        Product product = this.productRepo.getProductByNameAndRestaurantName(productName, restaurantName)
-//                .orElseThrow(() -> new DeliveryCustomException(Constants.PRODUCT_NOT_FOUND_BY_RESTAURANT_AND_NAME.getMessage()));
-//        return ImageUtils.decompressImage(product.getPicture());
-//    }
+
+    @Override
+    public byte[] getImageProduct(String restaurantName, String productName){
+
+        Product product = this.productRepo.getProductByNameAndRestaurantName(productName, restaurantName)
+                .orElseThrow(() -> new DeliveryCustomException(Constants.PRODUCT_NOT_FOUND_BY_RESTAURANT_AND_NAME.getMessage()));
+        return ImageUtils.decompressImage(product.getImage().getData());
+    }
 
     @Override
     public List<ProductDTO> getRestaurantProducts(String restaurantName, String foodType){
@@ -123,7 +141,7 @@ public class RestaurantServiceImpl implements RestaurantService {
                         .type(p.getType())
                         .description(p.getDescription())
                         .ingredients(p.getIngredients())
-                        .picture(p.getPicture())
+//                        .image(p.getImage().getData())
                         .restaurantName(restaurant.getName())
                         .build();
 
@@ -132,6 +150,18 @@ public class RestaurantServiceImpl implements RestaurantService {
 
             return productDTOList;
         }
+    }
+
+//    public byte[] getProductImage(byte[] img){
+//
+//        ResponseEntity<byte[]> responseEntity = ResponseEntity.status(HttpStatus.OK)
+//                .contentType(MediaType.valueOf("image/png"))
+//                .body(img);
+//        return responseEntity.getBody();
+//    }
+    public String convertByteToBase64Picture(byte[] imageBytes){
+        String imageBase64 = Base64Utils.encodeToString(imageBytes);
+        return "data:image/png;base64," + imageBase64;
     }
 
     @Override
@@ -186,7 +216,7 @@ public class RestaurantServiceImpl implements RestaurantService {
                     .type(p.getType())
                     .description(p.getDescription())
                     .ingredients(p.getIngredients())
-                    .picture(p.getPicture())
+//                    .picture(p.getPicture())
                     .restaurantName(restaurant.getName())
                     .build();
         }
