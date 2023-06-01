@@ -155,6 +155,12 @@ public class UserController {
         this.userService.removeCard(email, cardNumber);
     }
 
+    @PutMapping("/set-as-main-card/{email}/{cardId}")
+    @PreAuthorize("hasAnyRole('ROLE_USER')")
+    public void setAsMainCard(@PathVariable String email, @PathVariable long cardId){
+        this.userService.setAsMainCard(email, cardId);
+    }
+
     @PostMapping("/place-order")
     @PreAuthorize("hasAnyRole('ROLE_USER')")
     public void placeOrder(@RequestBody CreateOrderRequest orderRequest){

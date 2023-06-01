@@ -23,7 +23,8 @@ public enum Constants {
     USER_NOT_OWN_ADDRESS_EXCEPTION("User does not have this address"),
     USER_CARD_ALREADY_EXISTS_EXCEPTION("Already added this card"),
     USER_CARD_NOT_OWN_EXCEPTION("User does not own this card"),
-    CARD_NOT_FOUND_BY_NUMBER_EXCEPTION("No card in db with this number");
+    CARD_NOT_FOUND_BY_NUMBER_EXCEPTION("No card in db with this number"),
+    CARD_NOT_VALID("Card is not valid");
 
 
     private final String message;

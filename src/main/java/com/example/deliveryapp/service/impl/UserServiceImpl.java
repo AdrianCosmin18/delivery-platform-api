@@ -20,6 +20,9 @@ import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 
+import static com.example.deliveryapp.constants.Consts.MASTERCARD;
+import static com.example.deliveryapp.constants.Consts.VISA;
+
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -292,12 +295,33 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new DeliveryCustomException(Constants.USER_NOT_FOUND_BY_EMAIL.getMessage()));
 
         List<Card> userCards = user.getCards();
+        int year = cardDTO.getExpiryDate().getYear();
+        int month = cardDTO.getExpiryDate().getMonthValue();
+        int lastDayOfMonth = YearMonth.of(year, month).lengthOfMonth();
         Card card = Card.builder()
                 .cardNumber(cardDTO.getCardNumber())
                 .cardHolderName(cardDTO.getCardHolderName())
                 .securityCode(cardDTO.getSecurityCode())
-                .expiryDate(cardDTO.getExpiryDate().atDay(1))
+                .expiryDate(cardDTO.getExpiryDate().atDay(lastDayOfMonth))
                 .build();
+        switch (cardDTO.getCardNumber().charAt(0)){
+            case '2':{
+                card.setCardType(MASTERCARD);
+                break;
+            }
+            case '4':{
+                card.setCardType(VISA);
+                break;
+            }
+            case '5':{
+                card.setCardType(MASTERCARD);
+                break;
+            }
+            default:{
+                throw new DeliveryCustomException(Constants.CARD_NOT_VALID.getMessage());
+            }
+
+        }
 
         if(cardDTO.getIsDefault()){
             userCards.forEach(c -> c.setIsDefault(false));
@@ -328,11 +352,14 @@ public class UserServiceImpl implements UserService {
         for(Card c: user.getCards()){
 
             CardDTO cardDTO = CardDTO.builder()
+                    .id(c.getId())
                     .cardHolderName(c.getCardHolderName())
-                    .cardNumber(c.getCardNumber())
+                    .cardNumber("***" + c.getCardNumber().substring(c.getCardNumber().length() - 4))
                     .securityCode(c.getSecurityCode())
                     .expiryDate(YearMonth.of(c.getExpiryDate().getYear(), c.getExpiryDate().getMonth()))
                     .isDefault(c.getIsDefault())
+                    .cardType(c.getCardType())
+                    .fullExpiryDate(c.getExpiryDate())
                     .build();
 
             cardsDto.add(cardDTO);
@@ -359,6 +386,27 @@ public class UserServiceImpl implements UserService {
         }else{
             throw new DeliveryCustomException(Constants.USER_CARD_NOT_OWN_EXCEPTION.getMessage());
         }
+    }
+
+    @Override
+    public void setAsMainCard(String email, long cardId){
+
+        User user = this.userRepo.getUserByEmail(email)
+                .orElseThrow(() -> new DeliveryCustomException(Constants.USER_ALREADY_EXISTS_BY_EMAIL_EXCEPTION.getMessage()));
+
+        List<Card> userCards = user.getCards();
+        if(!userCards.stream().anyMatch(card -> card.getId() == cardId)) {
+            throw new DeliveryCustomException(Constants.CARD_NOT_FOUND_BY_NUMBER_EXCEPTION.getMessage());
+        }else{
+            userCards.forEach(card -> card.setIsDefault(false));
+            userCards.forEach(card -> {
+                if(card.getId() == cardId){
+                    card.setIsDefault(true);
+                }
+            });
+            this.userRepo.saveAndFlush(user);
+        }
+
     }
 
 //    @Override
