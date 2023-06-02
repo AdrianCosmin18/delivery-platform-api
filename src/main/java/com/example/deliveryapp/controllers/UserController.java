@@ -149,10 +149,10 @@ public class UserController {
         return new ResponseEntity<>(this.userService.getUserCards(email), HttpStatus.OK);
     }
 
-    @DeleteMapping("/delete-card")
+    @DeleteMapping("/delete-card/{email}/{cardId}")
     @PreAuthorize("hasAnyRole('ROLE_USER')")
-    public void deleteCard(@RequestParam(value = "email")String email, @RequestParam(value = "cardNumber")String cardNumber){
-        this.userService.removeCard(email, cardNumber);
+    public void deleteCard(@PathVariable(value = "email")String email, @PathVariable(value = "cardId")long cardId){
+        this.userService.removeCard(email, cardId);
     }
 
     @PutMapping("/set-as-main-card/{email}/{cardId}")

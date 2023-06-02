@@ -389,6 +389,25 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public void removeCard(String email, long cardId){
+
+        User user = this.userRepo.getUserByEmail(email)
+                .orElseThrow(() -> new DeliveryCustomException(Constants.USER_NOT_FOUND_BY_EMAIL.getMessage()));
+
+        List<Card> userCards = user.getCards();
+
+        if(userCards.stream().anyMatch(card -> card.getId().equals(cardId))){
+
+            List<Card> cards = userCards.stream().filter(card1 -> card1.getId() == cardId).collect(Collectors.toList());
+            user.deleteCard(cards.get(0));
+
+            this.userRepo.save(user);
+        }else{
+            throw new DeliveryCustomException(Constants.USER_CARD_NOT_OWN_EXCEPTION.getMessage());
+        }
+    }
+
+    @Override
     public void setAsMainCard(String email, long cardId){
 
         User user = this.userRepo.getUserByEmail(email)
@@ -408,69 +427,6 @@ public class UserServiceImpl implements UserService {
         }
 
     }
-
-//    @Override
-//    public boolean areProductsFromOtherRestaurantInCart(String email, String restaurantName, String currentProductName){
-//
-//        User user = this.userRepo.getUserByEmail(email)
-//                .orElseThrow(() -> new DeliveryCustomException("No user with this email"));
-//
-//        if(user.getProductCart().isEmpty()){
-//            return false;
-//        }
-//
-//        Product product = this.productRepo.getProductByNameAndRestaurantName(currentProductName, restaurantName)
-//                .orElseThrow(() -> new DeliveryCustomException("No product with this name in this restaurant"));
-//
-//        List<Cart> userCart = user.getProductCart();
-//        return !userCart.get(0).getProduct().getRestaurant().getName().equals(product.getRestaurant().getName());
-//    }
-//
-//    //daca cosul e gol, adaugam in el produsul
-//    //daca nu e gol, verificam daca este un produs de la un alt restaurant
-//    //  daca este, atunci golim cosul si adaugam acest produs produs
-//    //daca nu e gol si este un produs de la acelasi restaurant, verificam daca este cumva acelasi produs
-//    //  cu cel pe care incercam sa il adaugam acum, daca sunt identice, doar crestem cantitea cu cat am mai adaugat
-//    //  daca nu este acelasi produs, atunci doar il adaugam
-//    @Override
-//    public void addProductToUserCart(String email, String restaurantName, String currentProductName, Integer quantity){
-//
-//        User user = this.userRepo.getUserByEmail(email)
-//                .orElseThrow(() -> new DeliveryCustomException("No user with this email"));
-//
-//        Product product = this.productRepo.getProductByNameAndRestaurantName(currentProductName, restaurantName)
-//                .orElseThrow(() -> new DeliveryCustomException("No product with this name in this restaurant"));
-//
-//        List<Cart> userCart = user.getProductCart();
-//
-//        if(user.getProductCart().isEmpty()){
-//
-//            CartId cartId = new CartId(user.getId(), product.getId());
-//            Cart cart = new Cart(cartId, quantity, user, product);
-//            this.cartRepo.save(cart);
-//
-//        } else if (this.areProductsFromOtherRestaurantInCart(email, restaurantName, currentProductName)) {
-//
-//            user.setProductCart(new ArrayList<>());
-//            CartId cartId = new CartId(user.getId(), product.getId());
-//            Cart cart = new Cart(cartId, quantity, user, product);
-//            user.addProductCart(cart);
-//            product.addUserCart(cart);
-//            this.cartRepo.save(cart);
-//
-//        } else if (userCart.stream().map(c -> c.getProduct()).equals(product)) {
-//
-//            Cart cart = userCart.stream().filter(c -> c.getProduct().equals(product)).collect(Collectors.toList()).get(0);
-//            cart.setQuantity(cart.getQuantity() + quantity);
-//            this.cartRepo.save(cart);
-//
-//        } else if (!userCart.stream().map(c -> c.getProduct()).equals(product)) {
-//
-//            CartId cartId = new CartId(user.getId(), product.getId());
-//            Cart cart = new Cart(cartId, quantity, user, product);
-//            this.cartRepo.save(cart);
-//        }
-//    }
 
     @Override
     @Transactional

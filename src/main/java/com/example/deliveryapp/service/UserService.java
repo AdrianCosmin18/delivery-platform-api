@@ -35,6 +35,8 @@ public interface UserService {
 
     void removeCard(String email, String cardNumber);
 
+    void removeCard(String email, long cardId);
+
     void setAsMainCard(String email, long cardId);
 
     @Transactional
