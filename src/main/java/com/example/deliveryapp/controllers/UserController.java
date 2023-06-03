@@ -137,6 +137,18 @@ public class UserController {
         this.userService.updateAddress(email, addressId, addressDTO);
     }
 
+    @GetMapping("/get-main-address/{email}")
+    @PreAuthorize("hasAnyRole('ROLE_USER')")
+    public ResponseEntity<AddressDTO> getMainAddressOfUser(@PathVariable String email){
+        return new ResponseEntity<>(this.userService.getMainAddress(email), HttpStatus.OK);
+    }
+
+    @GetMapping("/has-user-main-address/{email}")
+    @PreAuthorize("hasAnyRole('ROLE_USER')")
+    public boolean hasUserMainAddress(@PathVariable String email){
+        return this.userService.isAnyMainAddress(email);
+    }
+
     @PostMapping("/add-card/{email}")
     @PreAuthorize("hasAnyRole('ROLE_USER')")
     public void addCard(@PathVariable String email, @RequestBody CardDTO cardDTO){
@@ -159,6 +171,18 @@ public class UserController {
     @PreAuthorize("hasAnyRole('ROLE_USER')")
     public void setAsMainCard(@PathVariable String email, @PathVariable long cardId){
         this.userService.setAsMainCard(email, cardId);
+    }
+
+    @GetMapping("/has-user-main-card/{email}")
+    @PreAuthorize("hasAnyRole('ROLE_USER')")
+    public boolean setAsMainCard(@PathVariable String email){
+        return this.userService.isAnyMainCard(email);
+    }
+
+    @GetMapping("/get-user-main-card/{email}")
+    @PreAuthorize("hasAnyRole('ROLE_USER')")
+    public CardDTO getUserMainCard(@PathVariable String email){
+        return this.userService.getMainCard(email);
     }
 
     @PostMapping("/place-order")

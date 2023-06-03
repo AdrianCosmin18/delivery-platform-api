@@ -289,6 +289,47 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public boolean isAnyMainAddress(String email){
+
+        User user = this.userRepo.getUserByEmail(email)
+                .orElseThrow(() -> new DeliveryCustomException(Constants.USER_ALREADY_EXISTS_BY_EMAIL_EXCEPTION.getMessage()));
+
+        for(Address address: user.getAddresses()){
+            if(address.getIsDefault()){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public AddressDTO getMainAddress(String email){
+
+        User user = this.userRepo.getUserByEmail(email)
+                .orElseThrow(() -> new DeliveryCustomException(Constants.USER_ALREADY_EXISTS_BY_EMAIL_EXCEPTION.getMessage()));
+
+        if(!this.isAnyMainAddress(email)){
+            throw new DeliveryCustomException("There is no main address for this user");
+        }
+
+        Address address = user.getAddresses().stream().filter(Address::getIsDefault).collect(Collectors.toList()).get(0);
+
+        return AddressDTO.builder()
+                .id(address.getId())
+                .street(address.getStreet())
+                .number(address.getNumber())
+                .cityName(address.getCity().getName())
+                .apartment(address.getApartment())
+                .block(address.getBlock())
+                .staircase(address.getStaircase())
+                .floor(address.getFloor())
+                .interphone(address.getInterphone())
+                .details(address.getDetails())
+                .isDefault(address.getIsDefault())
+                .build();
+    }
+
+    @Override
     public void addCard(String email, CardDTO cardDTO) {
 
         User user = this.userRepo.getUserByEmail(email)
@@ -426,6 +467,44 @@ public class UserServiceImpl implements UserService {
             this.userRepo.saveAndFlush(user);
         }
 
+    }
+
+    @Override
+    public boolean isAnyMainCard(String email){
+
+        User user = this.userRepo.getUserByEmail(email)
+                .orElseThrow(() -> new DeliveryCustomException(Constants.USER_ALREADY_EXISTS_BY_EMAIL_EXCEPTION.getMessage()));
+
+        for(Card card: user.getCards()){
+            if(card.getIsDefault()){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public CardDTO getMainCard(String email){
+
+        User user = this.userRepo.getUserByEmail(email)
+                .orElseThrow(() -> new DeliveryCustomException(Constants.USER_ALREADY_EXISTS_BY_EMAIL_EXCEPTION.getMessage()));
+
+        if(!this.isAnyMainCard(email)){
+            throw new DeliveryCustomException("There is no main card for this user");
+        }
+
+        Card c = user.getCards().stream().filter(Card::getIsDefault).collect(Collectors.toList()).get(0);
+
+        return CardDTO.builder()
+                .id(c.getId())
+                .cardHolderName(c.getCardHolderName())
+                .cardNumber("***" + c.getCardNumber().substring(c.getCardNumber().length() - 4))
+                .securityCode(c.getSecurityCode())
+                .expiryDate(YearMonth.of(c.getExpiryDate().getYear(), c.getExpiryDate().getMonth()))
+                .isDefault(c.getIsDefault())
+                .cardType(c.getCardType())
+                .fullExpiryDate(c.getExpiryDate())
+                .build();
     }
 
     @Override

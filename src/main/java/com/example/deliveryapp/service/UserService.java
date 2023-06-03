@@ -29,6 +29,10 @@ public interface UserService {
 
     void setAsMainAddress(String email, long addressId);
 
+    boolean isAnyMainAddress(String email);
+
+    AddressDTO getMainAddress(String email);
+
     void addCard(String email, CardDTO cardDTO);
 
     List<CardDTO> getUserCards(String email);
@@ -38,6 +42,10 @@ public interface UserService {
     void removeCard(String email, long cardId);
 
     void setAsMainCard(String email, long cardId);
+
+    boolean isAnyMainCard(String email);
+
+    CardDTO getMainCard(String email);
 
     @Transactional
     void placeOrder(CreateOrderRequest orderRequest);
