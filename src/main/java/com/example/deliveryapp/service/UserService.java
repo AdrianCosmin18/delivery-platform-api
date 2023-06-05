@@ -1,9 +1,6 @@
 package com.example.deliveryapp.service;
 
-import com.example.deliveryapp.DTOs.AddressDTO;
-import com.example.deliveryapp.DTOs.CardDTO;
-import com.example.deliveryapp.DTOs.CreateOrderRequest;
-import com.example.deliveryapp.DTOs.UserDTO;
+import com.example.deliveryapp.DTOs.*;
 import com.example.deliveryapp.models.Address;
 import com.example.deliveryapp.models.User;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,6 +46,8 @@ public interface UserService {
 
     @Transactional
     void placeOrder(CreateOrderRequest orderRequest);
+
+    List<OrderDTO> getAllHistoryOrders(String email);
 
     UserDTO getUserByEmail(String email);
 

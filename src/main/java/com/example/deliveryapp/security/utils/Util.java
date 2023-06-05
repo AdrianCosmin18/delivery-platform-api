@@ -20,6 +20,6 @@ public class Util {
             "/delivery-app/restaurant/add-product",
             "/delivery-app/city",
             "/delivery-app/restaurant/get-product-photo"
-    }; //trebuie modificat aici cum va fi in aplicatia mea
+    };
     public static final String JWT_TOKEN_HEADER = "Jwt-Token";
 }

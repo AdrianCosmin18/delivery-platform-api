@@ -4,7 +4,6 @@ import com.example.deliveryapp.DTOs.*;
 import com.example.deliveryapp.constants.Constants;
 import com.example.deliveryapp.exceptions.DeliveryCustomException;
 import com.example.deliveryapp.models.*;
-import com.example.deliveryapp.models.embeddedKey.OrderItemId;
 import com.example.deliveryapp.repos.*;
 import com.example.deliveryapp.service.UserService;
 import org.modelmapper.ModelMapper;
@@ -524,9 +523,9 @@ public class UserServiceImpl implements UserService {
             Product product = this.productRepo.getProductByNameAndRestaurantName( pc.getProductName(), pc.getRestaurantName())
                     .orElseThrow(() -> new DeliveryCustomException(Constants.PRODUCT_NOT_FOUND_BY_RESTAURANT_AND_NAME.getMessage()));
 
-            OrderItemId orderItemId = new OrderItemId(currentOrder.getId(), product.getId());
+//            OrderItemId orderItemId = new OrderItemId(currentOrder.getId(), product.getId());
             OrderItem orderItem = OrderItem.builder()
-                    .id(orderItemId)
+//                    .id(orderItemId)
                     .quantity(pc.getQuantity())
                     .price(pc.getQuantity() * product.getPrice())
                     .extraIngredients(pc.getExtraIngredients())
@@ -577,9 +576,47 @@ public class UserServiceImpl implements UserService {
         randomCourier.addOrder(currentOrder);
 
         currentOrder.setStatus("Comanda este in preparare, cand va fi gata, curierul o va ridica");
-        currentOrder.setDeliverTime(LocalDateTime.now().plusMinutes(45));
+        currentOrder.setDeliveredTime(LocalDateTime.now().plusMinutes(45));
+        currentOrder.setPlacedOrderTime(LocalDateTime.now());
 
         this.orderRepo.saveAndFlush(currentOrder);
+    }
+
+    @Override
+    public List<OrderDTO> getAllHistoryOrders(String email){
+
+        User user = this.userRepo.getUserByEmail(email)
+                .orElseThrow(() -> new DeliveryCustomException(Constants.USER_NOT_FOUND_BY_EMAIL.getMessage()));
+
+        List<Order> userOrders = user.getOrders();
+        List<OrderDTO> userOrdersDto = new ArrayList<>();
+        for(Order order: userOrders){
+
+            String addressToString =
+                    order.getAddress().getStreet() + ", nr." +
+                    order.getAddress().getNumber() + ", " +
+                    order.getAddress().getCity().getName();
+
+            String cardNumber = "***" + order.getCard().getCardNumber().substring(order.getCard().getCardNumber().length() - 4);
+
+            OrderDTO orderDTO = OrderDTO.builder()
+                    .amount(order.getAmount())
+                    .commentsSection(order.getCommentsSection())
+                    .status(order.getStatus())
+                    .deliverTime(order.getDeliveredTime())
+                    .placedOrderTime(order.getPlacedOrderTime())
+                    .deliveryTax(order.getDeliveryTax())
+                    .tipsTax(order.getTipsTax())
+                    .productsAmount(order.getProductsAmount())
+                    .id(order.getId())
+                    .addressToString(addressToString)
+                    .cardNumber(cardNumber)
+                    .build();
+
+            userOrdersDto.add(orderDTO);
+        }
+
+        return userOrdersDto;
     }
 
     @Override

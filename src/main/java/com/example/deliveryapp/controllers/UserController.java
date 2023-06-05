@@ -2,6 +2,7 @@ package com.example.deliveryapp.controllers;
 
 import com.example.deliveryapp.DTOs.*;
 import com.example.deliveryapp.models.Address;
+import com.example.deliveryapp.models.OrderItem;
 import com.example.deliveryapp.models.User;
 import com.example.deliveryapp.security.jwt.JWTTokenProvider;
 import com.example.deliveryapp.service.UserService;
@@ -189,6 +190,12 @@ public class UserController {
     @PreAuthorize("hasAnyRole('ROLE_USER')")
     public void placeOrder(@RequestBody CreateOrderRequest orderRequest){
         this.userService.placeOrder(orderRequest);
+    }
+
+    @GetMapping("/history-orders/{email}")
+    @PreAuthorize("hasAnyRole('ROLE_USER')")
+    public List<OrderDTO> getHistoryOfOrders(@PathVariable String email){
+        return this.userService.getAllHistoryOrders(email);
     }
 
     @PutMapping("/update-user/{email}")

@@ -27,7 +27,10 @@ public class Order {
     private String status;//deliverd / placed / in_progress
 
     @Column(name = "deliver_time")
-    private LocalDateTime deliverTime;
+    private LocalDateTime deliveredTime;
+
+    @Column(name = "placedOrderTime", nullable = false)
+    private LocalDateTime placedOrderTime;
 
     @Column(name = "productsAmount", nullable = false)
     private Double productsAmount;
