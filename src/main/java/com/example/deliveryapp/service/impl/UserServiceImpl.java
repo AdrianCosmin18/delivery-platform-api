@@ -516,10 +516,10 @@ public class UserServiceImpl implements UserService {
 
 
         List<OrderItem> orderItems = new ArrayList<>();
-        Order currentOrder = this.orderRepo.saveAndFlush(new Order(0D, "creating"));
+        Order currentOrder = this.orderRepo.saveAndFlush(new Order(0D, "creating", 0D));
         currentOrder.setOrderItems(new ArrayList<>());
 
-        for(ProductCart pc: orderRequest.getProductsInCart()){
+        for(OrderItemDTO pc: orderRequest.getProductsInCart()){
 
             Product product = this.productRepo.getProductByNameAndRestaurantName( pc.getProductName(), pc.getRestaurantName())
                     .orElseThrow(() -> new DeliveryCustomException(Constants.PRODUCT_NOT_FOUND_BY_RESTAURANT_AND_NAME.getMessage()));
@@ -529,6 +529,8 @@ public class UserServiceImpl implements UserService {
                     .id(orderItemId)
                     .quantity(pc.getQuantity())
                     .price(pc.getQuantity() * product.getPrice())
+                    .extraIngredients(pc.getExtraIngredients())
+                    .lessIngredients(pc.getLessIngredients())
                     .build();
 
             product.addOrderItem(orderItem);
@@ -539,7 +541,11 @@ public class UserServiceImpl implements UserService {
             orderItems.add(orderItem);
         }
 
-
+        currentOrder.setCommentsSection(orderRequest.getCommentsSection());
+        currentOrder.setTipsTax(orderRequest.getTipsTax());
+        currentOrder.setDeliveryTax(orderRequest.getDeliveryTax());
+        currentOrder.setProductsAmount(orderRequest.getProductsAmount());
+        currentOrder.setAmount(orderRequest.getTotalAmount());
         user.addOrder(currentOrder);
         //currentOrder.setUser(user);
         //currentOrder.setOrderItems(orderItems);
@@ -548,20 +554,16 @@ public class UserServiceImpl implements UserService {
 //        Card userCard = this.cardRepo.getCardByCardNumber(orderRequest.getCardNumber())
 //                .orElseThrow(() -> new DeliveryCustomException(Constants.CARD_NOT_FOUND_BY_NUMBER_EXCEPTION.getMessage()));
 
-        Card userCard = user.getCards().stream().filter(card -> card.getCardNumber().equals(orderRequest.getCardNumber())).collect(Collectors.toList()).get(0);
+        Card userCard = user.getCards().stream().filter(card -> card.getId() == orderRequest.getCardId()).collect(Collectors.toList()).get(0);
         if(userCard == null){
             throw new DeliveryCustomException(Constants.USER_CARD_NOT_OWN_EXCEPTION.getMessage());
         }
 
         //currentOrder.setCard(userCard);
         userCard.addOrder(currentOrder);
-        currentOrder.setAmount(orderItems.stream().mapToDouble(OrderItem::getPrice).sum());
+//        currentOrder.setAmount(orderItems.stream().mapToDouble(OrderItem::getPrice).sum());
 
-        Address userAddress = user.getAddresses().stream().filter(
-                address -> address.getCity().getName().equals(orderRequest.getAddressDTO().getCityName()) &&
-                        address.getStreet().equals(orderRequest.getAddressDTO().getStreet()) &&
-                        address.getNumber().equals(orderRequest.getAddressDTO().getNumber())).collect(Collectors.toList()).get(0);
-
+        Address userAddress = user.getAddresses().stream().filter(adr -> adr.getId() == orderRequest.getAddressId()).collect(Collectors.toList()).get(0);
         if(userAddress == null){
             throw new DeliveryCustomException(Constants.USER_NOT_OWN_ADDRESS_EXCEPTION.getMessage());
         }

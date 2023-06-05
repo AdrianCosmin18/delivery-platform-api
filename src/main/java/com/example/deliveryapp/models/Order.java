@@ -29,6 +29,18 @@ public class Order {
     @Column(name = "deliver_time")
     private LocalDateTime deliverTime;
 
+    @Column(name = "productsAmount", nullable = false)
+    private Double productsAmount;
+
+    @Column(name = "deliveryTax")
+    private Double deliveryTax;
+
+    @Column(name = "tipsTax")
+    private Double tipsTax;
+
+    @Column(name = "commentsSection")
+    private String commentsSection;
+
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
@@ -76,9 +88,10 @@ public class Order {
     private Courier courier;
 
 
-    public Order(Double amount, String status) {
+    public Order(Double amount, String status, Double productsAmount) {
         this.amount = amount;
         this.status = status;
+        this.productsAmount = productsAmount;
     }
 
     public void addOrderItem(OrderItem item){
