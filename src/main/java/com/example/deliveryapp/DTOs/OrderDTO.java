@@ -16,8 +16,8 @@ public class OrderDTO {
     private Long id;
     private Double amount;
     private String status;
-    private LocalDateTime deliverTime;
-    private LocalDateTime placedOrderTime;
+    private String deliverTime;
+    private String placedOrderTime;
     private Double productsAmount;
     private Double deliveryTax;
     private Double tipsTax;

@@ -24,7 +24,6 @@ import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 
 @RestController
 @RequestMapping("delivery-app/restaurant")
-@CrossOrigin()
 public class RestaurantController {
 
     @Autowired

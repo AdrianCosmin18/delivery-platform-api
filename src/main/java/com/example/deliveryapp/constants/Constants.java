@@ -24,7 +24,8 @@ public enum Constants {
     USER_CARD_ALREADY_EXISTS_EXCEPTION("Already added this card"),
     USER_CARD_NOT_OWN_EXCEPTION("User does not own this card"),
     CARD_NOT_FOUND_BY_NUMBER_EXCEPTION("No card in db with this number"),
-    CARD_NOT_VALID("Card is not valid");
+    CARD_NOT_VALID("Card is not valid"),
+    ORDER_NOT_FOUND_BY_ID("There is no order woth this id");
 
 
     private final String message;

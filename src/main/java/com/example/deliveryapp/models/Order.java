@@ -91,10 +91,11 @@ public class Order {
     private Courier courier;
 
 
-    public Order(Double amount, String status, Double productsAmount) {
+    public Order(Double amount, String status, Double productsAmount, LocalDateTime placedOrderTime) {
         this.amount = amount;
         this.status = status;
         this.productsAmount = productsAmount;
+        this.placedOrderTime = placedOrderTime;
     }
 
     public void addOrderItem(OrderItem item){

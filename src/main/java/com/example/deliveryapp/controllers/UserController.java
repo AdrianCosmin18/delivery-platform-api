@@ -24,7 +24,6 @@ import static com.example.deliveryapp.security.utils.Util.JWT_TOKEN_HEADER;
 
 @RestController
 @RequestMapping("delivery-app/user")
-@CrossOrigin()
 public class UserController {
 
     @Autowired

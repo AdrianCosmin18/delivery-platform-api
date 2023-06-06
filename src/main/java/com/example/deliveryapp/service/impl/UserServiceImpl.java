@@ -515,7 +515,7 @@ public class UserServiceImpl implements UserService {
 
 
         List<OrderItem> orderItems = new ArrayList<>();
-        Order currentOrder = this.orderRepo.saveAndFlush(new Order(0D, "creating", 0D));
+        Order currentOrder = this.orderRepo.saveAndFlush(new Order(0D, "creating", 0D, LocalDateTime.now()));
         currentOrder.setOrderItems(new ArrayList<>());
 
         for(OrderItemDTO pc: orderRequest.getProductsInCart()){
@@ -575,7 +575,7 @@ public class UserServiceImpl implements UserService {
         //currentOrder.setCourier(randomCourier);
         randomCourier.addOrder(currentOrder);
 
-        currentOrder.setStatus("Comanda este in preparare, cand va fi gata, curierul o va ridica");
+        currentOrder.setStatus("Comanda livrata");
         currentOrder.setDeliveredTime(LocalDateTime.now().plusMinutes(45));
         currentOrder.setPlacedOrderTime(LocalDateTime.now());
 
@@ -603,8 +603,8 @@ public class UserServiceImpl implements UserService {
                     .amount(order.getAmount())
                     .commentsSection(order.getCommentsSection())
                     .status(order.getStatus())
-                    .deliverTime(order.getDeliveredTime())
-                    .placedOrderTime(order.getPlacedOrderTime())
+                    .deliverTime(order.getDeliveredTime().toString())
+                    .placedOrderTime(order.getPlacedOrderTime().toString())
                     .deliveryTax(order.getDeliveryTax())
                     .tipsTax(order.getTipsTax())
                     .productsAmount(order.getProductsAmount())
