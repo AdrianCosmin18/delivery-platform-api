@@ -2,6 +2,7 @@ package com.example.deliveryapp.controllers;
 
 import com.example.deliveryapp.DTOs.ProductDTO;
 import com.example.deliveryapp.DTOs.RestaurantDTO;
+import com.example.deliveryapp.constants.FoodType;
 import com.example.deliveryapp.constants.Response;
 import com.example.deliveryapp.exceptions.InsertPictureException;
 import com.example.deliveryapp.models.Image;
@@ -13,14 +14,15 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
-import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 
 @RestController
 @RequestMapping("delivery-app/restaurant")
@@ -89,17 +91,18 @@ public class RestaurantController {
         return new ResponseEntity<List<ProductDTO>>(this.restaurantService.getRestaurantProducts(restaurantName, type), HttpStatus.OK);
     }
 
-    @GetMapping("/get-product-photo")
-    public ResponseEntity<?> getProductImage(@RequestParam(value = "restaurantName") String restaurantName, @RequestParam(value = "productName") String productName){
-        byte [] image = this.restaurantService.getImageProduct(restaurantName, productName);
-        return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.valueOf("image/png")).body(image);
-    }
-
     @GetMapping("/get-product-by-restaurant-and-product-Name/{restaurantName}")
     public ProductDTO getProductByRestaurantAndProductName(@PathVariable String restaurantName, @RequestParam(value = "productName")String productName){
         return this.restaurantService.getProductByName(restaurantName,productName);
     }
 
+    @PostMapping("/get-products-by-ingredients")
+    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
+    public Set<ProductDTO> getProductsByIngredients(
+            @RequestParam(value = "foodType") String foodType,
+            @RequestParam(value = "ingredientList") String ingredientList){
+        return this.restaurantService.getProductsByIngredients(foodType, ingredientList);
+    }
 
 
 }

@@ -37,6 +37,15 @@ public class Product {
     @Column(name = "ingredients")
     private String ingredients;
 
+    @Column(name = "containsLactose")
+    private Boolean containsLactose;
+
+    @Column(name = "containsGluten")
+    private Boolean containsGluten;
+
+    @Column(name = "isVegetarian")
+    private Boolean isVegetarian;
+
 //    @Lob
 //    @Column(name = "picture", length = 1000)
 //    private byte[] picture;

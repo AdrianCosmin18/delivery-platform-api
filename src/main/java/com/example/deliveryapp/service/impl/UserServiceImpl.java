@@ -5,6 +5,7 @@ import com.example.deliveryapp.constants.Constants;
 import com.example.deliveryapp.exceptions.DeliveryCustomException;
 import com.example.deliveryapp.models.*;
 import com.example.deliveryapp.repos.*;
+import com.example.deliveryapp.security.security.UserRole;
 import com.example.deliveryapp.service.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -527,7 +529,7 @@ public class UserServiceImpl implements UserService {
             OrderItem orderItem = OrderItem.builder()
 //                    .id(orderItemId)
                     .quantity(pc.getQuantity())
-                    .price(pc.getQuantity() * product.getPrice())
+                    .price(pc.getPrice())
                     .extraIngredients(pc.getExtraIngredients())
                     .lessIngredients(pc.getLessIngredients())
                     .build();
@@ -576,7 +578,7 @@ public class UserServiceImpl implements UserService {
         randomCourier.addOrder(currentOrder);
 
         currentOrder.setStatus("Comanda livrata");
-        currentOrder.setDeliveredTime(LocalDateTime.now().plusMinutes(45));
+        //currentOrder.setDeliveredTime(LocalDateTime.now().plusMinutes(45));
         currentOrder.setPlacedOrderTime(LocalDateTime.now());
 
         this.orderRepo.saveAndFlush(currentOrder);
@@ -588,7 +590,11 @@ public class UserServiceImpl implements UserService {
         User user = this.userRepo.getUserByEmail(email)
                 .orElseThrow(() -> new DeliveryCustomException(Constants.USER_NOT_FOUND_BY_EMAIL.getMessage()));
 
-        List<Order> userOrders = user.getOrders();
+        List<Order> userOrders =
+                user.getOrders()
+                .stream()
+                .sorted(Comparator.comparing(Order::getPlacedOrderTime).reversed())
+                .collect(Collectors.toList());
         List<OrderDTO> userOrdersDto = new ArrayList<>();
         for(Order order: userOrders){
 
@@ -599,12 +605,46 @@ public class UserServiceImpl implements UserService {
 
             String cardNumber = "***" + order.getCard().getCardNumber().substring(order.getCard().getCardNumber().length() - 4);
 
+            String paymentConfirmed = "";
+            if(order.getPaymentConfirmed() != null){
+                paymentConfirmed = order.getPaymentConfirmed().toString();
+            }
+
+            String orderInPreparation = "";
+            if(order.getOrderInPreparation() != null){
+                orderInPreparation = order.getOrderInPreparation().toString();
+            }
+
+            String orderInDelivery = "";
+            if(order.getOrderInDelivery() != null){
+                orderInDelivery = order.getOrderInDelivery().toString();
+            }
+
+            String canceledOrder = "";
+            if(order.getCanceledOrder() != null){
+                canceledOrder = order.getCanceledOrder().toString();
+            }
+
+            String placedOrderTime = "";
+            if(order.getPlacedOrderTime() != null){
+                placedOrderTime = order.getPlacedOrderTime().toString();
+            }
+
+            String deliverTime = "";
+            if(order.getDeliveredTime() != null){
+                deliverTime = order.getDeliveredTime().toString();
+            }
+
             OrderDTO orderDTO = OrderDTO.builder()
                     .amount(order.getAmount())
                     .commentsSection(order.getCommentsSection())
                     .status(order.getStatus())
-                    .deliverTime(order.getDeliveredTime().toString())
-                    .placedOrderTime(order.getPlacedOrderTime().toString())
+                    .deliverTime(deliverTime)
+                    .paymentConfirmed(paymentConfirmed)
+                    .orderInPreparation(orderInPreparation)
+                    .orderInDelivery(orderInDelivery)
+                    .canceledOrder(canceledOrder)
+                    .placedOrderTime(placedOrderTime)
                     .deliveryTax(order.getDeliveryTax())
                     .tipsTax(order.getTipsTax())
                     .productsAmount(order.getProductsAmount())
@@ -656,6 +696,15 @@ public class UserServiceImpl implements UserService {
         user.setEmail(userDTO.getEmail());
         user.setPhone(userDTO.getPhone());
 
+        this.userRepo.saveAndFlush(user);
+    }
+
+    @Override
+    public void makeUserAsAdmin(String email){
+        User user = this.userRepo.getUserByEmail(email)
+                .orElseThrow(() -> new DeliveryCustomException(Constants.USER_NOT_FOUND_BY_EMAIL.getMessage()));
+
+        user.setUserRole(UserRole.ADMIN);
         this.userRepo.saveAndFlush(user);
     }
 }

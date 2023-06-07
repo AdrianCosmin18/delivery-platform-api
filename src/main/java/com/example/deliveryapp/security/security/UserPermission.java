@@ -14,7 +14,12 @@ public enum UserPermission {
     DELETE_ADDRESS("address:delete"),
     ADD_CARD("card:add"),
     REMOVE_CARD("card:remove"),
-    PLACE_ORDER("order:add");
+    PLACE_ORDER("order:add"),
+    CONFIRM_PAYMENT("order:confirm payment"),
+    PREPARE_ORDER("order:order in preparation"),
+    DELIVER_ORDER("order:order in delivery"),
+    CANCEL_ORDER("order:cancel the order"),
+    DELIVERED_TIME("order:delivered");
 
     private String permission;
     public String getPermission(){ return permission; }

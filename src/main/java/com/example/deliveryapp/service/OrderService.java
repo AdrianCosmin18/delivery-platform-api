@@ -10,4 +10,6 @@ public interface OrderService {
     OrderDTO getOrderById(Long id);
 
     List<OrderItemDTO> getOrderItemsByOrderId(Long orderId);
+
+    List<OrderDTO> getOrdersInPaymentConfirmedState();
 }

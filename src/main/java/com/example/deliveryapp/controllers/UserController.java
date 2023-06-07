@@ -84,121 +84,121 @@ public class UserController {
     }
 
     @GetMapping("/get-user/{email}")
-    @PreAuthorize("hasAnyRole('ROLE_USER')")
+    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     public ResponseEntity<UserDTO> getUserByEmail(@PathVariable String email){
         return new ResponseEntity<>(this.userService.getUserByEmail(email), HttpStatus.OK);
     }
 
     @PostMapping("/add-restaurant-to-wishlist")
-    @PreAuthorize("hasAnyRole('ROLE_USER')")
+    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     public void addRestaurantToWishlist(@RequestParam(value = "email")String email, @RequestParam(value = "restaurantName")String restaurantName){
         this.userService.addRestaurantToWishlist(email, restaurantName);
     }
 
     @DeleteMapping("/delete-restaurant-from-wishlist")
-    @PreAuthorize("hasAnyRole('ROLE_USER')")
+    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     public void removeRestaurantFromWishlist(@RequestParam(value = "email")String email, @RequestParam(value = "restaurantName")String restaurantName){
         this.userService.removeRestaurantFromWishlist(email, restaurantName);
     }
 
     @PostMapping("/add-address")
-    @PreAuthorize("hasAnyRole('ROLE_USER')")
+    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     public void addAddress(@RequestParam(value = "email")String email, @RequestBody AddressDTO addressDTO){
         this.userService.addAddress(email, addressDTO);
     }
 
     @GetMapping("/get-user-addresses/{email}")
-    @PreAuthorize("hasAnyRole('ROLE_USER')")
+    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     public ResponseEntity<List<AddressDTO>> getUserAddresses(@PathVariable String email){
         return new ResponseEntity<List<AddressDTO>>(this.userService.getUserAddresses(email), HttpStatus.OK);
     }
 
     @DeleteMapping("/delete-address/{email}")
-    @PreAuthorize("hasAnyRole('ROLE_USER')")
+    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     public void deleteAddress(@PathVariable String email, @RequestBody AddressDTO addressDTO){
         this.userService.removeAddress(email, addressDTO);
     }
 
     @DeleteMapping("/delete-address/{email}/{addressId}")
-    @PreAuthorize("hasAnyRole('ROLE_USER')")
+    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     public void deleteAddress(@PathVariable String email, @PathVariable long addressId){
         this.userService.removeAddress(email, addressId);
     }
 
     @PutMapping("/set-as-main-address/{email}/{addressId}")
-    @PreAuthorize("hasAnyRole('ROLE_USER')")
+    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     public void setAsMainAddress(@PathVariable String email, @PathVariable long addressId){
         this.userService.setAsMainAddress(email, addressId);
     }
 
     @PutMapping("/update-address/{email}/{addressId}")
-    @PreAuthorize("hasAnyRole('ROLE_USER')")
+    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     public void updateAddress(@PathVariable String email, @PathVariable long addressId, @RequestBody AddressDTO addressDTO){
         this.userService.updateAddress(email, addressId, addressDTO);
     }
 
     @GetMapping("/get-main-address/{email}")
-    @PreAuthorize("hasAnyRole('ROLE_USER')")
+    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     public ResponseEntity<AddressDTO> getMainAddressOfUser(@PathVariable String email){
         return new ResponseEntity<>(this.userService.getMainAddress(email), HttpStatus.OK);
     }
 
     @GetMapping("/has-user-main-address/{email}")
-    @PreAuthorize("hasAnyRole('ROLE_USER')")
+    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     public boolean hasUserMainAddress(@PathVariable String email){
         return this.userService.isAnyMainAddress(email);
     }
 
     @PostMapping("/add-card/{email}")
-    @PreAuthorize("hasAnyRole('ROLE_USER')")
+    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     public void addCard(@PathVariable String email, @RequestBody CardDTO cardDTO){
         this.userService.addCard(email, cardDTO);
     }
 
     @GetMapping("/get-user-cards/{email}")
-    @PreAuthorize("hasAnyRole('ROLE_USER')")
+    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     public ResponseEntity<List<CardDTO>> getUserCards(@PathVariable String email){
         return new ResponseEntity<>(this.userService.getUserCards(email), HttpStatus.OK);
     }
 
     @DeleteMapping("/delete-card/{email}/{cardId}")
-    @PreAuthorize("hasAnyRole('ROLE_USER')")
+    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     public void deleteCard(@PathVariable(value = "email")String email, @PathVariable(value = "cardId")long cardId){
         this.userService.removeCard(email, cardId);
     }
 
     @PutMapping("/set-as-main-card/{email}/{cardId}")
-    @PreAuthorize("hasAnyRole('ROLE_USER')")
+    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     public void setAsMainCard(@PathVariable String email, @PathVariable long cardId){
         this.userService.setAsMainCard(email, cardId);
     }
 
     @GetMapping("/has-user-main-card/{email}")
-    @PreAuthorize("hasAnyRole('ROLE_USER')")
+    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     public boolean setAsMainCard(@PathVariable String email){
         return this.userService.isAnyMainCard(email);
     }
 
     @GetMapping("/get-user-main-card/{email}")
-    @PreAuthorize("hasAnyRole('ROLE_USER')")
+    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     public CardDTO getUserMainCard(@PathVariable String email){
         return this.userService.getMainCard(email);
     }
 
     @PostMapping("/place-order")
-    @PreAuthorize("hasAnyRole('ROLE_USER')")
+    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     public void placeOrder(@RequestBody CreateOrderRequest orderRequest){
         this.userService.placeOrder(orderRequest);
     }
 
     @GetMapping("/history-orders/{email}")
-    @PreAuthorize("hasAnyRole('ROLE_USER')")
+    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     public List<OrderDTO> getHistoryOfOrders(@PathVariable String email){
         return this.userService.getAllHistoryOrders(email);
     }
 
     @PutMapping("/update-user/{email}")
-    @PreAuthorize("hasAnyRole('ROLE_USER')")
+    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     public void updateUser(@PathVariable String email, @RequestBody UserDTO userDTO){
         this.userService.updateUser(email, userDTO);
     }
@@ -215,5 +215,10 @@ public class UserController {
 
     private void authenticate(String username, String password){
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
+    }
+
+    @PutMapping("/make-user-as-admin/{email}")
+    public void makeUserAsAdmin(@PathVariable String email){
+        this.userService.makeUserAsAdmin(email);
     }
 }

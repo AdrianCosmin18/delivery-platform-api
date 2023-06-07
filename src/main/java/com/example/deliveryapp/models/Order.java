@@ -26,11 +26,23 @@ public class Order {
     @Column(name = "status", nullable = false)
     private String status;//deliverd / placed / in_progress
 
-    @Column(name = "deliver_time")
-    private LocalDateTime deliveredTime;
-
     @Column(name = "placedOrderTime", nullable = false)
     private LocalDateTime placedOrderTime;
+
+    @Column(name = "paymentConfirmed")
+    private LocalDateTime paymentConfirmed;
+
+    @Column(name = "orderInPreparation")
+    private LocalDateTime orderInPreparation;
+
+    @Column(name = "orderInDelivery")
+    private LocalDateTime orderInDelivery;
+
+    @Column(name = "canceledOrder")
+    private LocalDateTime canceledOrder;
+
+    @Column(name = "deliver_time", nullable = true)
+    private LocalDateTime deliveredTime;
 
     @Column(name = "productsAmount", nullable = false)
     private Double productsAmount;

@@ -22,6 +22,37 @@ public enum UserRole {
         ADD_CARD,
         REMOVE_CARD,
         PLACE_ORDER)
+    ),
+
+    ADMIN(
+        Sets.newHashSet(
+            ADD_PRODUCT_TO_WISHLIST,
+            DELETE_FROM_WISHLIST,
+            ADD_ADDRESS,
+            DELETE_ADDRESS,
+            ADD_CARD,
+            REMOVE_CARD,
+            PLACE_ORDER,
+            CONFIRM_PAYMENT,
+            PREPARE_ORDER,
+            CANCEL_ORDER,
+            DELIVER_ORDER,
+            DELIVERED_TIME
+        )
+    ),
+
+    COURIER(
+        Sets.newHashSet(
+                ADD_PRODUCT_TO_WISHLIST,
+                DELETE_FROM_WISHLIST,
+                ADD_ADDRESS,
+                DELETE_ADDRESS,
+                ADD_CARD,
+                REMOVE_CARD,
+                PLACE_ORDER,
+                DELIVER_ORDER,
+                DELIVERED_TIME
+        )
     );
 
     private final Set<UserPermission> permissions;

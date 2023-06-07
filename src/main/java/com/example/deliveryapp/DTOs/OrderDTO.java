@@ -16,8 +16,12 @@ public class OrderDTO {
     private Long id;
     private Double amount;
     private String status;
-    private String deliverTime;
     private String placedOrderTime;
+    private String paymentConfirmed;
+    private String orderInPreparation;
+    private String orderInDelivery;
+    private String canceledOrder;
+    private String deliverTime;
     private Double productsAmount;
     private Double deliveryTax;
     private Double tipsTax;

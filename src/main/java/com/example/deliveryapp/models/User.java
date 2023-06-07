@@ -106,16 +106,6 @@ public class User implements UserDetails {
         this.phone = phone;
     }
 
-    //    @OneToMany(
-//            cascade = CascadeType.ALL,
-//            orphanRemoval = true,
-//            fetch = FetchType.LAZY,
-//            mappedBy = "user"
-//    )
-//    @JsonManagedReference
-//    private List<Cart> productCart;
-
-
     public void addAddress(Address address){
 
         this.addresses.add(address);
@@ -144,18 +134,10 @@ public class User implements UserDetails {
         order.setUser(this);
     }
 
-//    public void addProductCart(Cart cart){
-//        this.productCart.add(cart);
-//    }
-//
-//    public void removeProductCart(Cart cart){
-//        this.productCart.remove(cart);
-//    }
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         //ii dam rolul de user creat in UserRole pe baza lui UserPermission
-        return UserRole.USER.getGrantedAuthorities();
+        return this.userRole.getGrantedAuthorities();
     }
 
     @Override

@@ -20,14 +20,20 @@ public class OrderController {
     private OrderService orderService;
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ROLE_USER')")
+    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     public OrderDTO getOrderById(@PathVariable Long id){
         return this.orderService.getOrderById(id);
     }
 
     @GetMapping("/get-orderItems-by-orderId/{orderId}")
-    @PreAuthorize("hasAnyRole('ROLE_USER')")
+    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     public List<OrderItemDTO> getOrderItemsByOrderId(@PathVariable Long orderId){
         return this.orderService.getOrderItemsByOrderId(orderId);
+    }
+
+    @GetMapping("/get-orders-in-payment-confirmed-state")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    public List<OrderDTO> getOrdersInPaymentConfirmedState(){
+        return this.orderService.getOrdersInPaymentConfirmedState();
     }
 }

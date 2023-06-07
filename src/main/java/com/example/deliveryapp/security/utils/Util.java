@@ -19,7 +19,8 @@ public class Util {
             "/delivery-app/restaurant/get-product-by-restaurant-and-product-Name/*",
             "/delivery-app/restaurant/add-product",
             "/delivery-app/city",
-            "/delivery-app/restaurant/get-product-photo"
+            "/delivery-app/restaurant/get-product-photo",
+            "/delivery-app/user/make-user-as-admin/*"
     };
     public static final String JWT_TOKEN_HEADER = "Jwt-Token";
 }
