@@ -30,19 +30,19 @@ public class Order {
     private LocalDateTime placedOrderTime;
 
     @Column(name = "paymentConfirmed")
-    private LocalDateTime paymentConfirmed;
+    private String paymentConfirmed;
 
     @Column(name = "orderInPreparation")
-    private LocalDateTime orderInPreparation;
+    private String orderInPreparation;
 
     @Column(name = "orderInDelivery")
-    private LocalDateTime orderInDelivery;
+    private String orderInDelivery;
 
     @Column(name = "canceledOrder")
-    private LocalDateTime canceledOrder;
+    private String canceledOrder;
 
     @Column(name = "deliver_time", nullable = true)
-    private LocalDateTime deliveredTime;
+    private String deliveredTime;
 
     @Column(name = "productsAmount", nullable = false)
     private Double productsAmount;

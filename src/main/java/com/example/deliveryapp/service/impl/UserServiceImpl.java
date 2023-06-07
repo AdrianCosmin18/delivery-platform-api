@@ -2,6 +2,7 @@ package com.example.deliveryapp.service.impl;
 
 import com.example.deliveryapp.DTOs.*;
 import com.example.deliveryapp.constants.Constants;
+import com.example.deliveryapp.constants.OrderStatus;
 import com.example.deliveryapp.exceptions.DeliveryCustomException;
 import com.example.deliveryapp.models.*;
 import com.example.deliveryapp.repos.*;
@@ -577,7 +578,7 @@ public class UserServiceImpl implements UserService {
         //currentOrder.setCourier(randomCourier);
         randomCourier.addOrder(currentOrder);
 
-        currentOrder.setStatus("Comanda livrata");
+        currentOrder.setStatus(OrderStatus.PLACED_ORDER);
         //currentOrder.setDeliveredTime(LocalDateTime.now().plusMinutes(45));
         currentOrder.setPlacedOrderTime(LocalDateTime.now());
 
@@ -605,46 +606,46 @@ public class UserServiceImpl implements UserService {
 
             String cardNumber = "***" + order.getCard().getCardNumber().substring(order.getCard().getCardNumber().length() - 4);
 
-            String paymentConfirmed = "";
-            if(order.getPaymentConfirmed() != null){
-                paymentConfirmed = order.getPaymentConfirmed().toString();
-            }
-
-            String orderInPreparation = "";
-            if(order.getOrderInPreparation() != null){
-                orderInPreparation = order.getOrderInPreparation().toString();
-            }
-
-            String orderInDelivery = "";
-            if(order.getOrderInDelivery() != null){
-                orderInDelivery = order.getOrderInDelivery().toString();
-            }
-
-            String canceledOrder = "";
-            if(order.getCanceledOrder() != null){
-                canceledOrder = order.getCanceledOrder().toString();
-            }
-
-            String placedOrderTime = "";
-            if(order.getPlacedOrderTime() != null){
-                placedOrderTime = order.getPlacedOrderTime().toString();
-            }
-
-            String deliverTime = "";
-            if(order.getDeliveredTime() != null){
-                deliverTime = order.getDeliveredTime().toString();
-            }
+//            String paymentConfirmed = "";
+//            if(order.getPaymentConfirmed() != null){
+//                paymentConfirmed = order.getPaymentConfirmed();
+//            }
+//
+//            String orderInPreparation = "";
+//            if(order.getOrderInPreparation() != null){
+//                orderInPreparation = order.getOrderInPreparation().toString();
+//            }
+//
+//            String orderInDelivery = "";
+//            if(order.getOrderInDelivery() != null){
+//                orderInDelivery = order.getOrderInDelivery().toString();
+//            }
+//
+//            String canceledOrder = "";
+//            if(order.getCanceledOrder() != null){
+//                canceledOrder = order.getCanceledOrder().toString();
+//            }
+//
+//            String placedOrderTime = "";
+//            if(order.getPlacedOrderTime() != null){
+//                placedOrderTime = order.getPlacedOrderTime().toString();
+//            }
+//
+//            String deliverTime = "";
+//            if(order.getDeliveredTime() != null){
+//                deliverTime = order.getDeliveredTime().toString();
+//            }
 
             OrderDTO orderDTO = OrderDTO.builder()
                     .amount(order.getAmount())
                     .commentsSection(order.getCommentsSection())
                     .status(order.getStatus())
-                    .deliverTime(deliverTime)
-                    .paymentConfirmed(paymentConfirmed)
-                    .orderInPreparation(orderInPreparation)
-                    .orderInDelivery(orderInDelivery)
-                    .canceledOrder(canceledOrder)
-                    .placedOrderTime(placedOrderTime)
+                    .deliverTime(order.getDeliveredTime())
+                    .paymentConfirmed(order.getPaymentConfirmed())
+                    .orderInPreparation(order.getOrderInPreparation())
+                    .orderInDelivery(order.getOrderInDelivery())
+                    .canceledOrder(order.getCanceledOrder())
+                    .placedOrderTime(order.getPlacedOrderTime().toString())
                     .deliveryTax(order.getDeliveryTax())
                     .tipsTax(order.getTipsTax())
                     .productsAmount(order.getProductsAmount())

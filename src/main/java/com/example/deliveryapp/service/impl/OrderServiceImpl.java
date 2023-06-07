@@ -41,47 +41,47 @@ public class OrderServiceImpl implements OrderService {
 
         String cardNumber = "***" + order.getCard().getCardNumber().substring(order.getCard().getCardNumber().length() - 4);
 
-        String paymentConfirmed = "";
-        if(order.getPaymentConfirmed() != null){
-            paymentConfirmed = order.getPaymentConfirmed().toString();
-        }
-
-        String orderInPreparation = "";
-        if(order.getOrderInPreparation() != null){
-            orderInPreparation = order.getOrderInPreparation().toString();
-        }
-
-        String orderInDelivery = "";
-        if(order.getOrderInDelivery() != null){
-            orderInDelivery = order.getOrderInDelivery().toString();
-        }
-
-        String canceledOrder = "";
-        if(order.getCanceledOrder() != null){
-            canceledOrder = order.getCanceledOrder().toString();
-        }
-
-        String placedOrderTime = "";
-        if(order.getPlacedOrderTime() != null){
-            placedOrderTime = order.getPlacedOrderTime().toString();
-        }
-
-        String deliverTime = "";
-        if(order.getDeliveredTime() != null) {
-            deliverTime = order.getDeliveredTime().toString();
-        }
+//        String paymentConfirmed = "";
+//        if(order.getPaymentConfirmed() != null){
+//            paymentConfirmed = order.getPaymentConfirmed().toString();
+//        }
+//
+//        String orderInPreparation = "";
+//        if(order.getOrderInPreparation() != null){
+//            orderInPreparation = order.getOrderInPreparation().toString();
+//        }
+//
+//        String orderInDelivery = "";
+//        if(order.getOrderInDelivery() != null){
+//            orderInDelivery = order.getOrderInDelivery().toString();
+//        }
+//
+//        String canceledOrder = "";
+//        if(order.getCanceledOrder() != null){
+//            canceledOrder = order.getCanceledOrder().toString();
+//        }
+//
+//        String placedOrderTime = "";
+//        if(order.getPlacedOrderTime() != null){
+//            placedOrderTime = order.getPlacedOrderTime().toString();
+//        }
+//
+//        String deliverTime = "";
+//        if(order.getDeliveredTime() != null) {
+//            deliverTime = order.getDeliveredTime().toString();
+//        }
 
 
             return OrderDTO.builder()
                 .amount(order.getAmount())
                 .commentsSection(order.getCommentsSection())
                 .status(order.getStatus())
-                .deliverTime(deliverTime)
-                .placedOrderTime(placedOrderTime)
-                .paymentConfirmed(paymentConfirmed)
-                .orderInPreparation(orderInPreparation)
-                .orderInDelivery(orderInDelivery)
-                .canceledOrder(canceledOrder)
+                .deliverTime(order.getDeliveredTime())
+                .paymentConfirmed(order.getPaymentConfirmed())
+                .orderInPreparation(order.getOrderInPreparation())
+                .orderInDelivery(order.getOrderInDelivery())
+                .canceledOrder(order.getCanceledOrder())
+                .placedOrderTime(order.getPlacedOrderTime().toString())
                 .deliveryTax(order.getDeliveryTax())
                 .tipsTax(order.getTipsTax())
                 .productsAmount(order.getProductsAmount())
@@ -118,14 +118,17 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<OrderDTO> getOrdersInPaymentConfirmedState(){
 
-        Specification<Order> specification = new Specification<Order>() {
-            @Override
-            public Predicate toPredicate(Root<Order> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
-                return criteriaBuilder.lessThan(root.get("paymentConfirmed"), LocalDateTime.now());
-            }
-        };
+        Specification<Order> specificationPlacedOrderNotNull = (root, query, criteriaBuilder) ->
+            criteriaBuilder.isNotNull(root.get("placedOrderTime"));
 
-        List<Order> orders = this.orderRepo.findAll(specification);
+
+        Specification<Order> specificationPaymentConfirmedIsNull = (root, query, criteriaBuilder) ->
+                criteriaBuilder.isNull(root.get("paymentConfirmed"));
+
+        Specification<Order> combinedSpecification = Specification.where(specificationPlacedOrderNotNull).and(specificationPaymentConfirmedIsNull);
+
+
+        List<Order> orders = this.orderRepo.findAll(combinedSpecification);
 
         List<OrderDTO> orderDTOList = new ArrayList<>();
         for(Order order: orders){
@@ -137,21 +140,21 @@ public class OrderServiceImpl implements OrderService {
 
             String cardNumber = "***" + order.getCard().getCardNumber().substring(order.getCard().getCardNumber().length() - 4);
 
-            String placedOrderTime = "";
-            if(order.getPlacedOrderTime() != null){
-                placedOrderTime = order.getPlacedOrderTime().toString();
-            }
+//            String placedOrderTime = "";
+//            if(order.getPlacedOrderTime() != null){
+//                placedOrderTime = order.getPlacedOrderTime().toString();
+//            }
 
             OrderDTO orderDTO = OrderDTO.builder()
                     .amount(order.getAmount())
                     .commentsSection(order.getCommentsSection())
                     .status(order.getStatus())
-                    .deliverTime("")
-                    .paymentConfirmed("")
-                    .orderInPreparation("")
-                    .orderInDelivery("")
-                    .canceledOrder("")
-                    .placedOrderTime(placedOrderTime)
+                    .deliverTime(order.getDeliveredTime())
+                    .paymentConfirmed(order.getPaymentConfirmed())
+                    .orderInPreparation(order.getOrderInPreparation())
+                    .orderInDelivery(order.getOrderInDelivery())
+                    .canceledOrder(order.getCanceledOrder())
+                    .placedOrderTime(order.getPlacedOrderTime().toString())
                     .deliveryTax(order.getDeliveryTax())
                     .tipsTax(order.getTipsTax())
                     .productsAmount(order.getProductsAmount())
