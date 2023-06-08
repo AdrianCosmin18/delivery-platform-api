@@ -49,6 +49,10 @@ public interface UserService {
 
     List<OrderDTO> getAllHistoryOrders(String email);
 
+    void confirmReceivedOrder(String email, long orderId);
+
+    void cancelOrder(String email, long orderId);
+
     UserDTO getUserByEmail(String email);
 
     User findByEmail(String email);

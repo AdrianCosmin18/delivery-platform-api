@@ -20,7 +20,8 @@ public class Util {
             "/delivery-app/restaurant/add-product",
             "/delivery-app/city",
             "/delivery-app/restaurant/get-product-photo",
-            "/delivery-app/user/make-user-as-admin/*"
+            "/delivery-app/user/make-user-as-admin/*",
+            "/delivery-app/courier"
     };
     public static final String JWT_TOKEN_HEADER = "Jwt-Token";
 }

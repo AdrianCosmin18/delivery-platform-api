@@ -203,6 +203,17 @@ public class UserController {
         this.userService.updateUser(email, userDTO);
     }
 
+    @PutMapping("/confirm-received-order/{email}/{orderId}")
+    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
+    public void confirmReceivedOrder(@PathVariable String email, @PathVariable long orderId){
+        this.userService.confirmReceivedOrder(email, orderId);
+    }
+
+    @DeleteMapping("/cancel-order/{email}/{orderId}")
+    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
+    public void cancelOrder(@PathVariable String email, @PathVariable long orderId){
+        this.userService.cancelOrder(email, orderId);
+    }
 
 
     private HttpHeaders getJwtHeader(User user) {

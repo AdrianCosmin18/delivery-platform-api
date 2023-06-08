@@ -4,12 +4,14 @@ import com.example.deliveryapp.DTOs.CourierDTO;
 import com.example.deliveryapp.constants.Constants;
 import com.example.deliveryapp.exceptions.DeliveryCustomException;
 import com.example.deliveryapp.models.Courier;
+import com.example.deliveryapp.models.Order;
 import com.example.deliveryapp.repos.CourierRepo;
 import com.example.deliveryapp.service.CourierService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,6 +37,26 @@ public class CourierServiceImpl implements CourierService {
     @Override
     public List<CourierDTO> getCouriers() {
 
-        return this.courierRepo.findAll().stream().map(courier -> this.mapper.map(courier, CourierDTO.class)).collect(Collectors.toList());
+        List<Courier> couriers = this.courierRepo.findAll();
+        List<CourierDTO> courierDTOs = new ArrayList<>();
+
+        couriers.forEach(courier -> {
+
+            List<Order> orders = courier
+                    .getOrders()
+                    .stream()
+                    .filter(order -> order.getOrderInDelivery() != null && order.getDeliveredTime() == null)
+                    .collect(Collectors.toList());
+
+            courierDTOs.add(
+                    CourierDTO.builder()
+                            .id(courier.getId())
+                            .fullName(courier.getFullName())
+                            .phone(courier.getPhone())
+                            .ordersAssigned(orders.size())
+                            .vehicleType(courier.getVehicleType())
+                            .build());
+        });
+        return courierDTOs;
     }
 }

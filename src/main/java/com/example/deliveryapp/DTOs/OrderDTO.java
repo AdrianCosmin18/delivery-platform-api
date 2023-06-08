@@ -28,4 +28,5 @@ public class OrderDTO {
     private String commentsSection;
     private String addressToString;
     private String cardNumber;
+    private String username;
 }

@@ -11,7 +11,9 @@ import lombok.NoArgsConstructor;
 @Data
 public class CourierDTO {
 
+    private long id;
     private String fullName;
     private String phone;
     private String vehicleType;
+    private int ordersAssigned;
 }

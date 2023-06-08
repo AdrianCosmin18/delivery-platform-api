@@ -5,10 +5,7 @@ import com.example.deliveryapp.DTOs.OrderItemDTO;
 import com.example.deliveryapp.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -31,9 +28,52 @@ public class OrderController {
         return this.orderService.getOrderItemsByOrderId(orderId);
     }
 
-    @GetMapping("/get-orders-in-payment-confirmed-state")
+    @GetMapping("/get-orders-in-placed-order-state")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    public List<OrderDTO> getOrdersInPlacedOrderState(){
+        return this.orderService.getOrdersInPlacedOrderState();
+    }
+
+    @PutMapping("/put-order-in-payment-confirmation-state/{orderId}")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    public void putOrderInPaymentConfirmationState(@PathVariable long orderId){
+        this.orderService.putOrderInPaymentConfirmationState(orderId);
+    }
+
+    @GetMapping("/get-orders-in-payment-confirmation-state")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public List<OrderDTO> getOrdersInPaymentConfirmedState(){
-        return this.orderService.getOrdersInPaymentConfirmedState();
+        return this.orderService.getOrdersInPaymentConfirmationState();
+    }
+
+    @PutMapping("/put-order-in-preparation-state/{orderId}")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    public void putOrderInPreparationState(@PathVariable long orderId){
+        this.orderService.putOrderInPreparationState(orderId);
+    }
+
+    @GetMapping("/get-orders-in-preparation-state")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    public List<OrderDTO> getOrdersInPreparationState(){
+        return this.orderService.getOrdersInPreparationState();
+    }
+
+    @PutMapping("/put-order-in-delivery-state/{orderId}/{courierId}")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    public void putOrderInDeliveryStateToCourier(@PathVariable long orderId, @PathVariable long courierId){
+        this.orderService.putOrderInDeliveryState(orderId, courierId);
+    }
+
+    @GetMapping("/get-orders-in-delivery-state")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    public List<OrderDTO> getOrdersInDeliveryState(){
+        return this.orderService.getOrdersInDeliveryState();
+    }
+
+
+    @GetMapping("/get-finalized-orders")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    public List<OrderDTO> getFinalizedOrders(){
+        return this.orderService.getFinalizedOrders();
     }
 }

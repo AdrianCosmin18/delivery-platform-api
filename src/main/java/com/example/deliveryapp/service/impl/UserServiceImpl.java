@@ -596,6 +596,7 @@ public class UserServiceImpl implements UserService {
                 .stream()
                 .sorted(Comparator.comparing(Order::getPlacedOrderTime).reversed())
                 .collect(Collectors.toList());
+
         List<OrderDTO> userOrdersDto = new ArrayList<>();
         for(Order order: userOrders){
 
@@ -606,35 +607,6 @@ public class UserServiceImpl implements UserService {
 
             String cardNumber = "***" + order.getCard().getCardNumber().substring(order.getCard().getCardNumber().length() - 4);
 
-//            String paymentConfirmed = "";
-//            if(order.getPaymentConfirmed() != null){
-//                paymentConfirmed = order.getPaymentConfirmed();
-//            }
-//
-//            String orderInPreparation = "";
-//            if(order.getOrderInPreparation() != null){
-//                orderInPreparation = order.getOrderInPreparation().toString();
-//            }
-//
-//            String orderInDelivery = "";
-//            if(order.getOrderInDelivery() != null){
-//                orderInDelivery = order.getOrderInDelivery().toString();
-//            }
-//
-//            String canceledOrder = "";
-//            if(order.getCanceledOrder() != null){
-//                canceledOrder = order.getCanceledOrder().toString();
-//            }
-//
-//            String placedOrderTime = "";
-//            if(order.getPlacedOrderTime() != null){
-//                placedOrderTime = order.getPlacedOrderTime().toString();
-//            }
-//
-//            String deliverTime = "";
-//            if(order.getDeliveredTime() != null){
-//                deliverTime = order.getDeliveredTime().toString();
-//            }
 
             OrderDTO orderDTO = OrderDTO.builder()
                     .amount(order.getAmount())
@@ -652,6 +624,7 @@ public class UserServiceImpl implements UserService {
                     .id(order.getId())
                     .addressToString(addressToString)
                     .cardNumber(cardNumber)
+                    .username(user.getLastName() + " " + user.getFirstName())
                     .build();
 
             userOrdersDto.add(orderDTO);
@@ -659,6 +632,38 @@ public class UserServiceImpl implements UserService {
 
         return userOrdersDto;
     }
+
+    @Override
+    public void confirmReceivedOrder(String email, long orderId){
+
+        User user = this.userRepo.getUserByEmail(email)
+                .orElseThrow(() -> new DeliveryCustomException(Constants.USER_NOT_FOUND_BY_EMAIL.getMessage()));
+
+        List<Order> orders = user.getOrders().stream().filter(order -> order.getId() == orderId).collect(Collectors.toList());
+        if (orders.size() != 1) {
+            throw new DeliveryCustomException("User does not have order with this id");
+        }
+        Order userOrder = orders.get(0);
+        userOrder.setStatus(OrderStatus.ORDER_DELIVERED);
+        userOrder.setDeliveredTime(LocalDateTime.now().toString());
+        this.userRepo.saveAndFlush(user);
+    }
+
+    @Override
+    public void cancelOrder(String email, long orderId){
+
+        User user = this.userRepo.getUserByEmail(email)
+                .orElseThrow(() -> new DeliveryCustomException(Constants.USER_NOT_FOUND_BY_EMAIL.getMessage()));
+        List<Order> orders = user.getOrders().stream().filter(order -> order.getId() == orderId).collect(Collectors.toList());
+        if (orders.size() != 1) {
+            throw new DeliveryCustomException("User does not have order with this id");
+        }
+        Order userOrder = orders.get(0);
+        userOrder.setStatus(OrderStatus.CANCELED_ORDER);
+        userOrder.setCanceledOrder(LocalDateTime.now().toString());
+        this.userRepo.saveAndFlush(user);
+    }
+
 
     @Override
     public UserDTO getUserByEmail(String email){
