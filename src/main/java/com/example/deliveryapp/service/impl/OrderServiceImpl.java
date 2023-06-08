@@ -453,5 +453,47 @@ public class OrderServiceImpl implements OrderService {
         return orderDTOList;
     }
 
+    @Override
+    public List<OrderDTO> getCanceledOrders(){
+
+        Specification<Order> specificationCancelOrder = (root, query, criteriaBuilder) ->
+                criteriaBuilder.isNotNull(root.get("canceledOrder"));
+
+        List<Order> orders = this.orderRepo.findAll(specificationCancelOrder);
+        List<OrderDTO> orderDTOList = new ArrayList<>();
+        for(Order order: orders){
+
+            String addressToString =
+                    order.getAddress().getStreet() + ", nr." +
+                            order.getAddress().getNumber() + ", " +
+                            order.getAddress().getCity().getName();
+
+            String cardNumber = "***" + order.getCard().getCardNumber().substring(order.getCard().getCardNumber().length() - 4);
+
+
+            OrderDTO orderDTO = OrderDTO.builder()
+                    .amount(order.getAmount())
+                    .commentsSection(order.getCommentsSection())
+                    .status(order.getStatus())
+                    .deliverTime(order.getDeliveredTime())
+                    .paymentConfirmed(order.getPaymentConfirmed())
+                    .orderInPreparation(order.getOrderInPreparation())
+                    .orderInDelivery(order.getOrderInDelivery())
+                    .canceledOrder(order.getCanceledOrder())
+                    .placedOrderTime(order.getPlacedOrderTime().toString())
+                    .deliveryTax(order.getDeliveryTax())
+                    .tipsTax(order.getTipsTax())
+                    .productsAmount(order.getProductsAmount())
+                    .id(order.getId())
+                    .addressToString(addressToString)
+                    .cardNumber(cardNumber)
+                    .username(order.getUser().getLastName() + " " + order.getUser().getFirstName())
+                    .build();
+
+            orderDTOList.add(orderDTO);
+        }
+        return orderDTOList;
+    }
+
 
 }

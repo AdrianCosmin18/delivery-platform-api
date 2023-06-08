@@ -26,4 +26,6 @@ public interface OrderService {
     List<OrderDTO> getOrdersInDeliveryState();
 
     List<OrderDTO> getFinalizedOrders();
+
+    List<OrderDTO> getCanceledOrders();
 }

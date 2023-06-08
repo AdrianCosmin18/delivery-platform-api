@@ -76,4 +76,11 @@ public class OrderController {
     public List<OrderDTO> getFinalizedOrders(){
         return this.orderService.getFinalizedOrders();
     }
+
+    @GetMapping("/get-canceled-orders")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    public List<OrderDTO> getCanceledOrders(){
+        return this.orderService.getCanceledOrders();
+    }
+
 }
