@@ -623,6 +623,7 @@ public class UserServiceImpl implements UserService {
                     .productsAmount(order.getProductsAmount())
                     .id(order.getId())
                     .addressToString(addressToString)
+                    .city(order.getAddress().getCity().getName())
                     .cardNumber(cardNumber)
                     .username(user.getLastName() + " " + user.getFirstName())
                     .build();

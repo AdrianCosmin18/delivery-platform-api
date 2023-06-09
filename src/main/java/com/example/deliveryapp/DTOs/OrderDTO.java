@@ -27,6 +27,7 @@ public class OrderDTO {
     private Double tipsTax;
     private String commentsSection;
     private String addressToString;
+    private String city;
     private String cardNumber;
     private String username;
 }

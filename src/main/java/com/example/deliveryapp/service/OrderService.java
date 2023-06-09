@@ -13,19 +13,31 @@ public interface OrderService {
 
     List<OrderDTO> getOrdersInPlacedOrderState();
 
+    List<OrderDTO> getOrdersInPlacedOrderState(String cityName);
+
     void putOrderInPaymentConfirmationState(long orderId);
 
     List<OrderDTO> getOrdersInPaymentConfirmationState();
+
+    List<OrderDTO> getOrdersInPaymentConfirmationState(String cityName);
 
     void putOrderInPreparationState(long orderId);
 
     List<OrderDTO> getOrdersInPreparationState();
 
+    List<OrderDTO> getOrdersInPreparationState(String cityName);
+
     void putOrderInDeliveryState(long orderId, long courierId);
 
     List<OrderDTO> getOrdersInDeliveryState();
 
+    List<OrderDTO> getOrdersInDeliveryState(String cityName);
+
     List<OrderDTO> getFinalizedOrders();
 
+    List<OrderDTO> getFinalizedOrders(String cityName);
+
     List<OrderDTO> getCanceledOrders();
+
+    List<OrderDTO> getCanceledOrders(String cityName);
 }
