@@ -15,6 +15,8 @@ public class Util {
             "/delivery-app/user/login",
             "/delivery-app/user/register",
             "/delivery-app/restaurant/get-restaurant-products/*",
+            "/delivery-app/restaurant/get-image-product/*",
+            "/delivery-app/restaurant/get-products-by-ingredients",
             "/delivery-app/user/get-user/*",
             "/delivery-app/restaurant/get-product-by-restaurant-and-product-Name/*",
             "/delivery-app/restaurant/add-product",

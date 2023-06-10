@@ -145,6 +145,10 @@ public class User implements UserDetails {
         return this.password;
     }
 
+    public void setPassword(String password){
+        this.password = new BCryptPasswordEncoder().encode(password);
+    }
+
     @Override
     public String getUsername() {
         return this.email;

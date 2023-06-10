@@ -65,6 +65,8 @@ public interface UserService {
 
     void makeUserAsAdmin(String email);
 
+    void changePassword(String email, String newPassword);
+
 //    boolean areProductsFromOtherRestaurantInCart(String email, String restaurantName, String currentProductName);
 
 //    void addProductToUserCart(String email, String restaurantName, String currentProductName, Integer quantity);

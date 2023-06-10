@@ -714,4 +714,12 @@ public class UserServiceImpl implements UserService {
         user.setUserRole(UserRole.ADMIN);
         this.userRepo.saveAndFlush(user);
     }
+
+    @Override
+    public void changePassword(String email, String newPassword){
+
+        User user = this.findByEmail(email);
+        user.setPassword(newPassword);
+        this.userRepo.saveAndFlush(user);
+    }
 }

@@ -7,6 +7,7 @@ import com.example.deliveryapp.constants.Response;
 import com.example.deliveryapp.exceptions.InsertPictureException;
 import com.example.deliveryapp.models.Image;
 import com.example.deliveryapp.models.Product;
+import com.example.deliveryapp.repos.ImageRepo;
 import com.example.deliveryapp.service.RestaurantService;
 import jdk.jfr.ContentType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 
@@ -30,6 +32,9 @@ public class RestaurantController {
 
     @Autowired
     private RestaurantService restaurantService;
+
+    @Autowired
+    private ImageRepo imageRepo;
 
     @PostMapping("/{restaurantName}")
     public void addRestaurant(@PathVariable String restaurantName){
@@ -58,15 +63,20 @@ public class RestaurantController {
 
 
     @PostMapping("/add-product")
-    public Response addProduct(@RequestParam(value = "photo")MultipartFile file,
+    public Response addProduct(@RequestParam(value = "file")MultipartFile file,
                                @RequestParam(value = "name") String name,
                                @RequestParam(value = "price") Double price,
                                @RequestParam(value = "type") String type,
                                @RequestParam(value = "description") String description,
                                @RequestParam(value = "ingredients") String ingredients,
-                               @RequestParam(value = "restaurantName") String restaurantName) throws IOException {
+                               @RequestParam(value = "restaurantName") String restaurantName,
+                               @RequestParam(value = "containsGluten") Boolean containsGluten,
+                               @RequestParam(value = "containsLactose") Boolean containsLactose,
+                               @RequestParam(value = "isVegetarian") Boolean isVegetarian
+
+    ) throws IOException {
         try{
-            this.restaurantService.addProduct(file, name, price, type, description, ingredients, restaurantName);
+            this.restaurantService.addProduct(file, name, price, type, description, ingredients, restaurantName, containsGluten, containsLactose, isVegetarian);
             return new Response("added with succes", HttpStatus.OK);
 
         }catch (IOException e){
@@ -77,18 +87,22 @@ public class RestaurantController {
     @GetMapping(value = "/get-restaurant-products/{restaurantName}")
     public ResponseEntity<List<ProductDTO>> getRestaurantProducts(@PathVariable String restaurantName, @RequestParam(value = "type")String type){
 
-//        List<ProductDTO> products = this.restaurantService.getRestaurantProducts(restaurantName, type);
-//        ResponseEntity<List<ProductDTO>> response = new ResponseEntity<>()
-//        for(ProductDTO product : products){
-//
-//            byte[] imageData = product.getPicture();
-//            if (imageData != null && imageData.length > 0) {
-//                HttpHeaders headers = new HttpHeaders();
-//                headers.setContentType(MediaType.IMAGE_PNG);
-//                return new ResponseEntity<>(products, headers, HttpStatus.OK);
-//            }
-//        }
         return new ResponseEntity<List<ProductDTO>>(this.restaurantService.getRestaurantProducts(restaurantName, type), HttpStatus.OK);
+    }
+
+    @GetMapping("/get-image-product/{imageId}")
+    public ResponseEntity<byte[]> getImageById(@PathVariable long imageId){
+
+        Optional<Image> optionalImage = imageRepo.findById(imageId);
+        if (optionalImage.isPresent()) {
+            Image image = optionalImage.get();
+
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + image.getName() + "\"")
+                    .body(image.getData());
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @GetMapping("/get-product-by-restaurant-and-product-Name/{restaurantName}")
@@ -97,7 +111,7 @@ public class RestaurantController {
     }
 
     @PostMapping("/get-products-by-ingredients")
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
+//    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     public Set<ProductDTO> getProductsByIngredients(
             @RequestParam(value = "foodType") String foodType,
             @RequestParam(value = "ingredientList") String ingredientList){

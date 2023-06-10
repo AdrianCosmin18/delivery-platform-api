@@ -6,9 +6,11 @@ import com.example.deliveryapp.constants.Constants;
 import com.example.deliveryapp.constants.FoodType;
 import com.example.deliveryapp.exceptions.DeliveryCustomException;
 import com.example.deliveryapp.models.City;
+import com.example.deliveryapp.models.Image;
 import com.example.deliveryapp.models.Product;
 import com.example.deliveryapp.models.Restaurant;
 import com.example.deliveryapp.repos.CityRepo;
+import com.example.deliveryapp.repos.ImageRepo;
 import com.example.deliveryapp.repos.ProductRepo;
 import com.example.deliveryapp.repos.RestaurantRepo;
 import com.example.deliveryapp.service.RestaurantService;
@@ -41,6 +43,8 @@ public class RestaurantServiceImpl implements RestaurantService {
     private CityRepo cityRepo;
     @Autowired
     private ModelMapper mapper;
+    @Autowired
+    ImageRepo imageRepo;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -81,12 +85,18 @@ public class RestaurantServiceImpl implements RestaurantService {
 
 
     @Override
-    public void addProduct(String file, String name, Double price, String type, String description, String ingredients, String restaurantName) throws IOException {
-
-    }
-
-    @Override
-    public void addProduct(MultipartFile file, String name, Double price, String type, String description, String ingredients, String restaurantName) throws IOException {
+    public void addProduct(
+            MultipartFile file,
+            String name,
+            Double price,
+            String type,
+            String description,
+            String ingredients,
+            String restaurantName,
+            boolean containsGluten,
+            boolean containsLactose,
+            boolean isVegetarian
+    ) throws IOException {
         if (this.productRepo.getProductByNameAndRestaurantName(name, restaurantName).isPresent()) {
             throw new DeliveryCustomException("Already exists this product in this restaurant");
         }
@@ -96,14 +106,26 @@ public class RestaurantServiceImpl implements RestaurantService {
                 .description(description)
                 .price(price)
                 .type(type)
-//                .picture(ImageUtils.compressImage(file.getBytes()))
                 .ingredients(ingredients)
+                .containsGluten(containsGluten)
+                .containsLactose(containsLactose)
+                .isVegetarian(isVegetarian)
                 .build();
+
+        if(!file.isEmpty()){
+            Image image = new Image();
+            image.setName(file.getOriginalFilename());
+            image.setData(file.getBytes());
+            Image savedImage = imageRepo.save(image);
+
+            product.setImage(image);
+        }
+
+
 
         Restaurant restaurant = this.restaurantRepo.getRestaurantByName(restaurantName)
                 .orElseThrow(() -> new DeliveryCustomException("There is no restaurant with this name"));
 
-        product.setRestaurant(restaurant);
 
         restaurant.addProduct(product);
         this.restaurantRepo.save(restaurant);
@@ -125,12 +147,13 @@ public class RestaurantServiceImpl implements RestaurantService {
             for(Product p: products){
 
                 ProductDTO productDTO = ProductDTO.builder()
+                        .id(p.getId())
                         .name(p.getName())
                         .price(p.getPrice())
                         .type(p.getType())
                         .description(p.getDescription())
                         .ingredients(p.getIngredients())
-//                        .image(p.getImage().getData())
+                        .imageId(p.getImage() != null ? p.getImage().getId() : -1)
                         .restaurantName(restaurant.getName())
                         .containsLactose(p.getContainsLactose())
                         .containsGluten(p.getContainsGluten())
@@ -142,18 +165,6 @@ public class RestaurantServiceImpl implements RestaurantService {
 
             return productDTOList;
         }
-    }
-
-//    public byte[] getProductImage(byte[] img){
-//
-//        ResponseEntity<byte[]> responseEntity = ResponseEntity.status(HttpStatus.OK)
-//                .contentType(MediaType.valueOf("image/png"))
-//                .body(img);
-//        return responseEntity.getBody();
-//    }
-    public String convertByteToBase64Picture(byte[] imageBytes){
-        String imageBase64 = Base64Utils.encodeToString(imageBytes);
-        return "data:image/png;base64," + imageBase64;
     }
 
     @Override
@@ -203,13 +214,13 @@ public class RestaurantServiceImpl implements RestaurantService {
         if(products.size() == 1){
             Product p = products.get(0);
             return ProductDTO.builder()
+                    .id(p.getId())
                     .name(p.getName())
                     .price(p.getPrice())
                     .type(p.getType())
                     .description(p.getDescription())
                     .ingredients(p.getIngredients())
-//                    .picture(p.getPicture())
-                    .restaurantName(restaurant.getName())
+                    .imageId(p.getImage() != null ? p.getImage().getId() : -1)                    .restaurantName(restaurant.getName())
                     .containsLactose(p.getContainsLactose())
                     .containsGluten(p.getContainsGluten())
                     .isVegetarian(p.getIsVegetarian())

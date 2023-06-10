@@ -13,12 +13,18 @@ import java.util.Set;
 public interface RestaurantService {
 
 
-    void addProduct(String file, String name, Double price, String type, String description, String ingredients, String restaurantName) throws IOException;
-
-    // byte[] getImageProduct(String restaurantName, String productName);
-
-    void addProduct(MultipartFile file, String name, Double price, String type, String description, String ingredients, String restaurantName) throws IOException;
-
+    void addProduct(
+            MultipartFile file,
+            String name,
+            Double price,
+            String type,
+            String description,
+            String ingredients,
+            String restaurantName,
+            boolean containsGluten,
+            boolean containsLactose,
+            boolean isVegetarian
+    ) throws IOException;
     List<ProductDTO> getRestaurantProducts(String restaurantName, String type);
     void deleteProduct(String productName, String restaurantName);
     void addRestaurant(String restaurantName);

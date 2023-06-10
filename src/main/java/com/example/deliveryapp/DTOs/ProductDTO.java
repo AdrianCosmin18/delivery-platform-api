@@ -16,12 +16,13 @@ import java.util.Objects;
 @Builder
 public class ProductDTO {
 
+    private Long id;
     private String name;
     private Double price;
     private String type;
     private String description;
     private String ingredients;
-    private byte[] image;
+    private long imageId;
     private String restaurantName;
     private Boolean containsLactose;
     private Boolean containsGluten;
@@ -42,13 +43,11 @@ public class ProductDTO {
         if (this == o) return true;
         if (!(o instanceof ProductDTO)) return false;
         ProductDTO that = (ProductDTO) o;
-        return Objects.equals(getName(), that.getName()) && Objects.equals(getPrice(), that.getPrice()) && Objects.equals(getType(), that.getType()) && Objects.equals(getDescription(), that.getDescription()) && Objects.equals(getIngredients(), that.getIngredients()) && Arrays.equals(getImage(), that.getImage()) && Objects.equals(getRestaurantName(), that.getRestaurantName());
+        return getImageId() == that.getImageId() && Objects.equals(getName(), that.getName()) && Objects.equals(getPrice(), that.getPrice()) && Objects.equals(getType(), that.getType()) && Objects.equals(getDescription(), that.getDescription()) && Objects.equals(getIngredients(), that.getIngredients()) && Objects.equals(getRestaurantName(), that.getRestaurantName()) && Objects.equals(getContainsLactose(), that.getContainsLactose()) && Objects.equals(getContainsGluten(), that.getContainsGluten()) && Objects.equals(getIsVegetarian(), that.getIsVegetarian());
     }
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(getName(), getPrice(), getType(), getDescription(), getIngredients(), getRestaurantName());
-        result = 31 * result + Arrays.hashCode(getImage());
-        return result;
+        return Objects.hash(getName(), getPrice(), getType(), getDescription(), getIngredients(), getImageId(), getRestaurantName(), getContainsLactose(), getContainsGluten(), getIsVegetarian());
     }
 }

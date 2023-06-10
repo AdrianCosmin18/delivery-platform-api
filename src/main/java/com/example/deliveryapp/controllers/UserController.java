@@ -72,6 +72,14 @@ public class UserController {
         return new ResponseEntity<>(authenticationResponse, jwtHeader, HttpStatus.OK);
     }
 
+    @PutMapping("/change-password/{email}")
+    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
+    public void changePassword(@PathVariable String email, @RequestParam(value = "oldPassword") String oldPassword, @RequestParam(value = "newPassword") String newPassword){
+        this.authenticate(email, oldPassword);
+        this.userService.changePassword(email, newPassword);
+
+    }
+
 
     @PostMapping
     public void addUser(@Valid @RequestBody UserDTO userDTO){

@@ -46,9 +46,7 @@ public class Product {
     @Column(name = "isVegetarian")
     private Boolean isVegetarian;
 
-//    @Lob
-//    @Column(name = "picture", length = 1000)
-//    private byte[] picture;
+
 
     @OneToOne
     @JoinColumn(name = "image_id")
@@ -71,8 +69,27 @@ public class Product {
     @JsonBackReference
     private List<OrderItem> orderItems;
 
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) return true;
+        if (!(object instanceof Product)) return false;
+        Product product = (Product) object;
+        return java.util.Objects.equals(getName(), product.getName()) && java.util.Objects.equals(getPrice(), product.getPrice()) && java.util.Objects.equals(getType(), product.getType()) && java.util.Objects.equals(getDescription(), product.getDescription()) && java.util.Objects.equals(getIngredients(), product.getIngredients()) && java.util.Objects.equals(getContainsLactose(), product.getContainsLactose()) && java.util.Objects.equals(getContainsGluten(), product.getContainsGluten()) && java.util.Objects.equals(getIsVegetarian(), product.getIsVegetarian()) && java.util.Objects.equals(getImage(), product.getImage());
+    }
+
+    @Override
+    public int hashCode() {
+        return java.util.Objects.hash(getName(), getPrice(), getType(), getDescription(), getIngredients(), getContainsLactose(), getContainsGluten(), getIsVegetarian(), getImage());
+    }
+
     public void addOrderItem(OrderItem item){
         this.orderItems.add(item);
         item.setProduct(this);
+    }
+
+    public void setImage(Image image){
+        this.image = image;
+        image.setProduct(this);
     }
 }
