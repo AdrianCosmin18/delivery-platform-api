@@ -1,14 +1,19 @@
 package com.example.deliveryapp.models;
 
+import com.example.deliveryapp.security.security.UserRole;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
+import java.util.Collection;
 import java.util.List;
 
 @Data
@@ -16,7 +21,7 @@ import java.util.List;
 @NoArgsConstructor
 @Entity(name = "User")
 @Table(name = "user")
-public class User {
+public class User implements UserDetails {
 
     @Id
     @SequenceGenerator(name = "user_seq", allocationSize = 1)
@@ -35,12 +40,25 @@ public class User {
     @Column(name = "email", length = 50, nullable = false, unique = true)
     private String email;
 
-    @Column(name = "role", nullable = false)
-    private String role;
+    @NotEmpty
+    @Column(name = "password", nullable = false)
+    private String password;
+
+    @Enumerated(EnumType.STRING)
+    private UserRole userRole = UserRole.USER;
 
     @NotEmpty(message = "phone number is required")
     @Column(name = "phone", nullable = false, unique = true)
     private String phone;
+
+    @Column(name = "isAccountNonExpired")
+    private boolean isAccountNonExpired = true;
+    @Column(name = "isAccountNonLocked")
+    private boolean isAccountNonLocked = true;
+    @Column(name = "isCredentialsNonExpired")
+    private boolean isCredentialsNonExpired = true;
+    @Column(name = "isEnabled")
+    private boolean isEnabled = true;
 
 
 
@@ -80,15 +98,13 @@ public class User {
     @JsonManagedReference
     private List<Order> orders;
 
-//    @OneToMany(
-//            cascade = CascadeType.ALL,
-//            orphanRemoval = true,
-//            fetch = FetchType.LAZY,
-//            mappedBy = "user"
-//    )
-//    @JsonManagedReference
-//    private List<Cart> productCart;
-
+    public User(String lastName, String firstName, String email, String password, String phone) {
+        this.lastName = lastName;
+        this.firstName = firstName;
+        this.email = email;
+        this.password = new BCryptPasswordEncoder().encode(password);
+        this.phone = phone;
+    }
 
     public void addAddress(Address address){
 
@@ -118,12 +134,44 @@ public class User {
         order.setUser(this);
     }
 
-//    public void addProductCart(Cart cart){
-//        this.productCart.add(cart);
-//    }
-//
-//    public void removeProductCart(Cart cart){
-//        this.productCart.remove(cart);
-//    }
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        //ii dam rolul de user creat in UserRole pe baza lui UserPermission
+        return this.userRole.getGrantedAuthorities();
+    }
+
+    @Override
+    public String getPassword() {
+        return this.password;
+    }
+
+    public void setPassword(String password){
+        this.password = new BCryptPasswordEncoder().encode(password);
+    }
+
+    @Override
+    public String getUsername() {
+        return this.email;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return this.isAccountNonExpired;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return this.isAccountNonLocked;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return this.isCredentialsNonExpired;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return this.isEnabled;
+    }
 
 }

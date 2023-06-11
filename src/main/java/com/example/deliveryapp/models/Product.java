@@ -2,11 +2,10 @@ package com.example.deliveryapp.models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
-import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
-import java.awt.*;
-import java.sql.Blob;
+import java.io.File;
+import java.io.FileInputStream;
 import java.util.List;
 
 @Data
@@ -38,9 +37,20 @@ public class Product {
     @Column(name = "ingredients")
     private String ingredients;
 
-    @Lob
-    @Column(name = "picture", length = 1000)
-    private byte[] picture;
+    @Column(name = "containsLactose")
+    private Boolean containsLactose;
+
+    @Column(name = "containsGluten")
+    private Boolean containsGluten;
+
+    @Column(name = "isVegetarian")
+    private Boolean isVegetarian;
+
+
+
+    @OneToOne
+    @JoinColumn(name = "image_id")
+    private Image image;
 
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -52,15 +62,6 @@ public class Product {
     @JsonBackReference
     private Restaurant restaurant;
 
-//    @OneToMany(
-//            cascade = CascadeType.ALL,
-//            orphanRemoval = true,
-//            fetch = FetchType.LAZY,
-//            mappedBy = "product"
-//    )
-//    @JsonBackReference
-//    private List<Cart> userCart;
-
     @OneToMany(
             fetch = FetchType.LAZY,
             mappedBy = "product"
@@ -68,16 +69,27 @@ public class Product {
     @JsonBackReference
     private List<OrderItem> orderItems;
 
-//    public void addUserCart(Cart cart){
-//        this.userCart.add(cart);
-//    }
-//
-//    public void removeUserCart(Cart cart){
-//        this.userCart.remove(cart);
-//    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) return true;
+        if (!(object instanceof Product)) return false;
+        Product product = (Product) object;
+        return java.util.Objects.equals(getName(), product.getName()) && java.util.Objects.equals(getPrice(), product.getPrice()) && java.util.Objects.equals(getType(), product.getType()) && java.util.Objects.equals(getDescription(), product.getDescription()) && java.util.Objects.equals(getIngredients(), product.getIngredients()) && java.util.Objects.equals(getContainsLactose(), product.getContainsLactose()) && java.util.Objects.equals(getContainsGluten(), product.getContainsGluten()) && java.util.Objects.equals(getIsVegetarian(), product.getIsVegetarian()) && java.util.Objects.equals(getImage(), product.getImage());
+    }
+
+    @Override
+    public int hashCode() {
+        return java.util.Objects.hash(getName(), getPrice(), getType(), getDescription(), getIngredients(), getContainsLactose(), getContainsGluten(), getIsVegetarian(), getImage());
+    }
 
     public void addOrderItem(OrderItem item){
         this.orderItems.add(item);
         item.setProduct(this);
+    }
+
+    public void setImage(Image image){
+        this.image = image;
+        image.setProduct(this);
     }
 }

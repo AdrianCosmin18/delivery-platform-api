@@ -1,3 +1,5 @@
+<<<<<<< HEAD
+=======
 package com.example.deliveryapp.service.impl;
 
 import com.example.deliveryapp.DTOs.*;
@@ -7,8 +9,21 @@ import com.example.deliveryapp.exceptions.DeliveryCustomException;
 import com.example.deliveryapp.models.*;
 import com.example.deliveryapp.repos.*;
 import com.example.deliveryapp.security.security.UserRole;
+import com.example.deliveryapp.service.UserService;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.time.YearMonth;
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
+import java.util.Random;
+import java.util.stream.Collectors;
+
 import static com.example.deliveryapp.constants.Consts.MASTERCARD;
 import static com.example.deliveryapp.constants.Consts.VISA;
 
@@ -193,6 +208,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public void updateAddress(String email, long addressId, AddressDTO addressDTO){
 
+        User user = this.userRepo.getUserByEmail(email)
+                .orElseThrow(() -> new DeliveryCustomException(Constants.USER_ALREADY_EXISTS_BY_EMAIL_EXCEPTION.getMessage()));
+
         City city = this.cityRepo.getCityByName(addressDTO.getCityName())
                 .orElseThrow(() -> new DeliveryCustomException(Constants.CITY_NOT_FOUND_EXCEPTION.getMessage()));
 
@@ -313,11 +331,24 @@ public class UserServiceImpl implements UserService {
                 .details(address.getDetails())
                 .isDefault(address.getIsDefault())
                 .build();
+    }
+
+    @Override
+    public void addCard(String email, CardDTO cardDTO) {
+
+        User user = this.userRepo.getUserByEmail(email)
+                .orElseThrow(() -> new DeliveryCustomException(Constants.USER_NOT_FOUND_BY_EMAIL.getMessage()));
+
         List<Card> userCards = user.getCards();
         int year = cardDTO.getExpiryDate().getYear();
         int month = cardDTO.getExpiryDate().getMonthValue();
         int lastDayOfMonth = YearMonth.of(year, month).lengthOfMonth();
+        Card card = Card.builder()
+                .cardNumber(cardDTO.getCardNumber())
+                .cardHolderName(cardDTO.getCardHolderName())
+                .securityCode(cardDTO.getSecurityCode())
                 .expiryDate(cardDTO.getExpiryDate().atDay(lastDayOfMonth))
+                .build();
         switch (cardDTO.getCardNumber().charAt(0)){
             case '2':{
                 card.setCardType(MASTERCARD);
@@ -334,6 +365,7 @@ public class UserServiceImpl implements UserService {
             default:{
                 throw new DeliveryCustomException(Constants.CARD_NOT_VALID.getMessage());
             }
+
         }
 
         if(cardDTO.getIsDefault()){
@@ -344,11 +376,63 @@ public class UserServiceImpl implements UserService {
         }
 
         if (userCards.stream().anyMatch(c -> c.equals(card))){
+            throw new DeliveryCustomException(Constants.USER_CARD_ALREADY_EXISTS_EXCEPTION.getMessage());
+        }
+
+        user.addCard(card);
+        this.userRepo.save(user);
+    }
+
+    @Override
+    public List<CardDTO> getUserCards(String email){
+
+        User user = this.userRepo.getUserByEmail(email)
+                .orElseThrow(() -> new DeliveryCustomException(Constants.USER_NOT_FOUND_BY_EMAIL.getMessage()));
+
+        if(user.getCards().isEmpty()){
+            return new ArrayList<>();
+        }
+
+        List<CardDTO> cardsDto = new ArrayList<>();
+        for(Card c: user.getCards()){
+
+            CardDTO cardDTO = CardDTO.builder()
                     .id(c.getId())
+                    .cardHolderName(c.getCardHolderName())
                     .cardNumber("***" + c.getCardNumber().substring(c.getCardNumber().length() - 4))
+                    .securityCode(c.getSecurityCode())
+                    .expiryDate(YearMonth.of(c.getExpiryDate().getYear(), c.getExpiryDate().getMonth()))
                     .isDefault(c.getIsDefault())
                     .cardType(c.getCardType())
                     .fullExpiryDate(c.getExpiryDate())
+                    .build();
+
+            cardsDto.add(cardDTO);
+        }
+
+        return cardsDto;
+
+    }
+
+    @Override
+    public void removeCard(String email, String cardNumber){
+
+        User user = this.userRepo.getUserByEmail(email)
+                .orElseThrow(() -> new DeliveryCustomException(Constants.USER_NOT_FOUND_BY_EMAIL.getMessage()));
+
+        List<Card> userCards = user.getCards();
+
+        if(userCards.stream().anyMatch(card -> card.getCardNumber().equals(cardNumber))){
+
+            List<Card> cards = userCards.stream().filter(card1 -> card1.getCardNumber().equals(cardNumber)).collect(Collectors.toList());
+            user.deleteCard(cards.get(0));
+
+            this.userRepo.save(user);
+        }else{
+            throw new DeliveryCustomException(Constants.USER_CARD_NOT_OWN_EXCEPTION.getMessage());
+        }
+    }
+
     @Override
     public void removeCard(String email, long cardId){
 
@@ -426,24 +510,83 @@ public class UserServiceImpl implements UserService {
                 .fullExpiryDate(c.getExpiryDate())
                 .build();
     }
+
+    @Override
+    @Transactional
+    public void placeOrder(CreateOrderRequest orderRequest){
+
+        User user = this.userRepo.getUserByEmail(orderRequest.getEmailUser())
+                .orElseThrow(() -> new DeliveryCustomException(Constants.USER_NOT_FOUND_BY_EMAIL.getMessage()));
+
+
+        List<OrderItem> orderItems = new ArrayList<>();
         Order currentOrder = this.orderRepo.saveAndFlush(new Order(0D, "creating", 0D, LocalDateTime.now()));
+        currentOrder.setOrderItems(new ArrayList<>());
+
         for(OrderItemDTO pc: orderRequest.getProductsInCart()){
+
+            Product product = this.productRepo.getProductByNameAndRestaurantName( pc.getProductName(), pc.getRestaurantName())
+                    .orElseThrow(() -> new DeliveryCustomException(Constants.PRODUCT_NOT_FOUND_BY_RESTAURANT_AND_NAME.getMessage()));
+
 //            OrderItemId orderItemId = new OrderItemId(currentOrder.getId(), product.getId());
+            OrderItem orderItem = OrderItem.builder()
 //                    .id(orderItemId)
+                    .quantity(pc.getQuantity())
                     .price(pc.getPrice())
                     .extraIngredients(pc.getExtraIngredients())
                     .lessIngredients(pc.getLessIngredients())
+                    .build();
+
+            product.addOrderItem(orderItem);
+            // orderItem.setProduct(product);
+            //orderItem.setOrder(currentOrder);
+            currentOrder.addOrderItem(orderItem);
+
+            orderItems.add(orderItem);
+        }
+
         currentOrder.setCommentsSection(orderRequest.getCommentsSection());
         currentOrder.setTipsTax(orderRequest.getTipsTax());
         currentOrder.setDeliveryTax(orderRequest.getDeliveryTax());
         currentOrder.setProductsAmount(orderRequest.getProductsAmount());
         currentOrder.setAmount(orderRequest.getTotalAmount());
+        user.addOrder(currentOrder);
+        //currentOrder.setUser(user);
+        //currentOrder.setOrderItems(orderItems);
+
+
+//        Card userCard = this.cardRepo.getCardByCardNumber(orderRequest.getCardNumber())
+//                .orElseThrow(() -> new DeliveryCustomException(Constants.CARD_NOT_FOUND_BY_NUMBER_EXCEPTION.getMessage()));
+
         Card userCard = user.getCards().stream().filter(card -> card.getId() == orderRequest.getCardId()).collect(Collectors.toList()).get(0);
+        if(userCard == null){
+            throw new DeliveryCustomException(Constants.USER_CARD_NOT_OWN_EXCEPTION.getMessage());
+        }
+
+        //currentOrder.setCard(userCard);
+        userCard.addOrder(currentOrder);
 //        currentOrder.setAmount(orderItems.stream().mapToDouble(OrderItem::getPrice).sum());
+
         Address userAddress = user.getAddresses().stream().filter(adr -> adr.getId() == orderRequest.getAddressId()).collect(Collectors.toList()).get(0);
+        if(userAddress == null){
+            throw new DeliveryCustomException(Constants.USER_NOT_OWN_ADDRESS_EXCEPTION.getMessage());
+        }
+        //currentOrder.setAddress(userAddress);
+
+        userAddress.addOrder(currentOrder);
+
+        List<Courier> couriers = this.courierRepo.findAll();
+        Courier randomCourier = couriers.get(new Random().nextInt(couriers.size()));
+        //currentOrder.setCourier(randomCourier);
+        randomCourier.addOrder(currentOrder);
+
         currentOrder.setStatus(OrderStatus.PLACED_ORDER);
         //currentOrder.setDeliveredTime(LocalDateTime.now().plusMinutes(45));
         currentOrder.setPlacedOrderTime(LocalDateTime.now());
+
+        this.orderRepo.saveAndFlush(currentOrder);
+    }
+
     @Override
     public List<OrderDTO> getAllHistoryOrders(String email){
 
@@ -498,6 +641,7 @@ public class UserServiceImpl implements UserService {
 
         User user = this.userRepo.getUserByEmail(email)
                 .orElseThrow(() -> new DeliveryCustomException(Constants.USER_NOT_FOUND_BY_EMAIL.getMessage()));
+
         List<Order> orders = user.getOrders().stream().filter(order -> order.getId() == orderId).collect(Collectors.toList());
         if (orders.size() != 1) {
             throw new DeliveryCustomException("User does not have order with this id");
@@ -580,3 +724,5 @@ public class UserServiceImpl implements UserService {
         user.setPassword(newPassword);
         this.userRepo.saveAndFlush(user);
     }
+}
+>>>>>>> origin/burger-shop-delivery

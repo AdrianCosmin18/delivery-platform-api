@@ -29,6 +29,10 @@ public class Card {
     private Long id;
 
     @NotEmpty
+    @Column(name = "card_type", nullable = false)
+    private String cardType;
+
+    @NotEmpty
     @Column(name = "card_number", nullable = false)
     @Size(min = 16, max = 16)
     private String cardNumber;
@@ -45,6 +49,10 @@ public class Card {
     @NotNull
     @Column(name = "expiry_date", nullable = false)
     private LocalDate expiryDate;
+
+    @NotNull
+    @Column(name = "is_default", nullable = false)
+    private Boolean isDefault;
 
 
 

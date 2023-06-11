@@ -3,11 +3,14 @@ package com.example.deliveryapp.service.impl;
 import com.example.deliveryapp.DTOs.ProductDTO;
 import com.example.deliveryapp.DTOs.RestaurantDTO;
 import com.example.deliveryapp.constants.Constants;
+import com.example.deliveryapp.constants.FoodType;
 import com.example.deliveryapp.exceptions.DeliveryCustomException;
 import com.example.deliveryapp.models.City;
+import com.example.deliveryapp.models.Image;
 import com.example.deliveryapp.models.Product;
 import com.example.deliveryapp.models.Restaurant;
 import com.example.deliveryapp.repos.CityRepo;
+import com.example.deliveryapp.repos.ImageRepo;
 import com.example.deliveryapp.repos.ProductRepo;
 import com.example.deliveryapp.repos.RestaurantRepo;
 import com.example.deliveryapp.service.RestaurantService;
@@ -17,11 +20,17 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Base64Utils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import static com.example.deliveryapp.constants.Consts.BURGER_SHOP;
 
 @Service
 public class RestaurantServiceImpl implements RestaurantService {
@@ -34,6 +43,8 @@ public class RestaurantServiceImpl implements RestaurantService {
     private CityRepo cityRepo;
     @Autowired
     private ModelMapper mapper;
+    @Autowired
+    ImageRepo imageRepo;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -74,9 +85,20 @@ public class RestaurantServiceImpl implements RestaurantService {
 
 
     @Override
-    public void addProduct(MultipartFile file, String name, Double price, String type, String description, String ingredients, String restaurantName) throws IOException {
+    public void addProduct(
+            MultipartFile file,
+            String name,
+            Double price,
+            String type,
+            String description,
+            String ingredients,
+            String restaurantName,
+            boolean containsGluten,
+            boolean containsLactose,
+            boolean isVegetarian
+    ) throws IOException {
         if (this.productRepo.getProductByNameAndRestaurantName(name, restaurantName).isPresent()) {
-            throw new DeliveryCustomException(Constants.PRODUCT_ALREADY_EXISTS_IN_RESTAURANT_EXCEPTION.getMessage());
+            throw new DeliveryCustomException("Already exists this product in this restaurant");
         }
 
         Product product = Product.builder()
@@ -84,33 +106,39 @@ public class RestaurantServiceImpl implements RestaurantService {
                 .description(description)
                 .price(price)
                 .type(type)
-                .picture(ImageUtils.compressImage(file.getBytes()))
                 .ingredients(ingredients)
+                .containsGluten(containsGluten)
+                .containsLactose(containsLactose)
+                .isVegetarian(isVegetarian)
                 .build();
 
+        if(!file.isEmpty()){
+            Image image = new Image();
+            image.setName(file.getOriginalFilename());
+            image.setData(file.getBytes());
+            Image savedImage = imageRepo.save(image);
+
+            product.setImage(image);
+        }
+
+
+
         Restaurant restaurant = this.restaurantRepo.getRestaurantByName(restaurantName)
-                .orElseThrow(() -> new DeliveryCustomException(Constants.RESTAURANT_NOT_FOUND_BY_NAME_EXCEPTION.getMessage()));
+                .orElseThrow(() -> new DeliveryCustomException("There is no restaurant with this name"));
 
 
         restaurant.addProduct(product);
         this.restaurantRepo.save(restaurant);
     }
 
-    @Override
-    public byte[] getImageProduct(String restaurantName, String productName){
-
-        Product product = this.productRepo.getProductByNameAndRestaurantName(productName, restaurantName)
-                .orElseThrow(() -> new DeliveryCustomException(Constants.PRODUCT_NOT_FOUND_BY_RESTAURANT_AND_NAME.getMessage()));
-        return ImageUtils.decompressImage(product.getPicture());
-    }
 
     @Override
-    public List<ProductDTO> getRestaurantProducts(String restaurantName){
+    public List<ProductDTO> getRestaurantProducts(String restaurantName, String foodType){
 
         Restaurant restaurant = this.restaurantRepo.getRestaurantByName(restaurantName)
                 .orElseThrow(() -> new DeliveryCustomException(Constants.RESTAURANT_NOT_FOUND_BY_NAME_EXCEPTION.getMessage()));
 
-        List<Product> products = restaurant.getProducts();
+        List<Product> products = restaurant.getProducts().stream().filter(product -> product.getType().equals(foodType)).collect(Collectors.toList());
         if(products.isEmpty()){
             return new ArrayList<>();
         }else{
@@ -119,13 +147,17 @@ public class RestaurantServiceImpl implements RestaurantService {
             for(Product p: products){
 
                 ProductDTO productDTO = ProductDTO.builder()
+                        .id(p.getId())
                         .name(p.getName())
                         .price(p.getPrice())
                         .type(p.getType())
                         .description(p.getDescription())
                         .ingredients(p.getIngredients())
-                        .picture(ImageUtils.decompressImage(p.getPicture()))
+                        .imageId(p.getImage() != null ? p.getImage().getId() : -1)
                         .restaurantName(restaurant.getName())
+                        .containsLactose(p.getContainsLactose())
+                        .containsGluten(p.getContainsGluten())
+                        .isVegetarian(p.getIsVegetarian())
                         .build();
 
                 productDTOList.add(productDTO);
@@ -171,5 +203,59 @@ public class RestaurantServiceImpl implements RestaurantService {
         }else{
             throw new DeliveryCustomException(Constants.RESTAURANT_NOT_PRESENT_IN_CITY_EXCEPTION.getMessage());
         }
+    }
+    @Override
+    public ProductDTO getProductByName(String restaurantName, String productName){
+
+        Restaurant restaurant = this.restaurantRepo.getRestaurantByName(restaurantName)
+                .orElseThrow(() -> new DeliveryCustomException(Constants.RESTAURANT_NOT_FOUND_BY_NAME_EXCEPTION.getMessage()));
+        List<Product> products = restaurant.getProducts().stream().filter(product -> product.getName().equals(productName)).collect(Collectors.toList());
+
+        if(products.size() == 1){
+            Product p = products.get(0);
+            return ProductDTO.builder()
+                    .id(p.getId())
+                    .name(p.getName())
+                    .price(p.getPrice())
+                    .type(p.getType())
+                    .description(p.getDescription())
+                    .ingredients(p.getIngredients())
+                    .imageId(p.getImage() != null ? p.getImage().getId() : -1)                    .restaurantName(restaurant.getName())
+                    .containsLactose(p.getContainsLactose())
+                    .containsGluten(p.getContainsGluten())
+                    .isVegetarian(p.getIsVegetarian())
+                    .build();
+        }
+
+        throw new DeliveryCustomException("No product in this restaurant with this name");
+    }
+
+    @Override
+    public Set<ProductDTO> getProductsByIngredients(String foodType, String ingredientList){
+
+        List<ProductDTO> products = this.getRestaurantProducts(BURGER_SHOP, foodType);
+        List<String> ingredientsL = List.of(ingredientList.split(","));
+        Set<ProductDTO> productDTOList = new HashSet<>();
+
+
+        for(ProductDTO p: products){
+            for(String ingr: ingredientsL){
+                if(this.checkIfProductContainsIngredient(p, ingr)){
+                    productDTOList.add(p);
+                }
+            }
+        }
+        return productDTOList;
+    }
+
+    boolean checkIfProductContainsIngredient(ProductDTO product, String ingredient){
+
+        List<String> ingredients = List.of(product.getIngredients().split(","));
+        for(String ingr: ingredients){
+            if(ingr.equals(ingredient)){
+                return true;
+            }
+        }
+        return false;
     }
 }

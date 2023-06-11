@@ -13,8 +13,13 @@ import java.time.YearMonth;
 @NoArgsConstructor
 @Builder
 public class CardDTO {
+    private long id;
+    private String cardType;//mastercard sau visa
     private String cardNumber;
     private String cardHolderName;
     private String securityCode;
     private YearMonth expiryDate; //date must be: 04.2043 or 04-2024
+    private LocalDate fullExpiryDate;
+    private Boolean isDefault;
+
 }

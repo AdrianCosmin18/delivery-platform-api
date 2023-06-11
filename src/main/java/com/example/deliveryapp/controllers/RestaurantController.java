@@ -2,9 +2,12 @@ package com.example.deliveryapp.controllers;
 
 import com.example.deliveryapp.DTOs.ProductDTO;
 import com.example.deliveryapp.DTOs.RestaurantDTO;
+import com.example.deliveryapp.constants.FoodType;
 import com.example.deliveryapp.constants.Response;
 import com.example.deliveryapp.exceptions.InsertPictureException;
+import com.example.deliveryapp.models.Image;
 import com.example.deliveryapp.models.Product;
+import com.example.deliveryapp.repos.ImageRepo;
 import com.example.deliveryapp.service.RestaurantService;
 import jdk.jfr.ContentType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,13 +15,16 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
-import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 
 @RestController
 @RequestMapping("delivery-app/restaurant")
@@ -26,6 +32,9 @@ public class RestaurantController {
 
     @Autowired
     private RestaurantService restaurantService;
+
+    @Autowired
+    private ImageRepo imageRepo;
 
     @PostMapping("/{restaurantName}")
     public void addRestaurant(@PathVariable String restaurantName){
@@ -53,47 +62,61 @@ public class RestaurantController {
     }
 
 
-    @PostMapping(value = "/add-product", consumes = MULTIPART_FORM_DATA_VALUE)
-    public Response addProduct(@RequestParam(value = "photo") MultipartFile file,
+    @PostMapping("/add-product")
+    public Response addProduct(@RequestParam(value = "file")MultipartFile file,
                                @RequestParam(value = "name") String name,
                                @RequestParam(value = "price") Double price,
                                @RequestParam(value = "type") String type,
                                @RequestParam(value = "description") String description,
                                @RequestParam(value = "ingredients") String ingredients,
-                               @RequestParam(value = "restaurantName") String restaurantName) throws IOException {
+                               @RequestParam(value = "restaurantName") String restaurantName,
+                               @RequestParam(value = "containsGluten") Boolean containsGluten,
+                               @RequestParam(value = "containsLactose") Boolean containsLactose,
+                               @RequestParam(value = "isVegetarian") Boolean isVegetarian
+
+    ) throws IOException {
         try{
-            this.restaurantService.addProduct(file, name, price, type, description, ingredients, restaurantName);
-            return new Response("added with success", HttpStatus.OK);
+            this.restaurantService.addProduct(file, name, price, type, description, ingredients, restaurantName, containsGluten, containsLactose, isVegetarian);
+            return new Response("added with succes", HttpStatus.OK);
 
         }catch (IOException e){
             return new Response("Error on adding a product", HttpStatus.BAD_REQUEST);
         }
     }
 
-    @GetMapping(value = "/get-restaurant-products/{restaurantName}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<ProductDTO>> getRestaurantProducts(@PathVariable String restaurantName){
+    @GetMapping(value = "/get-restaurant-products/{restaurantName}")
+    public ResponseEntity<List<ProductDTO>> getRestaurantProducts(@PathVariable String restaurantName, @RequestParam(value = "type")String type){
 
-        List<ProductDTO> products = this.restaurantService.getRestaurantProducts(restaurantName);
-//        ResponseEntity<List<ProductDTO>> response = new ResponseEntity<>()
-        for(ProductDTO product : products){
+        return new ResponseEntity<List<ProductDTO>>(this.restaurantService.getRestaurantProducts(restaurantName, type), HttpStatus.OK);
+    }
 
-            byte[] imageData = product.getPicture();
-            if (imageData != null && imageData.length > 0) {
-                HttpHeaders headers = new HttpHeaders();
-                headers.setContentType(MediaType.IMAGE_PNG);
-                return new ResponseEntity<>(products, headers, HttpStatus.OK);
-            }
+    @GetMapping("/get-image-product/{imageId}")
+    public ResponseEntity<byte[]> getImageById(@PathVariable long imageId){
+
+        Optional<Image> optionalImage = imageRepo.findById(imageId);
+        if (optionalImage.isPresent()) {
+            Image image = optionalImage.get();
+
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + image.getName() + "\"")
+                    .body(image.getData());
+        } else {
+            return ResponseEntity.notFound().build();
         }
-
-        return new ResponseEntity<List<ProductDTO>>(this.restaurantService.getRestaurantProducts(restaurantName), HttpStatus.OK);
     }
 
-    @GetMapping("/get-product-photo")
-    public ResponseEntity<?> getProductImage(@RequestParam(value = "restaurantName") String restaurantName, @RequestParam(value = "productName") String productName){
-        byte [] image = this.restaurantService.getImageProduct(restaurantName, productName);
-        return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.valueOf("image/png")).body(image);
+    @GetMapping("/get-product-by-restaurant-and-product-Name/{restaurantName}")
+    public ProductDTO getProductByRestaurantAndProductName(@PathVariable String restaurantName, @RequestParam(value = "productName")String productName){
+        return this.restaurantService.getProductByName(restaurantName,productName);
     }
 
+    @PostMapping("/get-products-by-ingredients")
+//    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
+    public Set<ProductDTO> getProductsByIngredients(
+            @RequestParam(value = "foodType") String foodType,
+            @RequestParam(value = "ingredientList") String ingredientList){
+        return this.restaurantService.getProductsByIngredients(foodType, ingredientList);
+    }
 
 
 }

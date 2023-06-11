@@ -19,9 +19,13 @@ public class CreateOrderRequest implements Serializable {
 
     private String emailUser;
     @Builder.Default
-    private List<ProductCart> productsInCart = new ArrayList<>();
-    private String cardNumber;
-    private AddressDTO addressDTO;
-
+    private List<OrderItemDTO> productsInCart = new ArrayList<>();
+    private Long cardId;
+    private Long addressId;
+    private Double productsAmount;
+    private Double deliveryTax;
+    private Double tipsTax;
+    private Double totalAmount;
+    private String commentsSection;
 
 }
