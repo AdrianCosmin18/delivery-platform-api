@@ -51,8 +51,6 @@ public class UserServiceImpl implements UserService {
     private CardRepo cardRepo;
     @Autowired
     private ProductRepo productRepo;
-    //    @Autowired
-//    private CartRepo cartRepo;
     @Autowired
     private OrderRepo orderRepo;
     @Autowired
@@ -187,23 +185,22 @@ public class UserServiceImpl implements UserService {
         User user = this.userRepo.getUserByEmail(email)
                 .orElseThrow(() -> new DeliveryCustomException(Constants.USER_NOT_FOUND_BY_EMAIL.getMessage()));
 
-        List<Address> addresses = user.getAddresses()
-                .stream()
-                .filter(adr -> adr.getId() == addressId)
-                .collect(Collectors.toList());
+        List<Address> userAddresses = user.getAddresses();
 
-        if (addresses.size() > 1){
-            throw new DeliveryCustomException("Error: there are more addresses with the same id");
-        }
 
-        List<Address> addressList = user.getAddresses();
-        int index = this.indexAddress(addressId, addressList);
-        if(index != -1){
-            addressList.remove(index);
+        if(userAddresses.stream().anyMatch(address -> address.getId().equals(addressId))){
+
+            List<Address> addresses = user.getAddresses()
+                    .stream()
+                    .filter(adr -> adr.getId() == addressId)
+                    .collect(Collectors.toList());
+
+            Address address = addresses.get(0);
+            user.deleteAddress(address);
             this.userRepo.saveAndFlush(user);
-
+            this.orderRepo.updateOrderByAddressId(addressId);
         }else{
-            throw new RuntimeException("Eroare");
+            throw new DeliveryCustomException(Constants.USER_NOT_OWN_ADDRESS_EXCEPTION.getMessage());
         }
     }
 
@@ -623,14 +620,20 @@ public class UserServiceImpl implements UserService {
         List<OrderDTO> userOrdersDto = new ArrayList<>();
         for(Order order: userOrders){
 
-            String addressToString =
-                    order.getAddress().getStreet() + ", nr." +
-                            order.getAddress().getNumber() + ", " +
-                            order.getAddress().getCity().getName();
+            String addressToString = "";
+            String city = "";
+            if(order.getAddress() != null){
+                addressToString += order.getAddress().getStreet() + ", nr." +
+                        order.getAddress().getNumber() + ", " +
+                        order.getAddress().getCity().getName();
 
-            String cardNumber = "***" + order.getCard().getCardNumber().substring(order.getCard().getCardNumber().length() - 4);
+                city = order.getAddress().getCity().getName();
+            }
 
-
+            String cardNumber = "***";
+            if(order.getCard() != null){
+                cardNumber += order.getCard().getCardNumber().substring(order.getCard().getCardNumber().length() - 4);
+            }
             OrderDTO orderDTO = OrderDTO.builder()
                     .amount(order.getAmount())
                     .commentsSection(order.getCommentsSection())
@@ -646,7 +649,7 @@ public class UserServiceImpl implements UserService {
                     .productsAmount(order.getProductsAmount())
                     .id(order.getId())
                     .addressToString(addressToString)
-                    .city(order.getAddress().getCity().getName())
+                    .city(city)
                     .cardNumber(cardNumber)
                     .username(user.getLastName() + " " + user.getFirstName())
                     .build();

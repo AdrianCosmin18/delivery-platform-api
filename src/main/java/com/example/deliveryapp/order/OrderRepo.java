@@ -23,4 +23,8 @@ public interface OrderRepo extends JpaRepository<Order, Long>, JpaSpecificationE
     @Query("UPDATE Order o SET o.card = null WHERE o.card.id = :cardId")
     @Modifying
     void updateOrderByCardId(@Param("cardId") Long cardId);
+
+    @Query("UPDATE Order o SET o.address = null WHERE o.address.id = :addressId")
+    @Modifying
+    void updateOrderByAddressId(@Param("addressId") Long addressId);
 }

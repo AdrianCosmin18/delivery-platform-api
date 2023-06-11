@@ -33,11 +33,12 @@ public class OrderServiceImpl implements OrderService {
         Order order = this.orderRepo.findById(id)
                 .orElseThrow(() -> new DeliveryCustomException(Constants.ORDER_NOT_FOUND_BY_ID.getMessage()));
 
-
-        String addressToString =
-                order.getAddress().getStreet() + ", nr." +
-                        order.getAddress().getNumber() + ", " +
-                        order.getAddress().getCity().getName();
+        String addressToString = "";
+        if(order.getAddress() != null){
+            addressToString += order.getAddress().getStreet() + ", nr." +
+                    order.getAddress().getNumber() + ", " +
+                    order.getAddress().getCity().getName();
+        }
 
         String cardNumber = "***";
         if(order.getCard() != null){
@@ -115,10 +116,15 @@ public class OrderServiceImpl implements OrderService {
         List<OrderDTO> orderDTOList = new ArrayList<>();
         for(Order order: orders){
 
-            String addressToString =
-                    order.getAddress().getStreet() + ", nr." +
-                            order.getAddress().getNumber() + ", " +
-                            order.getAddress().getCity().getName();
+            String addressToString = "";
+            String city = "";
+            if(order.getAddress() != null){
+                addressToString += order.getAddress().getStreet() + ", nr." +
+                        order.getAddress().getNumber() + ", " +
+                        order.getAddress().getCity().getName();
+
+                city = order.getAddress().getCity().getName();
+            }
 
             String cardNumber = "***";
             if(order.getCard() != null){
@@ -141,7 +147,7 @@ public class OrderServiceImpl implements OrderService {
                     .productsAmount(order.getProductsAmount())
                     .id(order.getId())
                     .addressToString(addressToString)
-                    .city(order.getAddress().getCity().getName())
+                    .city(city)
                     .cardNumber(cardNumber)
                     .username(order.getUser().getLastName() + " " + order.getUser().getFirstName())
                     .build();
@@ -179,10 +185,15 @@ public class OrderServiceImpl implements OrderService {
         List<OrderDTO> orderDTOList = new ArrayList<>();
         for(Order order: orders){
 
-            String addressToString =
-                    order.getAddress().getStreet() + ", nr." +
-                            order.getAddress().getNumber() + ", " +
-                            order.getAddress().getCity().getName();
+            String addressToString = "";
+            String city = "";
+            if(order.getAddress() != null){
+                addressToString += order.getAddress().getStreet() + ", nr." +
+                        order.getAddress().getNumber() + ", " +
+                        order.getAddress().getCity().getName();
+
+                city = order.getAddress().getCity().getName();
+            }
 
             String cardNumber = "***";
             if(order.getCard() != null){
@@ -205,7 +216,7 @@ public class OrderServiceImpl implements OrderService {
                     .productsAmount(order.getProductsAmount())
                     .id(order.getId())
                     .addressToString(addressToString)
-                    .city(order.getAddress().getCity().getName())
+                    .city(city)
                     .cardNumber(cardNumber)
                     .username(order.getUser().getLastName() + " " + order.getUser().getFirstName())
                     .build();
@@ -258,10 +269,15 @@ public class OrderServiceImpl implements OrderService {
         List<OrderDTO> orderDTOList = new ArrayList<>();
         for(Order order: orders){
 
-            String addressToString =
-                    order.getAddress().getStreet() + ", nr." +
-                            order.getAddress().getNumber() + ", " +
-                            order.getAddress().getCity().getName();
+            String addressToString = "";
+            String city = "";
+            if(order.getAddress() != null){
+                addressToString += order.getAddress().getStreet() + ", nr." +
+                        order.getAddress().getNumber() + ", " +
+                        order.getAddress().getCity().getName();
+
+                city = order.getAddress().getCity().getName();
+            }
 
             String cardNumber = "***";
             if(order.getCard() != null){
@@ -285,7 +301,7 @@ public class OrderServiceImpl implements OrderService {
                     .productsAmount(order.getProductsAmount())
                     .id(order.getId())
                     .addressToString(addressToString)
-                    .city(order.getAddress().getCity().getName())
+                    .city(city)
                     .cardNumber(cardNumber)
                     .username(order.getUser().getLastName() + " " + order.getUser().getFirstName())
                     .build();
@@ -326,10 +342,15 @@ public class OrderServiceImpl implements OrderService {
         List<OrderDTO> orderDTOList = new ArrayList<>();
         for(Order order: orders){
 
-            String addressToString =
-                    order.getAddress().getStreet() + ", nr." +
-                            order.getAddress().getNumber() + ", " +
-                            order.getAddress().getCity().getName();
+            String addressToString = "";
+            String city = "";
+            if(order.getAddress() != null){
+                addressToString += order.getAddress().getStreet() + ", nr." +
+                        order.getAddress().getNumber() + ", " +
+                        order.getAddress().getCity().getName();
+
+                city = order.getAddress().getCity().getName();
+            }
 
             String cardNumber = "***";
             if(order.getCard() != null){
@@ -353,7 +374,7 @@ public class OrderServiceImpl implements OrderService {
                     .productsAmount(order.getProductsAmount())
                     .id(order.getId())
                     .addressToString(addressToString)
-                    .city(order.getAddress().getCity().getName())
+                    .city(city)
                     .cardNumber(cardNumber)
                     .username(order.getUser().getLastName() + " " + order.getUser().getFirstName())
                     .build();
@@ -410,10 +431,15 @@ public class OrderServiceImpl implements OrderService {
         List<OrderDTO> orderDTOList = new ArrayList<>();
         for(Order order: orders){
 
-            String addressToString =
-                    order.getAddress().getStreet() + ", nr." +
-                            order.getAddress().getNumber() + ", " +
-                            order.getAddress().getCity().getName();
+            String addressToString = "";
+            String city = "";
+            if(order.getAddress() != null){
+                addressToString += order.getAddress().getStreet() + ", nr." +
+                        order.getAddress().getNumber() + ", " +
+                        order.getAddress().getCity().getName();
+
+                city = order.getAddress().getCity().getName();
+            }
 
             String cardNumber = "***";
             if(order.getCard() != null){
@@ -437,7 +463,7 @@ public class OrderServiceImpl implements OrderService {
                     .productsAmount(order.getProductsAmount())
                     .id(order.getId())
                     .addressToString(addressToString)
-                    .city(order.getAddress().getCity().getName())
+                    .city(city)
                     .cardNumber(cardNumber)
                     .username(order.getUser().getLastName() + " " + order.getUser().getFirstName())
                     .build();
@@ -482,11 +508,15 @@ public class OrderServiceImpl implements OrderService {
         List<OrderDTO> orderDTOList = new ArrayList<>();
         for(Order order: orders){
 
-            String addressToString =
-                    order.getAddress().getStreet() + ", nr." +
-                            order.getAddress().getNumber() + ", " +
-                            order.getAddress().getCity().getName();
+            String addressToString = "";
+            String city = "";
+            if(order.getAddress() != null){
+                addressToString += order.getAddress().getStreet() + ", nr." +
+                        order.getAddress().getNumber() + ", " +
+                        order.getAddress().getCity().getName();
 
+                city = order.getAddress().getCity().getName();
+            }
             String cardNumber = "***";
             if(order.getCard() != null){
                 cardNumber += order.getCard().getCardNumber().substring(order.getCard().getCardNumber().length() - 4);
@@ -509,7 +539,7 @@ public class OrderServiceImpl implements OrderService {
                     .productsAmount(order.getProductsAmount())
                     .id(order.getId())
                     .addressToString(addressToString)
-                    .city(order.getAddress().getCity().getName())
+                    .city(city)
                     .cardNumber(cardNumber)
                     .username(order.getUser().getLastName() + " " + order.getUser().getFirstName())
                     .build();
@@ -574,10 +604,15 @@ public class OrderServiceImpl implements OrderService {
         List<OrderDTO> orderDTOList = new ArrayList<>();
         for(Order order: orders){
 
-            String addressToString =
-                    order.getAddress().getStreet() + ", nr." +
-                            order.getAddress().getNumber() + ", " +
-                            order.getAddress().getCity().getName();
+            String addressToString = "";
+            String city = "";
+            if(order.getAddress() != null){
+                addressToString += order.getAddress().getStreet() + ", nr." +
+                        order.getAddress().getNumber() + ", " +
+                        order.getAddress().getCity().getName();
+
+                city = order.getAddress().getCity().getName();
+            }
 
             String cardNumber = "***";
             if(order.getCard() != null){
@@ -601,7 +636,7 @@ public class OrderServiceImpl implements OrderService {
                     .productsAmount(order.getProductsAmount())
                     .id(order.getId())
                     .addressToString(addressToString)
-                    .city(order.getAddress().getCity().getName())
+                    .city(city)
                     .cardNumber(cardNumber)
                     .username(order.getUser().getLastName() + " " + order.getUser().getFirstName())
                     .build();
@@ -650,10 +685,15 @@ public class OrderServiceImpl implements OrderService {
         List<OrderDTO> orderDTOList = new ArrayList<>();
         for(Order order: orders){
 
-            String addressToString =
-                    order.getAddress().getStreet() + ", nr." +
-                            order.getAddress().getNumber() + ", " +
-                            order.getAddress().getCity().getName();
+            String addressToString = "";
+            String city = "";
+            if(order.getAddress() != null){
+                addressToString += order.getAddress().getStreet() + ", nr." +
+                        order.getAddress().getNumber() + ", " +
+                        order.getAddress().getCity().getName();
+
+                city = order.getAddress().getCity().getName();
+            }
 
             String cardNumber = "***";
             if(order.getCard() != null){
@@ -677,7 +717,7 @@ public class OrderServiceImpl implements OrderService {
                     .productsAmount(order.getProductsAmount())
                     .id(order.getId())
                     .addressToString(addressToString)
-                    .city(order.getAddress().getCity().getName())
+                    .city(city)
                     .cardNumber(cardNumber)
                     .username(order.getUser().getLastName() + " " + order.getUser().getFirstName())
                     .build();
@@ -722,10 +762,15 @@ public class OrderServiceImpl implements OrderService {
         List<OrderDTO> orderDTOList = new ArrayList<>();
         for(Order order: orders){
 
-            String addressToString =
-                    order.getAddress().getStreet() + ", nr." +
-                            order.getAddress().getNumber() + ", " +
-                            order.getAddress().getCity().getName();
+            String addressToString = "";
+            String city = "";
+            if(order.getAddress() != null){
+                addressToString += order.getAddress().getStreet() + ", nr." +
+                        order.getAddress().getNumber() + ", " +
+                        order.getAddress().getCity().getName();
+
+                city = order.getAddress().getCity().getName();
+            }
 
             String cardNumber = "***";
             if(order.getCard() != null){
@@ -749,7 +794,7 @@ public class OrderServiceImpl implements OrderService {
                     .productsAmount(order.getProductsAmount())
                     .id(order.getId())
                     .addressToString(addressToString)
-                    .city(order.getAddress().getCity().getName())
+                    .city(city)
                     .cardNumber(cardNumber)
                     .username(order.getUser().getLastName() + " " + order.getUser().getFirstName())
                     .build();
@@ -795,10 +840,15 @@ public class OrderServiceImpl implements OrderService {
         List<OrderDTO> orderDTOList = new ArrayList<>();
         for(Order order: orders){
 
-            String addressToString =
-                    order.getAddress().getStreet() + ", nr." +
-                            order.getAddress().getNumber() + ", " +
-                            order.getAddress().getCity().getName();
+            String addressToString = "";
+            String city = "";
+            if(order.getAddress() != null){
+                addressToString += order.getAddress().getStreet() + ", nr." +
+                        order.getAddress().getNumber() + ", " +
+                        order.getAddress().getCity().getName();
+
+                city = order.getAddress().getCity().getName();
+            }
 
             String cardNumber = "***";
             if(order.getCard() != null){
@@ -822,7 +872,7 @@ public class OrderServiceImpl implements OrderService {
                     .productsAmount(order.getProductsAmount())
                     .id(order.getId())
                     .addressToString(addressToString)
-                    .city(order.getAddress().getCity().getName())
+                    .city(city)
                     .cardNumber(cardNumber)
                     .username(order.getUser().getLastName() + " " + order.getUser().getFirstName())
                     .build();
@@ -846,10 +896,15 @@ public class OrderServiceImpl implements OrderService {
         List<OrderDTO> orderDTOList = new ArrayList<>();
         for(Order order: orders){
 
-            String addressToString =
-                    order.getAddress().getStreet() + ", nr." +
-                            order.getAddress().getNumber() + ", " +
-                            order.getAddress().getCity().getName();
+            String addressToString = "";
+            String city = "";
+            if(order.getAddress() != null){
+                addressToString += order.getAddress().getStreet() + ", nr." +
+                        order.getAddress().getNumber() + ", " +
+                        order.getAddress().getCity().getName();
+
+                city = order.getAddress().getCity().getName();
+            }
 
             String cardNumber = "***";
             if(order.getCard() != null){
@@ -873,7 +928,7 @@ public class OrderServiceImpl implements OrderService {
                     .productsAmount(order.getProductsAmount())
                     .id(order.getId())
                     .addressToString(addressToString)
-                    .city(order.getAddress().getCity().getName())
+                    .city(city)
                     .cardNumber(cardNumber)
                     .username(order.getUser().getLastName() + " " + order.getUser().getFirstName())
                     .build();
@@ -898,10 +953,15 @@ public class OrderServiceImpl implements OrderService {
         List<OrderDTO> orderDTOList = new ArrayList<>();
         for(Order order: orders){
 
-            String addressToString =
-                    order.getAddress().getStreet() + ", nr." +
-                            order.getAddress().getNumber() + ", " +
-                            order.getAddress().getCity().getName();
+            String addressToString = "";
+            String city = "";
+            if(order.getAddress() != null){
+                addressToString += order.getAddress().getStreet() + ", nr." +
+                        order.getAddress().getNumber() + ", " +
+                        order.getAddress().getCity().getName();
+
+                city = order.getAddress().getCity().getName();
+            }
 
             String cardNumber = "***";
             if(order.getCard() != null){
@@ -925,7 +985,7 @@ public class OrderServiceImpl implements OrderService {
                     .productsAmount(order.getProductsAmount())
                     .id(order.getId())
                     .addressToString(addressToString)
-                    .city(order.getAddress().getCity().getName())
+                    .city(city)
                     .cardNumber(cardNumber)
                     .username(order.getUser().getLastName() + " " + order.getUser().getFirstName())
                     .build();
