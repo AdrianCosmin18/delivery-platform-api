@@ -1,6 +1,6 @@
 package com.example.deliveryapp.DTOs;
 
-import com.example.deliveryapp.models.City;
+import com.example.deliveryapp.city.City;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
