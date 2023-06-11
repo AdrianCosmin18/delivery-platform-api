@@ -14,13 +14,11 @@ import com.example.deliveryapp.repos.ImageRepo;
 import com.example.deliveryapp.repos.ProductRepo;
 import com.example.deliveryapp.repos.RestaurantRepo;
 import com.example.deliveryapp.service.RestaurantService;
-import com.example.deliveryapp.utils.ImageUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Base64Utils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
