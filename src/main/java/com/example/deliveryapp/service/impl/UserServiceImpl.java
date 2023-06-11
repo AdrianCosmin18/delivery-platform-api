@@ -10,6 +10,7 @@ import com.example.deliveryapp.security.security.UserRole;
 import com.example.deliveryapp.service.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +27,7 @@ import static com.example.deliveryapp.constants.Consts.MASTERCARD;
 import static com.example.deliveryapp.constants.Consts.VISA;
 
 @Service
+@Transactional
 public class UserServiceImpl implements UserService {
 
     @Autowired
@@ -423,6 +425,8 @@ public class UserServiceImpl implements UserService {
         if(userCards.stream().anyMatch(card -> card.getCardNumber().equals(cardNumber))){
 
             List<Card> cards = userCards.stream().filter(card1 -> card1.getCardNumber().equals(cardNumber)).collect(Collectors.toList());
+            Card card = cards.get(0);
+            card.getOrders().forEach(card::deleteOrder);
             user.deleteCard(cards.get(0));
 
             this.userRepo.save(user);
@@ -439,16 +443,24 @@ public class UserServiceImpl implements UserService {
 
         List<Card> userCards = user.getCards();
 
+
+
         if(userCards.stream().anyMatch(card -> card.getId().equals(cardId))){
 
             List<Card> cards = userCards.stream().filter(card1 -> card1.getId() == cardId).collect(Collectors.toList());
+            Card card = cards.get(0);
             user.deleteCard(cards.get(0));
 
-            this.userRepo.save(user);
+            this.userRepo.saveAndFlush(user);
+
+            this.orderRepo.updateOrderByCardId(cardId);
+
         }else{
             throw new DeliveryCustomException(Constants.USER_CARD_NOT_OWN_EXCEPTION.getMessage());
         }
     }
+
+
 
     @Override
     public void setAsMainCard(String email, long cardId){

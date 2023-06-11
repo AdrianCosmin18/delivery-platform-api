@@ -87,4 +87,9 @@ public class Card {
         this.orders.add(order);
         order.setCard(this);
     }
+
+    public void deleteOrder(Order order){
+        this.orders.remove(order);
+        order.setCard(null);
+    }
 }

@@ -42,7 +42,11 @@ public class OrderServiceImpl implements OrderService {
                         order.getAddress().getNumber() + ", " +
                         order.getAddress().getCity().getName();
 
-        String cardNumber = "***" + order.getCard().getCardNumber().substring(order.getCard().getCardNumber().length() - 4);
+        String cardNumber = "***";
+        if(order.getCard() != null){
+            cardNumber += order.getCard().getCardNumber().substring(order.getCard().getCardNumber().length() - 4);
+        }
+//        String cardNumber = "***" + order.getCard().getCardNumber().substring(order.getCard().getCardNumber().length() - 4);
 
 
             return OrderDTO.builder()
@@ -119,12 +123,11 @@ public class OrderServiceImpl implements OrderService {
                             order.getAddress().getNumber() + ", " +
                             order.getAddress().getCity().getName();
 
-            String cardNumber = "***" + order.getCard().getCardNumber().substring(order.getCard().getCardNumber().length() - 4);
-
-//            String placedOrderTime = "";
-//            if(order.getPlacedOrderTime() != null){
-//                placedOrderTime = order.getPlacedOrderTime().toString();
-//            }
+            String cardNumber = "***";
+            if(order.getCard() != null){
+                cardNumber += order.getCard().getCardNumber().substring(order.getCard().getCardNumber().length() - 4);
+            }
+//        String cardNumber = "***" + order.getCard().getCardNumber().substring(order.getCard().getCardNumber().length() - 4);
 
             OrderDTO orderDTO = OrderDTO.builder()
                     .amount(order.getAmount())
@@ -184,8 +187,11 @@ public class OrderServiceImpl implements OrderService {
                             order.getAddress().getNumber() + ", " +
                             order.getAddress().getCity().getName();
 
-            String cardNumber = "***" + order.getCard().getCardNumber().substring(order.getCard().getCardNumber().length() - 4);
-
+            String cardNumber = "***";
+            if(order.getCard() != null){
+                cardNumber += order.getCard().getCardNumber().substring(order.getCard().getCardNumber().length() - 4);
+            }
+//        String cardNumber = "***" + order.getCard().getCardNumber().substring(order.getCard().getCardNumber().length() - 4);
 
             OrderDTO orderDTO = OrderDTO.builder()
                     .amount(order.getAmount())
@@ -260,7 +266,11 @@ public class OrderServiceImpl implements OrderService {
                             order.getAddress().getNumber() + ", " +
                             order.getAddress().getCity().getName();
 
-            String cardNumber = "***" + order.getCard().getCardNumber().substring(order.getCard().getCardNumber().length() - 4);
+            String cardNumber = "***";
+            if(order.getCard() != null){
+                cardNumber += order.getCard().getCardNumber().substring(order.getCard().getCardNumber().length() - 4);
+            }
+//        String cardNumber = "***" + order.getCard().getCardNumber().substring(order.getCard().getCardNumber().length() - 4);
 
 
             OrderDTO orderDTO = OrderDTO.builder()
@@ -324,7 +334,11 @@ public class OrderServiceImpl implements OrderService {
                             order.getAddress().getNumber() + ", " +
                             order.getAddress().getCity().getName();
 
-            String cardNumber = "***" + order.getCard().getCardNumber().substring(order.getCard().getCardNumber().length() - 4);
+            String cardNumber = "***";
+            if(order.getCard() != null){
+                cardNumber += order.getCard().getCardNumber().substring(order.getCard().getCardNumber().length() - 4);
+            }
+//        String cardNumber = "***" + order.getCard().getCardNumber().substring(order.getCard().getCardNumber().length() - 4);
 
 
             OrderDTO orderDTO = OrderDTO.builder()
@@ -404,7 +418,11 @@ public class OrderServiceImpl implements OrderService {
                             order.getAddress().getNumber() + ", " +
                             order.getAddress().getCity().getName();
 
-            String cardNumber = "***" + order.getCard().getCardNumber().substring(order.getCard().getCardNumber().length() - 4);
+            String cardNumber = "***";
+            if(order.getCard() != null){
+                cardNumber += order.getCard().getCardNumber().substring(order.getCard().getCardNumber().length() - 4);
+            }
+//        String cardNumber = "***" + order.getCard().getCardNumber().substring(order.getCard().getCardNumber().length() - 4);
 
 
             OrderDTO orderDTO = OrderDTO.builder()
@@ -472,7 +490,11 @@ public class OrderServiceImpl implements OrderService {
                             order.getAddress().getNumber() + ", " +
                             order.getAddress().getCity().getName();
 
-            String cardNumber = "***" + order.getCard().getCardNumber().substring(order.getCard().getCardNumber().length() - 4);
+            String cardNumber = "***";
+            if(order.getCard() != null){
+                cardNumber += order.getCard().getCardNumber().substring(order.getCard().getCardNumber().length() - 4);
+            }
+//        String cardNumber = "***" + order.getCard().getCardNumber().substring(order.getCard().getCardNumber().length() - 4);
 
 
             OrderDTO orderDTO = OrderDTO.builder()
@@ -560,7 +582,11 @@ public class OrderServiceImpl implements OrderService {
                             order.getAddress().getNumber() + ", " +
                             order.getAddress().getCity().getName();
 
-            String cardNumber = "***" + order.getCard().getCardNumber().substring(order.getCard().getCardNumber().length() - 4);
+            String cardNumber = "***";
+            if(order.getCard() != null){
+                cardNumber += order.getCard().getCardNumber().substring(order.getCard().getCardNumber().length() - 4);
+            }
+//        String cardNumber = "***" + order.getCard().getCardNumber().substring(order.getCard().getCardNumber().length() - 4);
 
 
             OrderDTO orderDTO = OrderDTO.builder()
@@ -632,7 +658,11 @@ public class OrderServiceImpl implements OrderService {
                             order.getAddress().getNumber() + ", " +
                             order.getAddress().getCity().getName();
 
-            String cardNumber = "***" + order.getCard().getCardNumber().substring(order.getCard().getCardNumber().length() - 4);
+            String cardNumber = "***";
+            if(order.getCard() != null){
+                cardNumber += order.getCard().getCardNumber().substring(order.getCard().getCardNumber().length() - 4);
+            }
+//        String cardNumber = "***" + order.getCard().getCardNumber().substring(order.getCard().getCardNumber().length() - 4);
 
 
             OrderDTO orderDTO = OrderDTO.builder()
@@ -700,7 +730,11 @@ public class OrderServiceImpl implements OrderService {
                             order.getAddress().getNumber() + ", " +
                             order.getAddress().getCity().getName();
 
-            String cardNumber = "***" + order.getCard().getCardNumber().substring(order.getCard().getCardNumber().length() - 4);
+            String cardNumber = "***";
+            if(order.getCard() != null){
+                cardNumber += order.getCard().getCardNumber().substring(order.getCard().getCardNumber().length() - 4);
+            }
+//        String cardNumber = "***" + order.getCard().getCardNumber().substring(order.getCard().getCardNumber().length() - 4);
 
 
             OrderDTO orderDTO = OrderDTO.builder()
@@ -769,7 +803,11 @@ public class OrderServiceImpl implements OrderService {
                             order.getAddress().getNumber() + ", " +
                             order.getAddress().getCity().getName();
 
-            String cardNumber = "***" + order.getCard().getCardNumber().substring(order.getCard().getCardNumber().length() - 4);
+            String cardNumber = "***";
+            if(order.getCard() != null){
+                cardNumber += order.getCard().getCardNumber().substring(order.getCard().getCardNumber().length() - 4);
+            }
+//        String cardNumber = "***" + order.getCard().getCardNumber().substring(order.getCard().getCardNumber().length() - 4);
 
 
             OrderDTO orderDTO = OrderDTO.builder()
@@ -816,7 +854,11 @@ public class OrderServiceImpl implements OrderService {
                             order.getAddress().getNumber() + ", " +
                             order.getAddress().getCity().getName();
 
-            String cardNumber = "***" + order.getCard().getCardNumber().substring(order.getCard().getCardNumber().length() - 4);
+            String cardNumber = "***";
+            if(order.getCard() != null){
+                cardNumber += order.getCard().getCardNumber().substring(order.getCard().getCardNumber().length() - 4);
+            }
+//        String cardNumber = "***" + order.getCard().getCardNumber().substring(order.getCard().getCardNumber().length() - 4);
 
 
             OrderDTO orderDTO = OrderDTO.builder()
@@ -864,7 +906,11 @@ public class OrderServiceImpl implements OrderService {
                             order.getAddress().getNumber() + ", " +
                             order.getAddress().getCity().getName();
 
-            String cardNumber = "***" + order.getCard().getCardNumber().substring(order.getCard().getCardNumber().length() - 4);
+            String cardNumber = "***";
+            if(order.getCard() != null){
+                cardNumber += order.getCard().getCardNumber().substring(order.getCard().getCardNumber().length() - 4);
+            }
+//        String cardNumber = "***" + order.getCard().getCardNumber().substring(order.getCard().getCardNumber().length() - 4);
 
 
             OrderDTO orderDTO = OrderDTO.builder()
