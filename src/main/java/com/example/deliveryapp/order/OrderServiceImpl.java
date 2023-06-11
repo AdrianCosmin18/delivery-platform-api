@@ -33,19 +33,20 @@ public class OrderServiceImpl implements OrderService {
         Order order = this.orderRepo.findById(id)
                 .orElseThrow(() -> new DeliveryCustomException(Constants.ORDER_NOT_FOUND_BY_ID.getMessage()));
 
-        String addressToString = "";
+        String addressToString = order.getInitialAddress();
+        String city = order.getInitialCityName();
         if(order.getAddress() != null){
-            addressToString += order.getAddress().getStreet() + ", nr." +
+            addressToString = order.getAddress().getStreet() + ", nr." +
                     order.getAddress().getNumber() + ", " +
                     order.getAddress().getCity().getName();
+
+            city = order.getAddress().getCity().getName();
         }
 
-        String cardNumber = "***";
+        String cardNumber = order.getInitialCardNumber();
         if(order.getCard() != null){
-            cardNumber += order.getCard().getCardNumber().substring(order.getCard().getCardNumber().length() - 4);
+            cardNumber = "***" + order.getCard().getCardNumber().substring(order.getCard().getCardNumber().length() - 4);
         }
-//        String cardNumber = "***" + order.getCard().getCardNumber().substring(order.getCard().getCardNumber().length() - 4);
-
 
             return OrderDTO.builder()
                 .amount(order.getAmount())
@@ -116,21 +117,20 @@ public class OrderServiceImpl implements OrderService {
         List<OrderDTO> orderDTOList = new ArrayList<>();
         for(Order order: orders){
 
-            String addressToString = "";
-            String city = "";
+            String addressToString = order.getInitialAddress();
+            String city = order.getInitialCityName();
             if(order.getAddress() != null){
-                addressToString += order.getAddress().getStreet() + ", nr." +
+                addressToString = order.getAddress().getStreet() + ", nr." +
                         order.getAddress().getNumber() + ", " +
                         order.getAddress().getCity().getName();
 
                 city = order.getAddress().getCity().getName();
             }
 
-            String cardNumber = "***";
+            String cardNumber = order.getInitialCardNumber();
             if(order.getCard() != null){
-                cardNumber += order.getCard().getCardNumber().substring(order.getCard().getCardNumber().length() - 4);
+                cardNumber = "***" + order.getCard().getCardNumber().substring(order.getCard().getCardNumber().length() - 4);
             }
-//        String cardNumber = "***" + order.getCard().getCardNumber().substring(order.getCard().getCardNumber().length() - 4);
 
             OrderDTO orderDTO = OrderDTO.builder()
                     .amount(order.getAmount())
@@ -178,28 +178,27 @@ public class OrderServiceImpl implements OrderService {
 
         List<Order> orders = this.orderRepo.findAll(combinedSpecification)
                 .stream()
-                .filter(order -> order.getAddress().getCity().getName().equals(cityName))
+                .filter(order -> order.getInitialCityName().equals(cityName))
                 .collect(Collectors.toList());
 
 
         List<OrderDTO> orderDTOList = new ArrayList<>();
         for(Order order: orders){
 
-            String addressToString = "";
-            String city = "";
+            String addressToString = order.getInitialAddress();
+            String city = order.getInitialCityName();
             if(order.getAddress() != null){
-                addressToString += order.getAddress().getStreet() + ", nr." +
+                addressToString = order.getAddress().getStreet() + ", nr." +
                         order.getAddress().getNumber() + ", " +
                         order.getAddress().getCity().getName();
 
                 city = order.getAddress().getCity().getName();
             }
 
-            String cardNumber = "***";
+            String cardNumber = order.getInitialCardNumber();
             if(order.getCard() != null){
-                cardNumber += order.getCard().getCardNumber().substring(order.getCard().getCardNumber().length() - 4);
+                cardNumber = "***" + order.getCard().getCardNumber().substring(order.getCard().getCardNumber().length() - 4);
             }
-//        String cardNumber = "***" + order.getCard().getCardNumber().substring(order.getCard().getCardNumber().length() - 4);
 
             OrderDTO orderDTO = OrderDTO.builder()
                     .amount(order.getAmount())
@@ -269,22 +268,20 @@ public class OrderServiceImpl implements OrderService {
         List<OrderDTO> orderDTOList = new ArrayList<>();
         for(Order order: orders){
 
-            String addressToString = "";
-            String city = "";
+            String addressToString = order.getInitialAddress();
+            String city = order.getInitialCityName();
             if(order.getAddress() != null){
-                addressToString += order.getAddress().getStreet() + ", nr." +
+                addressToString = order.getAddress().getStreet() + ", nr." +
                         order.getAddress().getNumber() + ", " +
                         order.getAddress().getCity().getName();
 
                 city = order.getAddress().getCity().getName();
             }
 
-            String cardNumber = "***";
+            String cardNumber = order.getInitialCardNumber();
             if(order.getCard() != null){
-                cardNumber += order.getCard().getCardNumber().substring(order.getCard().getCardNumber().length() - 4);
+                cardNumber = "***" + order.getCard().getCardNumber().substring(order.getCard().getCardNumber().length() - 4);
             }
-//        String cardNumber = "***" + order.getCard().getCardNumber().substring(order.getCard().getCardNumber().length() - 4);
-
 
             OrderDTO orderDTO = OrderDTO.builder()
                     .amount(order.getAmount())
@@ -336,28 +333,26 @@ public class OrderServiceImpl implements OrderService {
 
         List<Order> orders = this.orderRepo.findAll(combinedSpecification)
                 .stream()
-                .filter(order -> order.getAddress().getCity().getName().equals(cityName))
+                .filter(order -> order.getInitialCityName().equals(cityName))
                 .collect(Collectors.toList());
 
         List<OrderDTO> orderDTOList = new ArrayList<>();
         for(Order order: orders){
 
-            String addressToString = "";
-            String city = "";
+            String addressToString = order.getInitialAddress();
+            String city = order.getInitialCityName();
             if(order.getAddress() != null){
-                addressToString += order.getAddress().getStreet() + ", nr." +
+                addressToString = order.getAddress().getStreet() + ", nr." +
                         order.getAddress().getNumber() + ", " +
                         order.getAddress().getCity().getName();
 
                 city = order.getAddress().getCity().getName();
             }
 
-            String cardNumber = "***";
+            String cardNumber = order.getInitialCardNumber();
             if(order.getCard() != null){
-                cardNumber += order.getCard().getCardNumber().substring(order.getCard().getCardNumber().length() - 4);
+                cardNumber = "***" + order.getCard().getCardNumber().substring(order.getCard().getCardNumber().length() - 4);
             }
-//        String cardNumber = "***" + order.getCard().getCardNumber().substring(order.getCard().getCardNumber().length() - 4);
-
 
             OrderDTO orderDTO = OrderDTO.builder()
                     .amount(order.getAmount())
@@ -431,22 +426,20 @@ public class OrderServiceImpl implements OrderService {
         List<OrderDTO> orderDTOList = new ArrayList<>();
         for(Order order: orders){
 
-            String addressToString = "";
-            String city = "";
+            String addressToString = order.getInitialAddress();
+            String city = order.getInitialCityName();
             if(order.getAddress() != null){
-                addressToString += order.getAddress().getStreet() + ", nr." +
+                addressToString = order.getAddress().getStreet() + ", nr." +
                         order.getAddress().getNumber() + ", " +
                         order.getAddress().getCity().getName();
 
                 city = order.getAddress().getCity().getName();
             }
 
-            String cardNumber = "***";
+            String cardNumber = order.getInitialCardNumber();
             if(order.getCard() != null){
-                cardNumber += order.getCard().getCardNumber().substring(order.getCard().getCardNumber().length() - 4);
+                cardNumber = "***" + order.getCard().getCardNumber().substring(order.getCard().getCardNumber().length() - 4);
             }
-//        String cardNumber = "***" + order.getCard().getCardNumber().substring(order.getCard().getCardNumber().length() - 4);
-
 
             OrderDTO orderDTO = OrderDTO.builder()
                     .amount(order.getAmount())
@@ -502,27 +495,26 @@ public class OrderServiceImpl implements OrderService {
 
         List<Order> orders = this.orderRepo.findAll(combinedSpecification)
                 .stream()
-                .filter(order -> order.getAddress().getCity().getName().equals(cityName))
+                .filter(order -> order.getInitialCityName().equals(cityName))
                 .collect(Collectors.toList());
 
         List<OrderDTO> orderDTOList = new ArrayList<>();
         for(Order order: orders){
 
-            String addressToString = "";
-            String city = "";
+            String addressToString = order.getInitialAddress();
+            String city = order.getInitialCityName();
             if(order.getAddress() != null){
-                addressToString += order.getAddress().getStreet() + ", nr." +
+                addressToString = order.getAddress().getStreet() + ", nr." +
                         order.getAddress().getNumber() + ", " +
                         order.getAddress().getCity().getName();
 
                 city = order.getAddress().getCity().getName();
             }
-            String cardNumber = "***";
-            if(order.getCard() != null){
-                cardNumber += order.getCard().getCardNumber().substring(order.getCard().getCardNumber().length() - 4);
-            }
-//        String cardNumber = "***" + order.getCard().getCardNumber().substring(order.getCard().getCardNumber().length() - 4);
 
+            String cardNumber = order.getInitialCardNumber();
+            if(order.getCard() != null){
+                cardNumber = "***" + order.getCard().getCardNumber().substring(order.getCard().getCardNumber().length() - 4);
+            }
 
             OrderDTO orderDTO = OrderDTO.builder()
                     .amount(order.getAmount())
@@ -604,22 +596,20 @@ public class OrderServiceImpl implements OrderService {
         List<OrderDTO> orderDTOList = new ArrayList<>();
         for(Order order: orders){
 
-            String addressToString = "";
-            String city = "";
+            String addressToString = order.getInitialAddress();
+            String city = order.getInitialCityName();
             if(order.getAddress() != null){
-                addressToString += order.getAddress().getStreet() + ", nr." +
+                addressToString = order.getAddress().getStreet() + ", nr." +
                         order.getAddress().getNumber() + ", " +
                         order.getAddress().getCity().getName();
 
                 city = order.getAddress().getCity().getName();
             }
 
-            String cardNumber = "***";
+            String cardNumber = order.getInitialCardNumber();
             if(order.getCard() != null){
-                cardNumber += order.getCard().getCardNumber().substring(order.getCard().getCardNumber().length() - 4);
+                cardNumber = "***" + order.getCard().getCardNumber().substring(order.getCard().getCardNumber().length() - 4);
             }
-//        String cardNumber = "***" + order.getCard().getCardNumber().substring(order.getCard().getCardNumber().length() - 4);
-
 
             OrderDTO orderDTO = OrderDTO.builder()
                     .amount(order.getAmount())
@@ -679,28 +669,26 @@ public class OrderServiceImpl implements OrderService {
 
         List<Order> orders = this.orderRepo.findAll(combinedSpecification)
                 .stream()
-                .filter(order -> order.getAddress().getCity().getName().equals(cityName))
+                .filter(order -> order.getInitialCityName().equals(cityName))
                 .collect(Collectors.toList());
 
         List<OrderDTO> orderDTOList = new ArrayList<>();
         for(Order order: orders){
 
-            String addressToString = "";
-            String city = "";
+            String addressToString = order.getInitialAddress();
+            String city = order.getInitialCityName();
             if(order.getAddress() != null){
-                addressToString += order.getAddress().getStreet() + ", nr." +
+                addressToString = order.getAddress().getStreet() + ", nr." +
                         order.getAddress().getNumber() + ", " +
                         order.getAddress().getCity().getName();
 
                 city = order.getAddress().getCity().getName();
             }
 
-            String cardNumber = "***";
+            String cardNumber = order.getInitialCardNumber();
             if(order.getCard() != null){
-                cardNumber += order.getCard().getCardNumber().substring(order.getCard().getCardNumber().length() - 4);
+                cardNumber = "***" + order.getCard().getCardNumber().substring(order.getCard().getCardNumber().length() - 4);
             }
-//        String cardNumber = "***" + order.getCard().getCardNumber().substring(order.getCard().getCardNumber().length() - 4);
-
 
             OrderDTO orderDTO = OrderDTO.builder()
                     .amount(order.getAmount())
@@ -762,22 +750,20 @@ public class OrderServiceImpl implements OrderService {
         List<OrderDTO> orderDTOList = new ArrayList<>();
         for(Order order: orders){
 
-            String addressToString = "";
-            String city = "";
+            String addressToString = order.getInitialAddress();
+            String city = order.getInitialCityName();
             if(order.getAddress() != null){
-                addressToString += order.getAddress().getStreet() + ", nr." +
+                addressToString = order.getAddress().getStreet() + ", nr." +
                         order.getAddress().getNumber() + ", " +
                         order.getAddress().getCity().getName();
 
                 city = order.getAddress().getCity().getName();
             }
 
-            String cardNumber = "***";
+            String cardNumber = order.getInitialCardNumber();
             if(order.getCard() != null){
-                cardNumber += order.getCard().getCardNumber().substring(order.getCard().getCardNumber().length() - 4);
+                cardNumber = "***" + order.getCard().getCardNumber().substring(order.getCard().getCardNumber().length() - 4);
             }
-//        String cardNumber = "***" + order.getCard().getCardNumber().substring(order.getCard().getCardNumber().length() - 4);
-
 
             OrderDTO orderDTO = OrderDTO.builder()
                     .amount(order.getAmount())
@@ -834,28 +820,26 @@ public class OrderServiceImpl implements OrderService {
         List<Order> orders = this.orderRepo.findAll(combinedSpecification)
                 .stream()
                 .sorted(Comparator.comparing(Order::getId).reversed())
-                .filter(order -> order.getAddress().getCity().getName().equals(cityName))
+                .filter(order -> order.getInitialCityName().equals(cityName))
                 .collect(Collectors.toList());
 
         List<OrderDTO> orderDTOList = new ArrayList<>();
         for(Order order: orders){
 
-            String addressToString = "";
-            String city = "";
+            String addressToString = order.getInitialAddress();
+            String city = order.getInitialCityName();
             if(order.getAddress() != null){
-                addressToString += order.getAddress().getStreet() + ", nr." +
+                addressToString = order.getAddress().getStreet() + ", nr." +
                         order.getAddress().getNumber() + ", " +
                         order.getAddress().getCity().getName();
 
                 city = order.getAddress().getCity().getName();
             }
 
-            String cardNumber = "***";
+            String cardNumber = order.getInitialCardNumber();
             if(order.getCard() != null){
-                cardNumber += order.getCard().getCardNumber().substring(order.getCard().getCardNumber().length() - 4);
+                cardNumber = "***" + order.getCard().getCardNumber().substring(order.getCard().getCardNumber().length() - 4);
             }
-//        String cardNumber = "***" + order.getCard().getCardNumber().substring(order.getCard().getCardNumber().length() - 4);
-
 
             OrderDTO orderDTO = OrderDTO.builder()
                     .amount(order.getAmount())
@@ -896,22 +880,20 @@ public class OrderServiceImpl implements OrderService {
         List<OrderDTO> orderDTOList = new ArrayList<>();
         for(Order order: orders){
 
-            String addressToString = "";
-            String city = "";
+            String addressToString = order.getInitialAddress();
+            String city = order.getInitialCityName();
             if(order.getAddress() != null){
-                addressToString += order.getAddress().getStreet() + ", nr." +
+                addressToString = order.getAddress().getStreet() + ", nr." +
                         order.getAddress().getNumber() + ", " +
                         order.getAddress().getCity().getName();
 
                 city = order.getAddress().getCity().getName();
             }
 
-            String cardNumber = "***";
+            String cardNumber = order.getInitialCardNumber();
             if(order.getCard() != null){
-                cardNumber += order.getCard().getCardNumber().substring(order.getCard().getCardNumber().length() - 4);
+                cardNumber = "***" + order.getCard().getCardNumber().substring(order.getCard().getCardNumber().length() - 4);
             }
-//        String cardNumber = "***" + order.getCard().getCardNumber().substring(order.getCard().getCardNumber().length() - 4);
-
 
             OrderDTO orderDTO = OrderDTO.builder()
                     .amount(order.getAmount())
@@ -947,27 +929,27 @@ public class OrderServiceImpl implements OrderService {
         List<Order> orders = this.orderRepo.findAll(specificationCancelOrder)
                 .stream()
                 .sorted(Comparator.comparing(Order::getId).reversed())
-                .filter(order -> order.getAddress().getCity().getName().equals(cityName))
+                .filter(order -> order.getInitialCityName().equals(cityName))
                 .collect(Collectors.toList());
 
         List<OrderDTO> orderDTOList = new ArrayList<>();
         for(Order order: orders){
 
-            String addressToString = "";
-            String city = "";
+            String addressToString = order.getInitialAddress();
+            String city = order.getInitialCityName();
             if(order.getAddress() != null){
-                addressToString += order.getAddress().getStreet() + ", nr." +
+                addressToString = order.getAddress().getStreet() + ", nr." +
                         order.getAddress().getNumber() + ", " +
                         order.getAddress().getCity().getName();
 
                 city = order.getAddress().getCity().getName();
             }
 
-            String cardNumber = "***";
+            String cardNumber = order.getInitialCardNumber();
             if(order.getCard() != null){
-                cardNumber += order.getCard().getCardNumber().substring(order.getCard().getCardNumber().length() - 4);
+                cardNumber = "***" + order.getCard().getCardNumber().substring(order.getCard().getCardNumber().length() - 4);
             }
-//        String cardNumber = "***" + order.getCard().getCardNumber().substring(order.getCard().getCardNumber().length() - 4);
+
 
 
             OrderDTO orderDTO = OrderDTO.builder()

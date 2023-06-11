@@ -546,9 +546,7 @@ public class UserServiceImpl implements UserService {
             Product product = this.productRepo.getProductByNameAndRestaurantName( pc.getProductName(), pc.getRestaurantName())
                     .orElseThrow(() -> new DeliveryCustomException(Constants.PRODUCT_NOT_FOUND_BY_RESTAURANT_AND_NAME.getMessage()));
 
-//            OrderItemId orderItemId = new OrderItemId(currentOrder.getId(), product.getId());
             OrderItem orderItem = OrderItem.builder()
-//                    .id(orderItemId)
                     .quantity(pc.getQuantity())
                     .price(pc.getPrice())
                     .extraIngredients(pc.getExtraIngredients())
@@ -569,37 +567,34 @@ public class UserServiceImpl implements UserService {
         currentOrder.setProductsAmount(orderRequest.getProductsAmount());
         currentOrder.setAmount(orderRequest.getTotalAmount());
         user.addOrder(currentOrder);
-        //currentOrder.setUser(user);
-        //currentOrder.setOrderItems(orderItems);
 
-
-//        Card userCard = this.cardRepo.getCardByCardNumber(orderRequest.getCardNumber())
-//                .orElseThrow(() -> new DeliveryCustomException(Constants.CARD_NOT_FOUND_BY_NUMBER_EXCEPTION.getMessage()));
 
         Card userCard = user.getCards().stream().filter(card -> card.getId() == orderRequest.getCardId()).collect(Collectors.toList()).get(0);
         if(userCard == null){
             throw new DeliveryCustomException(Constants.USER_CARD_NOT_OWN_EXCEPTION.getMessage());
         }
 
-        //currentOrder.setCard(userCard);
         userCard.addOrder(currentOrder);
-//        currentOrder.setAmount(orderItems.stream().mapToDouble(OrderItem::getPrice).sum());
+        currentOrder.setInitialCardNumber("***" + userCard.getCardNumber().substring(userCard.getCardNumber().length() - 4));
 
         Address userAddress = user.getAddresses().stream().filter(adr -> adr.getId() == orderRequest.getAddressId()).collect(Collectors.toList()).get(0);
         if(userAddress == null){
             throw new DeliveryCustomException(Constants.USER_NOT_OWN_ADDRESS_EXCEPTION.getMessage());
         }
-        //currentOrder.setAddress(userAddress);
 
         userAddress.addOrder(currentOrder);
 
+        String initialAddress =  userAddress.getStreet() + ", nr." +
+                userAddress.getNumber() + ", " +
+                userAddress.getCity().getName();
+        currentOrder.setInitialAddress(initialAddress);
+        currentOrder.setInitialCityName(userAddress.getCity().getName());
+
         List<Courier> couriers = this.courierRepo.findAll();
         Courier randomCourier = couriers.get(new Random().nextInt(couriers.size()));
-        //currentOrder.setCourier(randomCourier);
         randomCourier.addOrder(currentOrder);
 
         currentOrder.setStatus(OrderStatus.PLACED_ORDER);
-        //currentOrder.setDeliveredTime(LocalDateTime.now().plusMinutes(45));
         currentOrder.setPlacedOrderTime(LocalDateTime.now());
 
         this.orderRepo.saveAndFlush(currentOrder);
@@ -620,19 +615,19 @@ public class UserServiceImpl implements UserService {
         List<OrderDTO> userOrdersDto = new ArrayList<>();
         for(Order order: userOrders){
 
-            String addressToString = "";
-            String city = "";
+            String addressToString = order.getInitialAddress();
+            String city = order.getInitialCityName();
             if(order.getAddress() != null){
-                addressToString += order.getAddress().getStreet() + ", nr." +
+                addressToString = order.getAddress().getStreet() + ", nr." +
                         order.getAddress().getNumber() + ", " +
                         order.getAddress().getCity().getName();
 
                 city = order.getAddress().getCity().getName();
             }
 
-            String cardNumber = "***";
+            String cardNumber = order.getInitialCardNumber();
             if(order.getCard() != null){
-                cardNumber += order.getCard().getCardNumber().substring(order.getCard().getCardNumber().length() - 4);
+                cardNumber = "***" + order.getCard().getCardNumber().substring(order.getCard().getCardNumber().length() - 4);
             }
             OrderDTO orderDTO = OrderDTO.builder()
                     .amount(order.getAmount())

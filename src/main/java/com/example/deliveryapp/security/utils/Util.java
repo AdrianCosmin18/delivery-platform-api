@@ -23,7 +23,9 @@ public class Util {
             "/delivery-app/city",
             "/delivery-app/restaurant/get-product-photo",
             "/delivery-app/user/make-user-as-admin/*",
-            "/delivery-app/courier"
+            "/delivery-app/courier",
+            "/delivery-app/send-email",
+            "/delivery-app/send-email-attach"
     };
     public static final String JWT_TOKEN_HEADER = "Jwt-Token";
 }

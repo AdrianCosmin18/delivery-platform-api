@@ -1,6 +1,5 @@
 package com.example.deliveryapp.models;
 
-import com.example.deliveryapp.models.embeddedKey.CartId;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

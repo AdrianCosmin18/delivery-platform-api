@@ -61,6 +61,15 @@ public class Order {
     @Column(name = "commentsSection")
     private String commentsSection;
 
+    @Column(name = "initialAddress")
+    private String initialAddress;
+
+    @Column(name = "initialCardNumber")
+    private String initialCardNumber;
+
+    @Column(name = "initialCityName")
+    private String initialCityName;
+
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
