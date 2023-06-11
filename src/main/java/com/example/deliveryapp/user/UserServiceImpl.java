@@ -11,6 +11,7 @@ import com.example.deliveryapp.constants.Constants;
 import com.example.deliveryapp.constants.OrderStatus;
 import com.example.deliveryapp.courier.Courier;
 import com.example.deliveryapp.courier.CourierRepo;
+import com.example.deliveryapp.email.EmailSenderService;
 import com.example.deliveryapp.exceptions.DeliveryCustomException;
 import com.example.deliveryapp.order.Order;
 import com.example.deliveryapp.order.OrderRepo;
@@ -28,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -57,9 +59,10 @@ public class UserServiceImpl implements UserService {
     private AddressRepo addressRepo;
     @Autowired
     private CourierRepo courierRepo;
-
     @Autowired
     private ModelMapper mapper;
+    @Autowired
+    private EmailSenderService emailSenderService;
 
 
 
@@ -469,7 +472,6 @@ public class UserServiceImpl implements UserService {
     }
 
 
-
     @Override
     public void setAsMainCard(String email, long cardId){
 
@@ -554,8 +556,6 @@ public class UserServiceImpl implements UserService {
                     .build();
 
             product.addOrderItem(orderItem);
-            // orderItem.setProduct(product);
-            //orderItem.setOrder(currentOrder);
             currentOrder.addOrderItem(orderItem);
 
             orderItems.add(orderItem);
@@ -575,7 +575,8 @@ public class UserServiceImpl implements UserService {
         }
 
         userCard.addOrder(currentOrder);
-        currentOrder.setInitialCardNumber("***" + userCard.getCardNumber().substring(userCard.getCardNumber().length() - 4));
+        String initialCardNumber = "***" + userCard.getCardNumber().substring(userCard.getCardNumber().length() - 4);
+        currentOrder.setInitialCardNumber(initialCardNumber);
 
         Address userAddress = user.getAddresses().stream().filter(adr -> adr.getId() == orderRequest.getAddressId()).collect(Collectors.toList()).get(0);
         if(userAddress == null){
@@ -597,7 +598,66 @@ public class UserServiceImpl implements UserService {
         currentOrder.setStatus(OrderStatus.PLACED_ORDER);
         currentOrder.setPlacedOrderTime(LocalDateTime.now());
 
+        this.emailSenderService.sendEmail(user.getEmail(), "Comandă plasată - BurgerShop",
+                this.formPlaceOrderSendMail(
+                        user.getLastName(),
+                        user.getFirstName(),
+                        currentOrder.getId(),
+                        LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")).toString(),
+                        initialAddress,
+                        orderRequest,
+                        initialCardNumber
+                ));
+
         this.orderRepo.saveAndFlush(currentOrder);
+    }
+
+    private String formPlaceOrderSendMail(String lastName,
+                                        String firstName,
+                                        long orderId,
+                                        String time,
+                                        String address,
+                                        CreateOrderRequest orderRequest,
+                                        String cardNumber){
+        String s = String.format("" +
+                "Dragă %s %s,\n" +
+                "\n" +
+                "Îți mulțumim că ai ales BurgerShop pentru a-ți satisface pofta de burgeri delicioși. Comanda ta a fost plasată cu succes și suntem nerăbdători să-ți oferim o experiență culinară deosebită.\n" +
+                "\n" +
+                "Detalii comandă:\n" +
+                "\n" +
+                "Număr comandă: %d\n" +
+                "Data și ora plasării: %s\n" +
+                "Adresa de livrare: %s\n" +
+                "\n" +
+                "Produse comandate:\n" +
+                "\n", lastName, firstName, orderId, time, address);
+
+        for(OrderItemDTO o: orderRequest.getProductsInCart()){
+            s += String.format("%s X %s\n", o.getProductName(), o.getQuantity().toString());
+        }
+
+        s += String.format(
+                        "\nSumar comandă:\n" +
+                        "\n" +
+                        "Total produse: %f\n" +
+                        "Taxe livrare: %f\n" +
+                        "Total plată: %f\n" +
+                        "\n" +
+                        "Plata card: %s\n" +
+                        "\n" +
+                        "Echipa noastră pregătește cu atenție comanda ta și se va asigura că toate preparatele sunt proaspete și delicioase. În cazul în care ai specificat o opțiune personalizată sau cerințe speciale în legătură cu comanda, vom avea grijă să le respectăm în măsura posibilului.\n" +
+                        "\n" +
+                        "Te vom ține la curent cu starea comenzii și te vom notifica imediat ce comanda ta este pregătită și în drum spre adresa specificată.\n" +
+                        "\n" +
+                        "Cu drag,\n" +
+                        "Echipa BurgerShop",
+                orderRequest.getProductsAmount(),
+                orderRequest.getDeliveryTax(),
+                orderRequest.getTotalAmount(),
+                cardNumber);
+
+        return s;
     }
 
     @Override
@@ -668,7 +728,53 @@ public class UserServiceImpl implements UserService {
         Order userOrder = orders.get(0);
         userOrder.setStatus(OrderStatus.ORDER_DELIVERED);
         userOrder.setDeliveredTime(LocalDateTime.now().toString());
+
+        this.emailSenderService.sendEmail(user.getEmail(), "Comandă livrată cu succes - BurgerShop",
+                this.formReceivedOrderSendEmail(
+                        user.getLastName(),
+                        user.getFirstName(),
+                        orderId,
+                        LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")).toString(),
+                        userOrder.getInitialAddress(),
+                        userOrder.getAmount(),
+                        userOrder.getInitialCardNumber()
+                ));
+
+
         this.userRepo.saveAndFlush(user);
+    }
+
+    private String formReceivedOrderSendEmail(String lastName,
+                                              String firstName,
+                                              long orderId,
+                                              String time,
+                                              String address,
+                                              double totalAmount,
+                                              String cardNumber){
+        String s = String.format("" +
+                "Dragă %s %s,\n" +
+                "\n" +
+                "Îți mulțumim că ai ales BurgerShop pentru a-ți satisface pofta de burgeri delicioși. Comanda ta a fost livrată cu succes și suntem nerăbdători să auzim părerea ta.\n" +
+                "\n" +
+                "Detalii comandă:\n" +
+                "\n" +
+                "Număr comandă: %d\n" +
+                "Data și ora livrării: %s\n" +
+                "Adresa de livrare: %s\n" +
+                "\n", lastName, firstName, orderId, time, address);
+
+
+        s += String.format(
+                        "Total plată: %f\n" +
+                        "\n" +
+                        "Plata card: %s\n" +
+                        "\n" +
+                        "Cu drag,\n" +
+                        "Echipa BurgerShop",
+                totalAmount,
+                cardNumber);
+
+        return s;
     }
 
     @Override
@@ -683,7 +789,38 @@ public class UserServiceImpl implements UserService {
         Order userOrder = orders.get(0);
         userOrder.setStatus(OrderStatus.CANCELED_ORDER);
         userOrder.setCanceledOrder(LocalDateTime.now().toString());
+
+        this.emailSenderService.sendEmail(user.getEmail(), "Comandă anulată - BurgerShop",
+                this.cancelOrderSendMail(
+                        user.getLastName(),
+                        user.getFirstName(),
+                        orderId,
+                        LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")).toString()
+                ));
+
         this.userRepo.saveAndFlush(user);
+    }
+
+    private String cancelOrderSendMail(String lastName,
+                                      String firstName,
+                                      long orderId,
+                                      String time){
+        String s = String.format("" +
+                "Dragă %s %s,\n" +
+                "\n" +
+                "Ne pare rău sa vedem că ai ales să anulezi comanda\n" +
+                "\n" +
+                "Detalii comandă:\n" +
+                "\n" +
+                "Număr comandă: %d\n" +
+                "Data și ora anulării: %s\n" +
+                "Adresa de livrare: %s\n" +
+                "\n", lastName, firstName, orderId, time);
+
+
+        s += String.format("Cu drag,\nEchipa BurgerShop");
+
+        return s;
     }
 
 
@@ -724,6 +861,12 @@ public class UserServiceImpl implements UserService {
         user.setEmail(userDTO.getEmail());
         user.setPhone(userDTO.getPhone());
 
+
+        this.emailSenderService.sendEmail(
+                userDTO.getEmail(),
+                "Informații actualizate cu succes - Detalii personale",
+                this.formChangePersonalInfoSendMail(userDTO, user.getLastName(), user.getFirstName()));
+
         this.userRepo.saveAndFlush(user);
     }
 
@@ -741,6 +884,53 @@ public class UserServiceImpl implements UserService {
 
         User user = this.findByEmail(email);
         user.setPassword(newPassword);
+        this.emailSenderService.sendEmail(
+                email,
+                "Parola ta a fost modificată cu succes - Informații importante",
+                this.formChangePasswordSendMail(user.getLastName(), user.getFirstName(), LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")).toString()));
         this.userRepo.saveAndFlush(user);
+    }
+
+    private String formChangePersonalInfoSendMail(UserDTO userDTO, String oldLastname, String oldFirstname){
+        return String.format("" +
+                "Dragă %s %s,\n" +
+                "\n" +
+                "Îți confirmăm că datele tale personale au fost actualizate cu succes în aplicația BurgerShop. Echipa noastră a preluat noile informații și le-a integrat în sistemul nostru.\n" +
+                "\n" +
+                "Iată detaliile tale personale actualizate:\n" +
+                "\n" +
+                "Nume: %s\n" +
+                "Prenume: %s\n" +
+                "Număr de telefon: %s\n" +
+                "Adresă de email: %s\n\n" +
+                "Dacă modificările de mai sus nu sunt corecte sau ai întrebări suplimentare, te rugăm să ne contactezi cât mai curând posibil. Echipa noastră de asistență va fi bucuroasă să te ajute și să corecteze orice informație necesară.\n" +
+                "\n" +
+                "Suntem dedicați oferirii unei experiențe de livrare fără probleme și de calitate, iar informațiile tale actualizate ne vor ajuta să livrăm comenzile tale în mod corespunzător și să fim în permanență conectați cu tine.\n" +
+                "\n" +
+                "Te mulțumim pentru încrederea acordată și pentru că faci parte din comunitatea noastră de iubitori de burgeri. Ne dorim să-ți oferim cele mai gustoase și autentice preparate, direct la ușa ta.\n" +
+                "\n" +
+                "Cu poftă,\n" +
+                "Echipa noastră de burgeri.", oldLastname, oldFirstname, userDTO.getLastName(), userDTO.getFirstName(), userDTO.getPhone(), userDTO.getEmail());
+    }
+
+    private String formChangePasswordSendMail(String lastname, String firstname, String time){
+        return String.format("" +
+                "Dragă %s %s,\n" +
+                "\n" +
+                "Îți confirmăm că parola contului tău în aplicația noastră BurgerShop a fost modificată cu succes. Ne dorim să te asigurăm că securitatea contului tău este o prioritate pentru noi și am luat toate măsurile necesare pentru a proteja datele tale personale.\n" +
+                "\n" +
+                "Dacă tu nu ai efectuat această modificare sau consideri că contul tău a fost compromis, te rugăm să ne contactezi imediat. Echipa noastră de suport tehnic va investiga situația și va lua măsurile necesare pentru a-ți proteja contul.\n" +
+                "\n" +
+                "În cazul în care ai fost tu cel care a solicitat modificarea parolei, te rugăm să ții cont de următoarele informații:\n" +
+                "\n" +
+                "Data și ora modificării parolei: %s\n" +
+                "În cazul în care ai întâmpinat orice dificultăți în procesul de schimbare a parolei sau ai întrebări suplimentare, nu ezita să ne contactezi. Suntem aici pentru a te ajuta și pentru a asigura funcționarea corespunzătoare a contului tău.\n" +
+                "\n" +
+                "Îți recomandăm să menții parola contului tău confidențială și să o schimbi periodic în scopul securității. De asemenea, te sfătuim să utilizezi o parolă puternică, care să conțină o combinație de litere, cifre și caractere speciale.\n" +
+                "\n" +
+                "Îți mulțumim pentru înțelegere și cooperare. Ne dorim să-ți oferim o experiență sigură și plăcută în utilizarea aplicației noastre de livrare cu burgeri.\n" +
+                "\n" +
+                "Cu stimă,\n" +
+                "Echipa noastră de burgeri", firstname, lastname, time);
     }
 }

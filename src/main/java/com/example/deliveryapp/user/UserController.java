@@ -1,6 +1,7 @@
 package com.example.deliveryapp.user;
 
 import com.example.deliveryapp.DTOs.*;
+import com.example.deliveryapp.email.EmailSenderService;
 import com.example.deliveryapp.user.User;
 import com.example.deliveryapp.security.jwt.JWTTokenProvider;
 import com.example.deliveryapp.user.UserService;
@@ -30,6 +31,8 @@ public class UserController {
     private AuthenticationManager authenticationManager;
     @Autowired
     private JWTTokenProvider jwtTokenProvider;
+    @Autowired
+    private EmailSenderService emailSenderService;
 
     @PostMapping("/register")
     public ResponseEntity<AuthenticationResponse> register(@RequestBody UserDTO userDTO){
@@ -46,6 +49,11 @@ public class UserController {
                 jwtHeader.getFirst(JWT_TOKEN_HEADER),
                 authorities
         );
+
+        this.emailSenderService.sendEmail(
+                newUser.getEmail(),
+                "Bun venit în aplicația BurgerShop!",
+                this.formEmailMessage(userDTO.getFirstName(), userDTO.getLastName()));
 
         return new ResponseEntity<>(authenticationResponse, jwtHeader, HttpStatus.OK);
     }
@@ -237,5 +245,30 @@ public class UserController {
     @PutMapping("/make-user-as-admin/{email}")
     public void makeUserAsAdmin(@PathVariable String email){
         this.userService.makeUserAsAdmin(email);
+    }
+
+    public String formEmailMessage(String firstName, String lastName){
+
+        return String.format("" +
+                "Dragă %s %s, \n\n" +
+                "Bine ai venit în aplicația noastră de livrare cu tematică de burgeri! Suntem încântați să te avem alături și să-ți oferim cele mai delicioase burgeri direct la ușa ta.\n\n" +
+                "În aplicația noastră, vei putea:\n" +
+                "\n" +
+                "Explora meniul nostru variat de burgeri și produse complementare\n" +
+                "Personaliza și comanda burgerul preferat, alegând ingredientele și toppingurile dorite\n" +
+                "Vizualiza starea comenzii tale\n" +
+                "Beneficia de oferte și reduceri exclusive pentru utilizatorii aplicației\n" +
+                "Salvat și accesa comenzile și preferințele tale pentru o experiență rapidă și ușoară\n" +
+                "\n" +
+                "Suntem mândri să îți oferim cele mai proaspete ingrediente și combinații savuroase pentru a-ți satisface pofta de burgeri autentici și gustoși.\n" +
+                "\n" +
+                "Echipa noastră de bucătari talentați pregătește burgeri de cea mai înaltă calitate, folosind rețete tradiționale și ingrediente de încredere. Ne asigurăm că fiecare comandă este pregătită cu atenție și livrată în cel mai scurt timp posibil.\n" +
+                "\n" +
+                "Îți mulțumim pentru alegerea făcută și pentru încrederea acordată. Echipa noastră este mereu aici pentru a răspunde întrebărilor tale și a te ajuta în orice fel posibil. Nu ezita să ne contactezi prin intermediul funcției noastre de asistență online sau telefonic.\n" +
+                "\n" +
+                "Îți mulțumim pentru alegerea făcută și pentru încrederea acordată. Echipa noastră este mereu aici pentru a răspunde întrebărilor tale și a te ajuta în orice fel posibil. Nu ezita să ne contactezi prin intermediul funcției noastre de asistență online sau telefonic.\n" +
+                "\n" +
+                "Cu poftă,\n" +
+                "Echipa BurgerShop", firstName, lastName);
     }
 }

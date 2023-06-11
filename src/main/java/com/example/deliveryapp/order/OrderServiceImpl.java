@@ -4,6 +4,7 @@ import com.example.deliveryapp.DTOs.OrderDTO;
 import com.example.deliveryapp.DTOs.OrderItemDTO;
 import com.example.deliveryapp.constants.Constants;
 import com.example.deliveryapp.constants.OrderStatus;
+import com.example.deliveryapp.email.EmailSenderService;
 import com.example.deliveryapp.exceptions.DeliveryCustomException;
 import com.example.deliveryapp.courier.Courier;
 import com.example.deliveryapp.orderItem.OrderItem;
@@ -13,6 +14,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -26,6 +28,8 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private CourierRepo courierRepo;
+    @Autowired
+    private EmailSenderService emailSenderService;
 
     @Override
     public OrderDTO getOrderById(Long id){
@@ -237,7 +241,34 @@ public class OrderServiceImpl implements OrderService {
 
         order.setStatus(OrderStatus.PAYMENT_CONFIRMED);
         order.setPaymentConfirmed(LocalDateTime.now().toString());
+
+
+        this.emailSenderService.sendEmail(order.getUser().getEmail(),
+                "Confirmare plată - BurgerShop",
+                this.sendEmailConfirmationPayment(
+                        order.getUser().getLastName(),
+                        order.getUser().getFirstName(),
+                        order.getInitialCardNumber(),
+                        orderId,
+                        LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")).toString(),
+                        order.getInitialAddress()
+                ));
         this.orderRepo.saveAndFlush(order);
+    }
+
+    private String sendEmailConfirmationPayment(String lastname, String firstname, String card, long orderId, String time, String address){
+        return String.format("" +
+                "Dragă %s %s,\n" +
+                "\n" +
+                "Plata comenzii a fost realizată cu succes\n\n" +
+                "Plata cu cardul: %s\n" +
+                "Număr comandă: %d\n" +
+                "Data și ora plasării: %s\n" +
+                "Adresa de livrare: %s\n\n" +
+                "Poți urmări statusul comenzii tale in contul tău la secțiunea Istoric comenzi.\n" +
+                "\n" +
+                "Cu drag,\n" +
+                "Echipa BurgerShop.", lastname, firstname, card, orderId, time, address);
     }
 
     @Override
@@ -391,7 +422,29 @@ public class OrderServiceImpl implements OrderService {
 
         order.setStatus(OrderStatus.ORDER_IN_PREPARATION);
         order.setOrderInPreparation(LocalDateTime.now().toString());
+
+        this.emailSenderService.sendEmail(order.getUser().getEmail(),
+                "Comandă în preparare - BurgerShop",
+                this.sendEmailOrderInPreparation(
+                        order.getUser().getLastName(),
+                        order.getUser().getFirstName(),
+                        orderId,
+                        order.getInitialAddress()
+                ));
         this.orderRepo.saveAndFlush(order);
+    }
+
+    private String sendEmailOrderInPreparation(String lastname, String firstname,long orderId, String address){
+        return String.format("" +
+                "Dragă %s %s,\n" +
+                "\n" +
+                "Comanda ta este în preparare\n\n" +
+                "Număr comandă: %d\n" +
+                "Poți urmări statusul comenzii tale in contul tău la secțiunea Istoric comenzi.\n" +
+                "Cand comanda va fi gata un curier o va ridica si va pleca spre adresa ta: %s." +
+                "\n" +
+                "Cu drag,\n" +
+                "Echipa BurgerShop.", lastname, firstname, orderId, address);
     }
 
     @Override
@@ -557,7 +610,30 @@ public class OrderServiceImpl implements OrderService {
         Courier courier = this.courierRepo.findById(courierId)
                         .orElseThrow(() -> new DeliveryCustomException("No courier with this id"));
         order.setCourier(courier);
+
+        this.emailSenderService.sendEmail(order.getUser().getEmail(),
+                "Comandă în preparare - BurgerShop",
+                this.sendEmailOrderInDelivery(
+                        order.getUser().getLastName(),
+                        order.getUser().getFirstName(),
+                        orderId,
+                        courier.getFullName(),
+                        courier.getPhone()
+                ));
         this.orderRepo.saveAndFlush(order);
+    }
+
+    private String sendEmailOrderInDelivery(String lastname, String firstname,long orderId, String courierName, String courierPhone){
+        return String.format("" +
+                "Dragă %s %s,\n" +
+                "\n" +
+                "Comanda ta a fost ridicată de curierul nostru si va ajunge la adresa ta in cel mai scurt timp posibil\n\n" +
+                "Număr comandă: %d\n" +
+                "Poți urmări statusul comenzii tale si mai multe detalii despre coamnda, gasesti in contul tău la secțiunea Istoric comenzi.\n\n" +
+                "Curier: %s - %s" +
+                "\n" +
+                "Cu drag,\n" +
+                "Echipa BurgerShop.", lastname, firstname, orderId, courierName, courierPhone);
     }
 
     @Override
