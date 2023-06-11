@@ -1,7 +1,7 @@
 package com.example.deliveryapp.security.security;
 
 import com.example.deliveryapp.exceptions.DeliveryCustomException;
-import com.example.deliveryapp.repos.UserRepo;
+import com.example.deliveryapp.user.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
