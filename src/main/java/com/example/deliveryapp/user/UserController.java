@@ -49,12 +49,10 @@ public class UserController {
                 jwtHeader.getFirst(JWT_TOKEN_HEADER),
                 authorities
         );
-
         this.emailSenderService.sendEmail(
                 newUser.getEmail(),
                 "Bun venit în aplicația BurgerShop!",
                 this.formEmailMessage(userDTO.getFirstName(), userDTO.getLastName()));
-
         return new ResponseEntity<>(authenticationResponse, jwtHeader, HttpStatus.OK);
     }
 
@@ -74,7 +72,6 @@ public class UserController {
                 jwtHeader.getFirst(JWT_TOKEN_HEADER),
                 authorities
         );
-
         return new ResponseEntity<>(authenticationResponse, jwtHeader, HttpStatus.OK);
     }
 

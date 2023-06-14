@@ -376,7 +376,6 @@ public class UserServiceImpl implements UserService {
             default:{
                 throw new DeliveryCustomException(Constants.CARD_NOT_VALID.getMessage());
             }
-
         }
 
         if(cardDTO.getIsDefault()){
@@ -451,21 +450,15 @@ public class UserServiceImpl implements UserService {
 
         User user = this.userRepo.getUserByEmail(email)
                 .orElseThrow(() -> new DeliveryCustomException(Constants.USER_NOT_FOUND_BY_EMAIL.getMessage()));
-
         List<Card> userCards = user.getCards();
-
-
 
         if(userCards.stream().anyMatch(card -> card.getId().equals(cardId))){
 
             List<Card> cards = userCards.stream().filter(card1 -> card1.getId() == cardId).collect(Collectors.toList());
             Card card = cards.get(0);
             user.deleteCard(cards.get(0));
-
             this.userRepo.saveAndFlush(user);
-
             this.orderRepo.updateOrderByCardId(cardId);
-
         }else{
             throw new DeliveryCustomException(Constants.USER_CARD_NOT_OWN_EXCEPTION.getMessage());
         }
