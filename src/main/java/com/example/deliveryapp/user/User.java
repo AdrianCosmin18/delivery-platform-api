@@ -108,6 +108,13 @@ public class User implements UserDetails {
         this.phone = phone;
     }
 
+    public User(String lastName, String firstName, String email, String phone) {
+        this.lastName = lastName;
+        this.firstName = firstName;
+        this.email = email;
+        this.phone = phone;
+    }
+
     public void addAddress(Address address){
 
         this.addresses.add(address);
