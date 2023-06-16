@@ -346,7 +346,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void addCard(String email, CardDTO cardDTO) {
-
         User user = this.userRepo.getUserByEmail(email)
                 .orElseThrow(() -> new DeliveryCustomException(Constants.USER_NOT_FOUND_BY_EMAIL.getMessage()));
 
@@ -377,7 +376,6 @@ public class UserServiceImpl implements UserService {
                 throw new DeliveryCustomException(Constants.CARD_NOT_VALID.getMessage());
             }
         }
-
         if(cardDTO.getIsDefault()){
             userCards.forEach(c -> c.setIsDefault(false));
             card.setIsDefault(true);
@@ -388,7 +386,6 @@ public class UserServiceImpl implements UserService {
         if (userCards.stream().anyMatch(c -> c.equals(card))){
             throw new DeliveryCustomException(Constants.USER_CARD_ALREADY_EXISTS_EXCEPTION.getMessage());
         }
-
         user.addCard(card);
         this.userRepo.save(user);
     }
@@ -807,7 +804,6 @@ public class UserServiceImpl implements UserService {
                 "\n" +
                 "Număr comandă: %d\n" +
                 "Data și ora anulării: %s\n" +
-                "Adresa de livrare: %s\n" +
                 "\n", lastName, firstName, orderId, time);
 
 
