@@ -847,15 +847,26 @@ public class UserServiceImpl implements UserService {
 
         user.setLastName(userDTO.getLastName());
         user.setFirstName(userDTO.getFirstName());
+
+        if(user.getEmail().equals(userDTO.getEmail())){
+            user.setEmail(userDTO.getEmail());
+        }else if(this.userRepo.getUserByEmail(userDTO.getEmail()).isPresent()){
+            throw new DeliveryCustomException(Constants.USER_ALREADY_EXISTS_BY_EMAIL_EXCEPTION.getMessage());
+        }
+
+        if(user.getPhone().equals(userDTO.getPhone())){
+            user.setPhone(userDTO.getPhone());
+        }else if(this.userRepo.getUserByPhone(userDTO.getPhone()).isPresent()){
+            throw new DeliveryCustomException(Constants.USER_ALREADY_EXISTS_PHONE_EXCEPTION.getMessage());
+        }
+
+
         user.setEmail(userDTO.getEmail());
         user.setPhone(userDTO.getPhone());
-
-
         this.emailSenderService.sendEmail(
                 userDTO.getEmail(),
                 "Informații actualizate cu succes - Detalii personale",
                 this.formChangePersonalInfoSendMail(userDTO, user.getLastName(), user.getFirstName()));
-
         this.userRepo.saveAndFlush(user);
     }
 
