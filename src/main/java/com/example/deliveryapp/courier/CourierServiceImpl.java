@@ -56,4 +56,18 @@ public class CourierServiceImpl implements CourierService {
         });
         return courierDTOs;
     }
+
+    @Override
+    public CourierDTO getCourierById(Long id){
+
+        Courier courier = this.courierRepo.findById(id)
+                .orElseThrow(() -> new DeliveryCustomException("Courier not found by id"));
+
+        return CourierDTO.builder()
+                .id(courier.getId())
+                .fullName(courier.getFullName())
+                .phone(courier.getPhone())
+                .vehicleType(courier.getVehicleType())
+                .build();
+    }
 }

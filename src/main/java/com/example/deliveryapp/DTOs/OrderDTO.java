@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 public class OrderDTO {
 
     private Long id;
+    private Long courierId;
     private Double amount;
     private String status;
     private String placedOrderTime;

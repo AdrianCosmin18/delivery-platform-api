@@ -2,6 +2,7 @@ package com.example.deliveryapp.courier;
 
 import com.example.deliveryapp.DTOs.CourierDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,5 +25,10 @@ public class CourierController {
         return this.courierService.getCouriers();
     }
 
+    @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
+    public CourierDTO getCourierById(@PathVariable Long id){
+        return this.courierService.getCourierById(id);
+    }
 
 }

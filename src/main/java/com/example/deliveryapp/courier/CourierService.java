@@ -8,4 +8,6 @@ public interface CourierService {
 
     void addCourier(CourierDTO courierDTO);
     List<CourierDTO> getCouriers();
+
+    CourierDTO getCourierById(Long id);
 }

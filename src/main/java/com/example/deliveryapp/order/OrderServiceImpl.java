@@ -66,6 +66,7 @@ public class OrderServiceImpl implements OrderService {
                 .tipsTax(order.getTipsTax())
                 .productsAmount(order.getProductsAmount())
                 .id(order.getId())
+                .courierId(order.getCourier().getId())
                 .addressToString(addressToString)
                 .cardNumber(cardNumber)
                 .username(order.getUser().getLastName() + " " + order.getUser().getFirstName())
