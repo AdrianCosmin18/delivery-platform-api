@@ -32,11 +32,7 @@ public class DeliveryAppApplication {
 		}
 	}
 
-//	@Configuration
-//	public static class ObjectMapperBean{
-//		@Bean
-//		public ObjectMapper objectMapper(){return new ObjectMapper();}
-//	}
+
 
 	@Configuration
 	public class JacksonConfig {
