@@ -1,7 +1,7 @@
 version: "3.8"
 services:
   backend:
-    image: "adriancosmin18/delivery-app:latest"
+    image: "adriancosmin18/delivery-app"
     ports:
       - "80:8080"
     restart: "always"
