@@ -25,7 +25,8 @@ public class Util {
             "/delivery-app/user/make-user-as-admin/*",
             "/delivery-app/courier",
             "/delivery-app/send-email",
-            "/delivery-app/send-email-attach"
+            "/delivery-app/send-email-attach",
+            "/**"
     };
     public static final String JWT_TOKEN_HEADER = "Jwt-Token";
 }

@@ -1,0 +1,109 @@
+
+<div class="container border d-flex flex-column">
+  <h3 class="badge text-bg-danger">BurgerShop</h3>
+  <h4 style="color: white; margin-bottom: 30px">Crează cont</h4>
+
+  <form [formGroup]="form">
+
+    <div class="d-flex flex-column gap-4">
+
+      <section>
+        <article class="p-inputgroup">
+          <span class="p-inputgroup-addon">Prenume</span>
+          <input
+            pInputText
+            class="form-control"
+            aria-describedby="basic-addon1"
+            formControlName="firstName">
+        </article>
+        <article *ngIf="form.get('firstName')!.invalid && form.get('firstName')!.dirty">
+          <small *ngIf="form.get('firstName')!.hasError('required')" class="p-error">Prenumele este obligatoriu</small>
+          <small *ngIf="form.get('firstName')!.hasError('minlength')" class="p-error">Prenumele trebuie să conțină minim 2 caractere</small>
+        </article>
+      </section>
+
+      <section>
+        <article class="p-inputgroup">
+          <span class="p-inputgroup-addon">Nume</span>
+          <input
+            pInputText
+            class="form-control"
+            aria-describedby="basic-addon1"
+            formControlName="lastName">
+        </article>
+        <article *ngIf="form.get('lastName')!.invalid && form.get('lastName')!.dirty">
+          <small *ngIf="form.get('lastName')!.hasError('required')" class="p-error">Numele este obligatoriu</small>
+          <small *ngIf="form.get('lastName')!.hasError('minlength')" class="p-error">Numele trebuie să conțină minim 2 caractere</small>
+        </article>
+      </section>
+
+      <section>
+        <div class="p-inputgroup">
+          <span class="p-inputgroup-addon"><i class="pi pi-phone"></i></span>
+          <input type="text" pInputText formControlName="phone" placeholder="Număr de telefon">
+        </div>
+        <div *ngIf="form.get('phone')!.invalid && form.get('phone')!.dirty">
+          <small *ngIf="form.get('phone')!.hasError('required')" class="p-error">Numărul de telefon este obligatoriu</small>
+          <small *ngIf="form.get('phone')!.hasError('pattern')" class="p-error">Introdu un număr de telefon valid</small>
+        </div>
+      </section>
+
+      <section>
+        <div class="p-inputgroup">
+          <span class="p-inputgroup-addon"><i class="pi pi-at"></i></span>
+          <input type="text" pInputText formControlName="email" placeholder="email">
+        </div>
+        <div *ngIf="form.get('email')!.invalid && form.get('email')!.dirty" style="margin: 0px">
+          <small *ngIf="form.get('email')!.hasError('email')" class="p-error">Introdu o adresă de mail validă</small>
+          <small *ngIf="form.get('email')!.hasError('required')" class="p-error">Mailul este obligatoriu</small>
+        </div>
+      </section>
+
+
+      <section>
+        <div class="p-inputgroup">
+          <span class="p-inputgroup-addon">Parola</span>
+          <p-password formControlName="password"
+                      [style]="{'width': '100%'}"
+                      [toggleMask]="true"
+                      [weakLabel]="'Slabă'"
+                      [mediumLabel]="'Medie'"
+                      [strongLabel]="'Puternică'"
+                      [promptLabel]="'Introduce o parolă'">
+            <ng-template pTemplate="header">
+              <h6>Alege o parolă</h6>
+            </ng-template>
+            <ng-template pTemplate="footer">
+              <p-divider></p-divider>
+              <p class="mt-2">Obligatoriu</p>
+              <ul class="pl-2 ml-2 mt-0" style="line-height: 1.5">
+                <li>Cel puțin o literă mică</li>
+                <li>Cel puțin o literă mare</li>
+                <li>Cel puțin o cifră</li>
+                <li>Minimum 6 caractere</li>
+              </ul>
+            </ng-template>
+          </p-password>
+        </div>
+        <div *ngIf="form.get('password')!.invalid && form.get('password')!.dirty" style="margin: 0px">
+          <small *ngIf="form.get('password')!.hasError('minlength')" class="p-error">Parola are formă incorectă</small>
+          <small *ngIf="form.get('password')!.hasError('required')" class="p-error">Parola este obligatorie</small>
+        </div>
+      </section>
+
+    </div>
+
+    <button pButton pRipple type="button" label="Inregistrează-te"
+            class="p-button-raised p-button-danger"
+            [disabled]="form.invalid || !form.dirty"
+            (click)="doRegister()"></button>
+
+    <button pButton pRipple type="button" label="Mergi la login"
+            class="p-button-raised p-button-secondary go-to-login"
+            (click)="goToLogin()"></button>
+  </form>
+
+
+</div>
+
+<p-toast position="top-center"></p-toast>

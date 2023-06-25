@@ -1,0 +1,47 @@
+
+<img alt="Card" src="{{image}}" style="width: 200px; display: flex;justify-self: center; align-self: center">
+<h5>{{burger.ingredients}}</h5>
+<p-accordion [multiple]="true">
+  <p-accordionTab>
+
+    <ng-template pTemplate="header">
+      Extra <span id="adauga">Alege maxim {{burgerIngredients.length}} articole</span>
+    </ng-template>
+
+    <section class="app-ingredient"
+             *ngFor="let ingredient of burgerIngredients"
+             [ingredient]="ingredient"
+             [message]="extraIngredientMessage"
+             (action)="addOrRemoveIngredient($event)"></section>
+
+  </p-accordionTab>
+  <p-accordionTab>
+    <ng-template pTemplate="header">
+      Elimină <span id="elimina">Alege maxim {{burgerIngrCanEliminate.length}} articole</span>
+    </ng-template>
+
+    <section class="app-ingredient"
+             *ngFor="let ingredient of burgerIngrCanEliminate"
+             [ingredient]="ingredient"
+             [message]="removeIngredientMessage"
+             (action)="addOrRemoveIngredient($event)"></section>
+
+  </p-accordionTab>
+
+</p-accordion>
+<section class="count">
+  <i class="pi pi-minus-circle"
+     style="font-size: 2rem; cursor: {{piMinusCursor}}"
+     [ngStyle]="{color: piMinusColor}"
+     (click)="decreaseBurgerCounter()"></i>
+  <button pButton pRipple class="p-button-text  p-button-secondary" label="{{burgerCounter}}" [disabled]="true"></button>
+  <i class="pi pi-plus-circle" style="font-size: 2rem; color: #b5393a; cursor: pointer"
+     (click)="increaseBurgerCounter()"></i>
+</section>
+
+<div style="display: flex; justify-content: center; margin-top: 10px;">
+  <button pButton pRipple type="button"
+          label="Adaugă {{burgerCounter}} pentru {{roundNumber((burgerPrice * burgerCounter).toFixed(2))}} lei"
+          class="p-button-rounded p-button-secondary"
+          (click)="addToCart()"></button>
+</div>

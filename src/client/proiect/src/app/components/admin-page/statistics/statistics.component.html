@@ -1,0 +1,20 @@
+<section class="container mt-5">
+
+  <section class="d-flex gap-3">
+
+    <button pButton pRipple type="button"
+            icon="pi pi-arrow-left"
+            class="p-button-text p-button-rounded p-button-secondary"
+            routerLink="/adminPage"
+    ></button>
+    <h3 class="d-flex align-items-center" style="margin: 0;">Statistici produse vândute</h3>
+  </section>
+
+  <div class="container mb-5">
+    <p-chart type="bar"
+             [data]="baseData"
+             [options]="horizontalOptions"
+    ></p-chart>
+  </div>
+</section>
+

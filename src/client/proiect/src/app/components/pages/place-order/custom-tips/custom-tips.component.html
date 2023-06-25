@@ -1,0 +1,12 @@
+<section class="d-flex flex-column align-items-center gap-2">
+  <img src="./assets/delivery_guy.png" style="width: 150px; height: 150px">
+  <h4>Introduce tips-ul pe care îl dorești</h4>
+
+  <div class="p-inputgroup">
+    <input type="text" [(ngModel)]="value" pInputText placeholder="Price">
+    <span class="p-inputgroup-addon">LEI</span>
+  </div>
+
+  <button pButton pRipple type="button" label="Salvează" (click)="saveTip()"
+          class="p-button-rounded p-button-warning"></button>
+</section>

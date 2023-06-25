@@ -1,0 +1,286 @@
+<div class="container-xl mt-5">
+
+
+  <section class="d-flex gap-3">
+    <button pButton pRipple type="button"
+            icon="pi pi-arrow-left"
+            class="p-button-text p-button-rounded p-button-secondary"
+            routerLink="/historyOrders"
+    ></button>
+
+    <h2 style="margin: 0px;" class="d-flex align-items-center">Detalii comanda #{{orderId}}</h2>
+  </section>
+
+
+  <section class="d-flex gap-2 mt-5">
+
+    <div class="d-flex flex-column gap-2" style="width: 100%;">
+
+      <article>
+        <p style="margin: 0px">Data: <strong>{{order.placedOrderTime | date: 'dd/MM/yyyy HH:mm'}}</strong></p>
+      </article>
+
+      <p-divider></p-divider>
+
+      <article>
+        <h3 style="margin: 0px">Livrare la: </h3>
+        <p style="margin: 0px">{{order.addressToString}}</p>
+      </article>
+
+      <p-divider></p-divider>
+
+      <article>
+        <h3 style="margin: 0px">Plata cu cardul:</h3>
+        <p style="margin: 0px">{{order.cardNumber}}</p>
+      </article>
+
+      <p-divider></p-divider>
+
+      <article *ngIf="order.commentsSection">
+        <h3 style="margin: 0px">Comentarii:</h3>
+        <p style="margin:0px;">{{order.commentsSection}}</p>
+      </article>
+
+      <p-divider *ngIf="order.commentsSection"></p-divider>
+
+
+      <article>
+        <h3 style="margin: 0px;">Sumar:</h3>
+        <div class="d-flex justify-content-between gap-3">
+          <h5 style="margin: 0px">{{getTotalQuantity()}} produse</h5>
+
+          <h5>{{order.productsAmount}} lei</h5>
+        </div>
+
+        <div *ngIf="order.productsAmount < 100" class="d-flex flex-column">
+          <div class="d-flex justify-content-between gap-3">
+            <h5 style="margin: 0; ">Taxă transport</h5>
+            <h5 style="margin: 0;">{{order.deliveryTax}} lei</h5>
+          </div>
+          <p>Fără taxă transport pentru comenzi peste 100 lei</p>
+        </div>
+
+        <div *ngIf="order.tipsTax > 0" class="d-flex justify-content-between gap-3">
+          <h5 style="margin: 0; ">Tips</h5>
+          <h5 style="margin: 0;">{{order.tipsTax}} lei</h5>
+        </div>
+
+        <div class="d-flex justify-content-between gap-3">
+          <h3 style="margin: 0; ">TOTAL</h3>
+          <h3 style="margin: 0;">{{order.amount}} lei</h3>
+        </div>
+
+
+
+      </article>
+
+
+      <article *ngIf="!order.canceledOrder" class="d-flex flex-column gap-3 mt-5">
+
+        <h3>Status comandă</h3>
+
+        <div class="status-order"
+             [icon]="'pi-check'"
+             [colorIcon]="'var(--green-600)'"
+             [message]="'Comandă plasată'"
+             [date]="order.placedOrderTime"
+             [active]="true"
+        ></div>
+
+        <i class="pi pi-arrow-down p-text-secondary ms-2" style="font-size: 2rem"></i>
+
+        <div class="status-order" *ngIf="order.paymentConfirmed; else elseBlockPaymentConfirmed"
+             [icon]="'pi-check'"
+             [colorIcon]="'var(--green-600)'"
+             [message]="'Plată confirmată'"
+             [date]="order.paymentConfirmed"
+             [active]="true"
+        ></div>
+
+        <ng-template #elseBlockPaymentConfirmed>
+          <div class="status-order"
+               [icon]="'pi-question'"
+               [colorIcon]="'var(--yellow-500)'"
+               [message]="'Plată confirmată'"
+               [active]="true"
+          ></div>
+        </ng-template>
+
+        <i class="pi pi-arrow-down p-text-secondary ms-2" *ngIf="order.paymentConfirmed" style="font-size: 2rem"></i>
+
+        <div class="status-order" *ngIf="order.orderInPreparation && order.paymentConfirmed; else elseBlockInPreparation"
+             [icon]="'pi-check'"
+             [colorIcon]="'var(--green-600)'"
+             [message]="'Comandă în preparare'"
+             [date]="order.orderInPreparation"
+             [active]="true"
+        ></div>
+
+        <ng-template #elseBlockInPreparation>
+
+          <div class="status-order" *ngIf="order.paymentConfirmed"
+               [icon]="'pi-question'"
+               [colorIcon]="'var(--yellow-500)'"
+               [message]="'Comandă în preparare'"
+               [active]="true"
+          ></div>
+
+        </ng-template>
+
+        <i class="pi pi-arrow-down p-text-secondary ms-2" *ngIf="order.orderInPreparation" style="font-size: 2rem"></i>
+
+
+        <div class="status-order" *ngIf="order.orderInDelivery && order.orderInPreparation && order.paymentConfirmed; else elseBlockInDelivery"
+             [icon]="'pi-check'"
+             [colorIcon]="'var(--green-600)'"
+             [message]="'Comandă în curs de livrare'"
+             [date]="order.orderInDelivery"
+             [active]="true"
+        ></div>
+
+        <ng-template #elseBlockInDelivery>
+
+          <div class="status-order" *ngIf="order.orderInPreparation"
+               [icon]="'pi-question'"
+               [colorIcon]="'var(--yellow-500)'"
+               [message]="'Comandă în curs de livrare'"
+               [active]="true"
+          ></div>
+
+        </ng-template>
+
+        <i class="pi pi-arrow-down p-text-secondary ms-2" *ngIf="order.orderInDelivery" style="font-size: 2rem"></i>
+
+
+        <div class="status-order" *ngIf="order.deliverTime && order.orderInDelivery && order.orderInPreparation && order.paymentConfirmed; else elseBlockDelivered"
+             [icon]="'pi-check'"
+             [colorIcon]="'var(--green-600)'"
+             [message]="'Comandă livrată'"
+             [date]="order.deliverTime"
+             [active]="true"
+        ></div>
+
+        <ng-template #elseBlockDelivered>
+
+          <div class="status-order" *ngIf="order.orderInDelivery"
+               [icon]="'pi-question'"
+               [colorIcon]="'var(--yellow-500)'"
+               [message]="'Comandă livrată'"
+               [active]="true"
+          ></div>
+
+          <p-button *ngIf="order.orderInDelivery" label="Info curier" icon="pi pi-info-circle" (click)="detailsCourier()"></p-button>
+
+
+        </ng-template>
+
+
+      </article>
+
+      <article *ngIf="order.canceledOrder" class="d-flex flex-column gap-3 mt-5">
+
+        <h3>Status comandă</h3>
+
+        <div class="status-order"
+             [icon]="'pi-check'"
+             [colorIcon]="'var(--green-600)'"
+             [message]="'Comandă plasată'"
+             [date]="order.placedOrderTime"
+             [active]="true"
+        ></div>
+
+        <i class="pi pi-arrow-down p-text-secondary ms-2" style="font-size: 2rem"></i>
+
+        <div class="status-order" *ngIf="order.paymentConfirmed; else elseBlockPaymentConfirmed"
+             [icon]="'pi-check'"
+             [colorIcon]="'var(--green-600)'"
+             [message]="'Plată confirmată'"
+             [date]="order.paymentConfirmed"
+             [active]="true"
+        ></div>
+
+        <ng-template #elseBlockPaymentConfirmed>
+          <div class="status-order"
+               [icon]="'pi-times-circle'"
+               [colorIcon]="'var(--red-500)'"
+               [message]="'Comandă anulată'"
+               [date]="order.canceledOrder"
+               [active]="true"
+          ></div>
+        </ng-template>
+
+        <i class="pi pi-arrow-down p-text-secondary ms-2" *ngIf="order.paymentConfirmed" style="font-size: 2rem"></i>
+
+        <div class="status-order" *ngIf="order.orderInPreparation && order.paymentConfirmed; else elseBlockInPreparation"
+             [icon]="'pi-check'"
+             [colorIcon]="'var(--green-600)'"
+             [message]="'Comandă în preparare'"
+             [date]="order.paymentConfirmed"
+             [active]="true"
+        ></div>
+
+        <ng-template #elseBlockInPreparation>
+          <div class="status-order" *ngIf="order.paymentConfirmed"
+               [icon]="'pi-times-circle'"
+               [colorIcon]="'var(--red-500)'"
+               [message]="'Comandă anulată'"
+               [date]="order.canceledOrder"
+               [active]="true"
+          ></div>
+        </ng-template>
+
+        <i class="pi pi-arrow-down p-text-secondary ms-2" *ngIf="order.orderInPreparation" style="font-size: 2rem"></i>
+
+        <div class="status-order" *ngIf="!order.orderInDelivery && order.orderInPreparation"
+             [icon]="'pi-times-circle'"
+             [colorIcon]="'var(--red-500)'"
+             [message]="'Comandă anulată'"
+             [date]="order.canceledOrder"
+             [active]="true"
+        ></div>
+
+      </article>
+    </div>
+
+
+    <div class="d-flex flex-column gap-2" style="width: 100%;">
+      <h3>Produse în comandă</h3>
+
+      <div *ngFor="let orderItem of orderItems" class="card border-0">
+        <div class="card-body">
+          <h5 class="card-title" style="margin: 0px;">{{orderItem.quantity}} X {{orderItem.productName}}</h5>
+          <p *ngIf="orderItem.extraIngredients !== ''"
+              class="card-text" style="margin: 0px;">
+            <strong>Extra opțiuni: </strong>{{orderItem.extraIngredients}}</p>
+          <p *ngIf="orderItem.lessIngredients !== ''"
+             class="card-text" style="margin: 0px;">
+            <strong>Fără: </strong>{{orderItem.lessIngredients}}</p>
+          <p class="card-text" style="margin: 0px;">
+            <strong>{{orderItem.price}} lei</strong></p>
+        </div>
+      </div>
+
+      <button *ngIf="order.status === 'Order is being delivered'"
+              pButton pRipple type="button" label="Confirmă primirea comenzii"
+              (click)="confirmReceivedOrder()"
+              class="p-button-rounded p-button-danger"
+              [loading]="loading" style="float: right"
+      ></button>
+
+      <button *ngIf="order.status === 'Placed order' ||
+                     order.status === 'Payment confirmed' ||
+                     order.status === 'Order in preparation'"
+              pButton pRipple type="button" label="Anulează comanda"
+              (click)="cancelOrder()"
+              class="p-button-rounded p-button-danger"
+              [loading]="loading" style="float: right"
+      ></button>
+
+    </div>
+
+  </section>
+
+  <p-confirmDialog [key]="'cancelOrder'" header="Confirmation" icon="pi pi-exclamation-triangle"></p-confirmDialog>
+  <p-toast position="top-right"></p-toast>
+
+</div>

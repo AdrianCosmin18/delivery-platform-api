@@ -1,0 +1,23 @@
+
+.container{
+  margin-top: 10%;
+  width: 40%;
+  margin-bottom: 10%;
+  background-color: #f9c141;
+}
+
+h3{
+  font-size: 30px;
+  margin-bottom: 5%;
+  margin-top: 1%;
+  width: 50%;
+}
+button{
+  margin-top: 20px;
+  display: block;
+  margin-right: auto;
+}
+
+.go-to-register{
+  margin-bottom: 10px;
+}

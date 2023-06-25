@@ -1,0 +1,40 @@
+.card{
+  border: 1px solid grey;
+}
+
+.card-div{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  margin-bottom: 2%;
+}
+
+i{
+  cursor: pointer;
+}
+
+::ng-deep .p-button .pi-cart-plus {
+  font-size: 1.5em; /* sau orice altă valoare de dimensiune */
+}
+
+::ng-deep .pi-trash {
+  margin-left: 10px;
+  align-self: center;
+}
+
+::ng-deep .p-card{
+  justify-self: center;
+}
+
+::ng-deep .p-card-footer{
+  display: flex;
+  justify-content: center;
+}
+
+::ng-deep .p-card-body{
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+}
+

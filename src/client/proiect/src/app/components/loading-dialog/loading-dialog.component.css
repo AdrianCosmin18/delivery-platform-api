@@ -1,0 +1,76 @@
+html, body {
+  height: 100%;
+  background-image: linear-gradient(-105deg, #009acc, #363795);
+}
+
+/*#009acc*/
+
+.box {
+  height: 100%;
+  width: 100%;
+  background: gray;
+  opacity: 0.7;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  padding: 42.5vh 35vw 42.5vh 35vw;
+  display: flex;
+  flex-direction: row;
+  box-shadow: 0 2px 5px 0 rgba(0,0,0,.3);
+}
+
+/* .svg-container {
+  margin: 12px;
+} */
+
+.spinner {
+  animation: rotate 2s linear infinite;
+  z-index: 2;
+  /*position: absolute;*/
+  /*top: 50%;*/
+  /*left: 50%;*/
+  /*margin: -25px 0 0 -25px;*/
+  margin: 0 0 0 0;
+  width: 15vw;
+  height: 15vh;
+}
+
+.spinner .path {
+  /*stroke: hsl(210, 70%, 75%);*/
+  stroke: hsl(0, 0%, 100%);
+  stroke-linecap: round;
+  animation: dash 1.5s ease-in-out infinite;
+}
+
+@keyframes rotate {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes dash {
+  0% {
+    stroke-dasharray: 1, 150;
+    stroke-dashoffset: 0;
+  }
+  50% {
+    stroke-dasharray: 90, 150;
+    stroke-dashoffset: -35;
+  }
+  100% {
+    stroke-dasharray: 90, 150;
+    stroke-dashoffset: -124;
+  }
+}
+
+p {
+  margin: 0 0 0 0;
+  font-size: 2.5vw;
+  color: white;
+  /*padding: 4vh 0 0 0;*/
+  padding: 2vh 0 2vh 0;
+  height: 15vh;
+  width: 15vw;
+  line-height: 5.5vh;
+}

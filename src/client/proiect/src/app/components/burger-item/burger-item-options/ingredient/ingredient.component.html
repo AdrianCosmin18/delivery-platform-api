@@ -1,0 +1,9 @@
+
+<article style="display: flex; flex-direction: row; justify-content: space-between">
+  <p>{{ingredient.name.toUpperCase()}}</p>
+  <p *ngIf="message === 'Extra'" style="margin-left: 5px;"> <strong style="color: #ffc244"> +{{ingredient.price}} Lei</strong></p>
+  <i class="pi {{iconStyle}}"
+     style="font-size: 1.5rem; margin-left: auto; color:{{colorIcon}};"
+     (click)="add()"
+  ></i>
+</article>

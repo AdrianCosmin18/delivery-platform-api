@@ -1,0 +1,62 @@
+
+<p-card header={{item.productName}} styleClass="p-card-shadow" [style]="{'width': '27rem'}">
+  <ng-template pTemplate="header">
+    <img src="{{image}}"
+         style="width: 150px;" class="img-fluid rounded-start" alt="...">
+  </ng-template>
+
+  <article *ngIf="item.extraIngredients !== ''" class="row">
+
+    <div class="col-12 col-md-3 d-flex justify-content-start align-items-center">
+      <p style="margin: 0px;"><strong>Extra optiuni: </strong></p>
+    </div>
+    <div class="col-12 col-md-6 d-flex align-items-center">
+      <p style="margin: 0px;"> {{item.extraIngredients}}</p>
+    </div>
+
+    <div class="col-12 col-md-3 d-flex align-items-center">
+      <h5 style="color: #f9c141; margin: 0px;"> +{{extraPrice}} lei</h5>
+    </div>
+  </article>
+
+  <p-divider *ngIf="item.extraIngredients !== ''" [style]="{'margin': '5px'}"></p-divider>
+
+  <article *ngIf="item.lessIngredients !== ''" class="row d-flex flex-row align-items-center gap-2">
+    <div class="col-12 col-md-4">
+      <p style="margin: 0px;"><strong> Fără: </strong></p>
+    </div>
+    <div class="col-12 col-md-8">
+      <p style="margin: 0px;"> {{item.lessIngredients}}</p>
+    </div>
+
+  </article>
+
+  <p-divider *ngIf="item.lessIngredients !== ''" [style]="{'margin': '5px'}"></p-divider>
+
+  <article class="d-flex flex-row gap-2 justify-content-start">
+    <h5>Preț bază: {{product.price}}</h5>
+  </article>
+
+  <article class="d-flex gap-3 mt-3">
+
+    <span class="p-buttonset col-8 col-md-5 d-flex flex-row">
+      <button pButton pRipple icon="pi pi-minus" class="p-button-outlined p-button-warning" (click)="decreaseQuantity()"></button>
+      <button pButton pRipple label="{{item.quantity}}" class="p-button-outlined p-button-warning"></button>
+      <button pButton pRipple icon="pi pi-plus" class="p-button-outlined p-button-warning" (click)="increaseQuantity()"></button>
+    </span>
+
+    <div class="col-md-4">
+      <p style="color: #ed9c00; font-size: 20px; padding-top: 10px; margin-right: auto;"><strong>{{orderItemTotalPrice()}} lei</strong></p>
+    </div>
+
+    <div class="col-md-3">
+      <button pButton pRipple type="button" icon="pi pi-trash"
+              class="p-button-rounded p-button-danger p-button-text"
+              style="margin-right: 10px;"
+              (click)="removeFromCart()"
+      ></button>
+    </div>
+
+  </article>
+
+</p-card>

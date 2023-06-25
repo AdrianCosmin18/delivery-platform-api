@@ -1,0 +1,11 @@
+
+<div class="d-flex gap-3">
+  <button pButton pRipple type="button" icon="pi {{icon}}" [disabled]="true"
+          [ngStyle]="{backgroundColor: colorIcon}"
+          class="p-button-rounded p-button-secondary"></button>
+  <div>
+    <h5 style="margin: 0; color: {{colorText}}">{{message}}</h5>
+    <p style="margin: 0;">{{date | date: 'dd/MM/yyyy HH:mm'}}</p>
+  </div>
+</div>
+

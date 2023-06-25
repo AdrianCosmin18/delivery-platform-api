@@ -1,0 +1,121 @@
+<section class="container mt-5">
+
+  <section class="d-flex gap-3">
+
+    <button pButton pRipple type="button"
+            icon="pi pi-arrow-left"
+            class="p-button-text p-button-rounded p-button-secondary"
+            routerLink="/mainPage"
+    ></button>
+    <h3 class="d-flex align-items-center" style="margin: 0;">Intolerante alimentare</h3>
+  </section>
+
+  <h6 class="text-muted mt-5">În cazul în care dispuneți de intoleranțe alimentare, această secțiune vă permite să alegeți produsele care nu conțin anumiți alergeni (ex: lactoză, glucoză).</h6>
+  <h6 class="text-muted">De asemenea, această secțiune include și meniul vegetarian .</h6>
+
+
+  <section class="section-menu d-flex gap-5 mt-5">
+
+    <article style="margin-right: 20%;">
+      <p-megaMenu [model]="items" orientation="vertical"></p-megaMenu>
+    </article>
+
+    <article class="d-flex align-items-start">
+
+      <div *ngIf="filteredBurgers.length > 0" class="container container-product">
+        <div class="burger-item d-flex justify-content-center"
+             *ngFor="let burger of filteredBurgers"
+             [burger]="burger"
+        ></div>
+      </div>
+
+      <div *ngIf="filteredFries.length > 0" class="container container-product">
+        <div class="fries-item d-flex justify-content-center"
+             *ngFor="let fries of filteredFries"
+             [fries]="fries"
+        ></div>
+      </div>
+
+      <div *ngIf="sauces.length > 0" class="container container-product">
+        <div class="sauce-item d-flex justify-content-center"
+             *ngFor="let sauce of filteredSauces"
+             [sauce]="sauce"
+        ></div>
+      </div>
+
+    </article>
+
+  </section>
+
+
+
+
+
+<!--  <p-tabView>-->
+<!--    <p-tabPanel header="Burgeri">-->
+
+<!--      <p-dropdown [options]="intolerances"-->
+<!--                  [(ngModel)]="selectedIntolerance"-->
+<!--                  placeholder="Filtreaza dupa burger"-->
+<!--                  optionLabel="name"-->
+<!--                  optionValue="name"-->
+<!--                  [showClear]="true"-->
+<!--                  [style]="{'width': '100%'}"-->
+<!--                  (onChange)="filterBurgers()"-->
+<!--      ></p-dropdown>-->
+
+
+<!--      <div *ngIf="filteredBurgers.length > 0" class="container container-product">-->
+<!--        <div class="burger-item d-flex justify-content-center"-->
+<!--             *ngFor="let burger of filteredBurgers"-->
+<!--             [burger]="burger"-->
+<!--        ></div>-->
+<!--      </div>-->
+<!--    </p-tabPanel>-->
+<!--    <p-tabPanel header="Cartofi">-->
+
+<!--      <p-dropdown [options]="intolerances"-->
+<!--                  [(ngModel)]="selectedIntolerance"-->
+<!--                  placeholder="Filtreaza dupa cartofi"-->
+<!--                  optionLabel="name"-->
+<!--                  optionValue="name"-->
+<!--                  [showClear]="true"-->
+<!--                  [style]="{'width': '100%'}"-->
+<!--                  (onChange)="filterFries()"-->
+<!--      ></p-dropdown>-->
+
+
+<!--      <div *ngIf="filteredFries.length > 0" class="container container-product">-->
+<!--        <div class="fries-item d-flex justify-content-center"-->
+<!--             *ngFor="let fries of filteredFries"-->
+<!--             [fries]="fries"-->
+<!--        ></div>-->
+<!--      </div>-->
+
+<!--    </p-tabPanel>-->
+
+
+<!--    <p-tabPanel header="Sosuri">-->
+
+<!--      <p-dropdown [options]="intolerances"-->
+<!--                  [(ngModel)]="selectedIntolerance"-->
+<!--                  placeholder="Filtreaza dupa sos"-->
+<!--                  optionLabel="name"-->
+<!--                  optionValue="name"-->
+<!--                  [showClear]="true"-->
+<!--                  [style]="{'width': '100%'}"-->
+<!--                  (onChange)="filterSauces()"-->
+<!--      ></p-dropdown>-->
+
+
+<!--      <div *ngIf="sauces.length > 0" class="container container-product">-->
+<!--        <div class="sauce-item d-flex justify-content-center"-->
+<!--             *ngFor="let sauce of filteredSauces"-->
+<!--             [sauce]="sauce"-->
+<!--        ></div>-->
+<!--      </div>-->
+
+<!--    </p-tabPanel>-->
+
+<!--  </p-tabView>-->
+</section>

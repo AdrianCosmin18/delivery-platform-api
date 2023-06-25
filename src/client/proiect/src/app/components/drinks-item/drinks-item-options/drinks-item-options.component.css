@@ -1,0 +1,35 @@
+#elimina, #adauga {
+  margin-left: auto;
+  color: #f9c141;
+}
+
+.count{
+  margin-top: 30px;
+  display: flex;
+  justify-content: center;
+}
+
+.pi-minus-circle, .pi-plus-circle{
+  display: flex;
+  align-self: center;
+}
+
+.template{
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-around;
+}
+
+::ng-deep p-selectButton{
+  display: flex;
+  justify-content: center;
+}
+
+::ng-deep .accord{
+  margin-top: 30px;
+}
+
+.button-group{
+  /*display: block;*/
+}

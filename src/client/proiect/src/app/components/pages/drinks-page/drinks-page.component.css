@@ -1,0 +1,13 @@
+.container{
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  column-gap: 30px;
+  row-gap: 40px;
+  margin-top: 5%;
+  justify-items: center;
+  align-items: center;
+}
+
+.burger-item{
+  max-width: 360px;
+}

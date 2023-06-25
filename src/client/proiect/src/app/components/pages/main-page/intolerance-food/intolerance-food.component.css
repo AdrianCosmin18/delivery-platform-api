@@ -1,0 +1,25 @@
+
+
+.container-product{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 30px;
+  row-gap: 30px;
+  margin-top: 5%;
+}
+
+@media screen and (max-width: 1350px){
+  .container-product{
+    display: grid;
+    grid-template-columns: 1fr;
+    column-gap: 30px;
+    row-gap: 30px;
+    margin-top: 5%;
+  }
+}
+
+@media screen and (max-width: 990px){
+  .section-menu{
+    flex-direction: column;
+  }
+}

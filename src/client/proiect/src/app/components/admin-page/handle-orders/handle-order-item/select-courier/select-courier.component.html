@@ -1,0 +1,21 @@
+<section class="d-flex flex-column gap-4 justify-content-center align-items-center">
+
+  <div *ngFor="let courier of couriers" class="card" style="width: 20rem;">
+    <div class="card-header d-flex justify-content-between">
+      <h5 class="d-flex align-items-center gap-1" style="margin: 0;">Nume: <strong>{{courier.fullName}}</strong></h5>
+      <button pButton pRipple type="button"
+              icon="pi pi-plus"
+              class="p-button-rounded p-button-danger"
+              pTooltip="asignează comanda" tooltipPosition="top"
+              (click)="addOrderToCourier(courier.id)"
+      ></button>
+    </div>
+    <ul class="list-group list-group-flush">
+<!--      <li class="list-group-item">Nume: <strong>{{courier.fullName}}</strong></li>-->
+      <li class="list-group-item">Tip vehicul: <strong>{{courier.vehicleType}}</strong></li>
+      <li class="list-group-item"
+      >Comenzi de livrat active: <p-badge [value]="courier.ordersAssigned.toString()" size="medium" severity="warning" styleClass="mr-2"></p-badge></li>
+    </ul>
+  </div>
+
+</section>

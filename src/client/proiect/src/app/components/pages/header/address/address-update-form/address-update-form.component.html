@@ -1,0 +1,148 @@
+<form [formGroup]="form">
+
+  <section class="container" style="padding-top: 10px;">
+
+    <div class="row gy-4">
+
+      <article class="field col-12">
+        <p-dropdown [options]="cities" [(ngModel)]="citySelected"
+                    class="dropdown-city" placeholder="Oraș"
+                    optionLabel="name" optionValue="name"
+                    styleClass="custom-dropdown"
+                    formControlName="cities" [style]="{'width':'100%'}"
+        ></p-dropdown>
+      </article>
+
+      <section class="field col-12">
+
+        <span class="p-float-label">
+          <input id="street"
+                 type="text"
+                 pInputText
+                 [style]="{'width':'100%'}"
+                 formControlName="street">
+          <label for="street" style="margin-left: 1%;">Strada</label>
+
+          <div *ngIf="form.get('street')?.invalid && form.get('street')?.dirty">
+            <small *ngIf="form.get('street')?.hasError('required')" class="p-error">Strada este obligatorie</small>
+            <small *ngIf="form.get('street')?.hasError('minlength')" class="p-error">Strada trebuie să aibă minim 4 caractere</small>
+          </div>
+        </span>
+      </section>
+
+      <section class="field col-12">
+
+        <span class="p-float-label">
+          <input id="number"
+                 type="number"
+                 pInputText
+                 [style]="{'width':'100%'}"
+                 formControlName="number">
+          <label for="number" style="margin-left: 1%;">Numărul</label>
+
+          <div *ngIf="form.get('number')?.invalid && form.get('number')?.dirty">
+            <small *ngIf="form.get('number')?.hasError('required')" class="p-error">Numărul este obligatoriu</small>
+          </div>
+        </span>
+      </section>
+
+      <section class="field col-12 col-md-6">
+
+        <span class="p-float-label">
+          <input id="block"
+                 type="text"
+                 pInputText
+                 [style]="{'width':'100%'}"
+                 formControlName="block">
+          <label for="block" style="margin-left: 1%;">Bloc</label>
+        </span>
+      </section>
+
+      <section class="field col-12 col-md-6">
+
+        <span class="p-float-label">
+          <input id="staircase"
+                 type="text"
+                 pInputText
+                 [style]="{'width':'100%'}"
+                 formControlName="staircase">
+          <label for="staircase" style="margin-left: 1%;">Scară</label>
+        </span>
+      </section>
+
+      <section class="field col-12 col-md-6">
+
+        <span class="p-float-label">
+          <input id="floor"
+                 type="number"
+                 pInputText
+                 [style]="{'width':'100%'}"
+                 formControlName="floor">
+          <label for="floor" style="margin-left: 1%;">Etaj</label>
+        </span>
+      </section>
+
+      <section class="field col-12 col-md-6">
+
+        <span class="p-float-label">
+          <input id="apartment"
+                 type="number"
+                 pInputText
+                 [style]="{'width':'100%'}"
+                 formControlName="apartment">
+          <label for="apartment" style="margin-left: 1%;">Apartament</label>
+        </span>
+      </section>
+
+      <section class="field col-12 col-md-3">
+
+        <span class="p-float-label">
+          <input id="interphone"
+                 type="text"
+                 pInputText
+                 [style]="{'width':'100%'}"
+                 formControlName="interphone">
+          <label for="interphone" style="margin-left: 1%;">Interfon</label>
+        </span>
+      </section>
+
+      <section class="field col-12 col-md-9">
+
+        <span class="p-float-label">
+          <input id="details"
+                 type="text"
+                 pInputText
+                 [style]="{'width':'100%'}"
+                 formControlName="details">
+          <label for="details" style="margin-left: 1%;">Detalii</label>
+        </span>
+      </section>
+
+    </div>
+
+    <div class="field-checkbox" style="margin-top: 3%; gap: 5px">
+      <p-checkbox formControlName="isDefault" [binary]="true" inputId="binary"></p-checkbox>
+      <label>Setează ca adresă principală</label>
+    </div>
+
+  </section>
+
+  <p-divider></p-divider>
+
+  <button *ngIf="formType === 'Update address'"
+          pButton pRipple label="Salvează adresa"
+          class="p-button-danger button-new-address"
+          [disabled]="form.invalid || !form.dirty"
+          (click)="updateAddress()"
+  ></button>
+
+  <button *ngIf="formType === 'Add new address'"
+          pButton pRipple label="Adaugă adresa"
+          class="p-button-danger button-new-address"
+          [disabled]="form.invalid || !form.dirty"
+          (click)="addAddress()"
+  ></button>
+
+</form>
+
+<p-toast position="bottom"></p-toast>

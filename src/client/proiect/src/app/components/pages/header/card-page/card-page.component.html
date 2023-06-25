@@ -1,0 +1,44 @@
+
+<section *ngIf="cards.length === 0; else elseBlock">
+  <h3 class="title-h3">
+    Nu exista niciun card adăugat</h3>
+
+  <section class="d-flex justify-content-center" style="margin-top: 25px;">
+    <button pButton pRipple label="Adaugă nou card"
+            icon="pi pi-plus"
+            class="p-button-danger delete-button"
+            (click)="addNewCard()"
+    ></button>
+  </section>
+</section>
+
+
+<ng-template #elseBlock>
+  <div class="container">
+    <div class="cards">
+      <article
+        class="app-card-item"
+        *ngFor="let card of cards"
+        (emitMainCardId)="setAsMainCard($event)"
+        [email]=email
+        [card] = card
+        [isAPlacedOrder]="isAPlacedOrder"
+        (emitDeleteCard)="onDeleteCard($event)"
+      ></article>
+    </div>
+
+    <p-divider></p-divider>
+
+    <section style="text-align: center"></section>
+    <button pButton pRipple label="Adaugă nou card"
+            icon="pi pi-plus"
+            class="p-button-danger delete-button"
+            (click)="addNewCard()"
+    ></button>
+  </div>
+</ng-template>
+
+
+<p-toast position="bottom-center"></p-toast>
+
+

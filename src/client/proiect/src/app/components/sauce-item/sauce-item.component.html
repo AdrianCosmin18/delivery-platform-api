@@ -1,0 +1,19 @@
+<p-card header={{sauce.name}} styleClass="p-card-shadow" [style]="{width: '360px'}">
+  <ng-template pTemplate="header">
+    <img alt="Card" src="{{getImageUrl(sauce.imageId)}}" style="width: 200px">
+  </ng-template>
+  <p>{{sauce.ingredients}}</p>
+  <ng-template pTemplate="footer">
+
+    <p-button label="{{sauce.price}} lei"
+              icon="pi pi-cart-plus"
+              (click)="addCart()"
+              badgeClass="p-badge-danger"
+              styleClass="p-button-outlined p-button-secondary"
+              [style]="{'margin-left': '10px'}"
+              pTooltip="Adaugă în coș" tooltipPosition="top"
+    ></p-button>
+
+  </ng-template>
+</p-card>
+<p-toast position="top-left"></p-toast>

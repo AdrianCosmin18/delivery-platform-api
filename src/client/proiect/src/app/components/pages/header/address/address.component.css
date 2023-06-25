@@ -1,0 +1,67 @@
+.address-item {
+  display: flex;
+  align-items: center;
+  padding: .5rem;
+  width: 100%;
+}
+
+
+.p-orderlist-controls{
+  display: none;
+}
+
+img {
+  width: 75px;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+  margin-right: 1rem;
+}
+
+.address-list-detail {
+  flex: 1 1 0;
+}
+
+.address-list-action {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.address-category-icon {
+  vertical-align: middle;
+  margin-right: .5rem;
+}
+
+.address-category {
+  vertical-align: middle;
+  line-height: 1;
+}
+
+
+@media screen and (max-width: 576px) {
+    .address-item {
+      flex-wrap: wrap;
+    }
+
+      .image-container {
+        width: 100%;
+        text-align: center;
+      }
+
+      img {
+        margin: 0 0 1rem 0;
+        width: 100px;
+      }
+}
+
+.button-new-address{
+  margin-right: 0px;
+}
+
+:host /deep/ .p-orderlist .p-orderlist-controls {
+  display: none;
+}
+
+.title-h3{
+  margin-top: 25px;
+  text-align: center;
+}

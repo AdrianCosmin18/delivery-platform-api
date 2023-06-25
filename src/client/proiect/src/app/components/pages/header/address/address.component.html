@@ -1,0 +1,81 @@
+
+<section *ngIf="lenAddresses === 0; else elseBlock">
+  <h3 class="title-h3">
+    Nu exista nicio adresa inregistrata</h3>
+
+  <section class="d-flex justify-content-center" style="margin-top: 25px;">
+    <button pButton pRipple label="Adaugă adresă nouă"
+            icon="pi pi-plus"
+            class="p-button-danger button-new-address"
+            (click)="addNewAddress()"
+    ></button>
+  </section>
+</section>
+
+
+<!--<ng-template #elseBlock>-->
+
+<!--  <p-orderList [listStyle]="{'max-height':'30rem'}"-->
+<!--               [value]="addresses" filterBy="street"-->
+<!--               filterPlaceholder="Filtrează după stradă"-->
+<!--               controlsPosition="none"-->
+<!--               [dragdrop]="false">-->
+
+<!--    <ng-template let-address pTemplate="item">-->
+
+<!--      <div class="address-item"-->
+<!--           [address]="address"-->
+<!--           [email]="email"-->
+<!--           [isAPlacedOrder]="isAPlacedOrder"-->
+<!--           (emitMainAddressId)="setAsMainAddress($event)"-->
+<!--           (emitUpdateAddress)="updatedAddress($event)"-->
+<!--           (emitDeleteAddress)="deleteAddress($event)">-->
+<!--      </div>-->
+
+<!--    </ng-template>-->
+<!--  </p-orderList>-->
+
+<!--  <p-divider></p-divider>-->
+
+<!--  <section class="d-flex justify-content-end">-->
+<!--    <button pButton pRipple label="Adaugă adresă nouă"-->
+<!--            icon="pi pi-plus"-->
+<!--            class="p-button-danger button-new-address"-->
+<!--            (click)="addNewAddress()"-->
+<!--    ></button>-->
+<!--  </section>-->
+
+<!--</ng-template>-->
+
+<ng-template #elseBlock>
+  <p-virtualScroller [value]="addresses" scrollHeight="300px" [itemSize]="100" [lazy]="true">
+
+
+
+    <ng-template let-address pTemplate="item">
+      <div class="address-item" style=""
+           [address]="address"
+           [email]="email"
+           [isAPlacedOrder]="isAPlacedOrder"
+           (emitMainAddressId)="setAsMainAddress($event)"
+           (emitUpdateAddress)="updatedAddress($event)"
+           (emitDeleteAddress)="deleteAddress($event)">
+      </div>
+    </ng-template>
+
+
+  </p-virtualScroller>
+
+<!--  <p-divider></p-divider>-->
+
+  <section class="d-flex justify-content-end mt-4">
+    <button pButton pRipple label="Adaugă adresă nouă"
+            icon="pi pi-plus"
+            class="p-button-danger button-new-address"
+            (click)="addNewAddress()"
+    ></button>
+  </section>
+</ng-template>
+
+
+<p-toast position="bottom-center"></p-toast>

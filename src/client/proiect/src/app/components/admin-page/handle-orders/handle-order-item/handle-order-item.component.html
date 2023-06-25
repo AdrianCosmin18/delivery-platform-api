@@ -1,0 +1,33 @@
+<div *ngFor="let orderItem of orderItems" class="card border-0">
+  <div class="card-body">
+    <h5 class="card-title" style="margin: 0px;">{{orderItem.quantity}} X {{orderItem.productName}}</h5>
+    <p *ngIf="orderItem.extraIngredients !== ''"
+       class="card-text" style="margin: 0px;">
+      <strong>Extra optiuni: </strong>{{orderItem.extraIngredients}}</p>
+    <p *ngIf="orderItem.lessIngredients !== ''"
+       class="card-text" style="margin: 0px;">
+      <strong>Fara: </strong>{{orderItem.lessIngredients}}</p>
+    <p class="card-text" style="margin: 0px;">
+      <strong>{{orderItem.price}} lei</strong></p>
+  </div>
+</div>
+
+<button *ngIf="currentStateOrder !== 'Comenzi in preparare' &&
+               currentStateOrder !== 'Comenzi in curs de livrare' &&
+               currentStateOrder !== 'Comenzi livrate' &&
+               currentStateOrder !== 'Comenzi anulate' &&
+               role === 'ROLE_ADMIN'"
+        pButton pRipple type="button"
+        label="Treceți comanda în starea de {{message}}"
+        class="p-button-rounded p-button-danger"
+        (click)="changeState()"
+></button>
+
+<button *ngIf="currentStateOrder === 'Comenzi in preparare' && role === 'ROLE_ADMIN'"
+        pButton pRipple type="button"
+        label="Atribuie unui curier"
+        class="p-button-rounded p-button-danger"
+        (click)="changeState()"
+></button>
+
+<p class="text-danger" *ngIf="currentStateOrder === 'Comenzi in curs de livrare'">Clientul va confirma finalizarea comenzii!</p>

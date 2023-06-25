@@ -1,0 +1,57 @@
+<form [formGroup]="form">
+
+  <section class="d-flex justify-content-center gap-4 name">
+
+    <div class="field d-flex flex-column">
+      <label for="float-input-lastName" class="block">Nume</label>
+      <input id="float-input-lastName"
+             type="text" pInputText
+             formControlName="lastName">
+      <div *ngIf="form.get('lastName')!.invalid && form.get('lastName')!.dirty">
+          <small *ngIf="form.get('lastName')!.hasError('required')" class="p-error">Numele este obligatoriu</small>
+          <small *ngIf="form.get('lastName')!.hasError('minlength')" class="p-error">Numele trebuie să conțină minim 2 caractere</small>
+      </div>
+    </div>
+
+    <div class="field d-flex flex-column">
+      <label for="float-input-firstName" class="block">Prenume</label>
+      <input id="float-input-firstName"
+             type="text" pInputText
+             formControlName="firstName">
+      <div *ngIf="form.get('firstName')!.invalid && form.get('firstName')!.dirty">
+          <small *ngIf="form.get('firstName')!.hasError('required')" class="p-error">Prenumele este obligatoriu</small>
+          <small *ngIf="form.get('firstName')!.hasError('minlength')" class="p-error">Prenumele trebuie să conțină minim 2 caractere</small>
+      </div>
+    </div>
+
+  </section>
+
+  <section class="email-and-phone d-flex flex-column gap-4">
+
+      <div class="p-inputgroup">
+        <span class="p-inputgroup-addon"><i class="pi pi-at"></i></span>
+        <input type="text" pInputText formControlName="email" placeholder="email">
+      </div>
+      <div *ngIf="form.get('email')!.invalid && form.get('email')!.dirty" style="margin: 0px">
+        <small *ngIf="form.get('email')!.hasError('email')" class="p-error">Introdu o adresă de mail validă</small>
+        <small *ngIf="form.get('email')!.hasError('required')" class="p-error">Emailul este obligatoriu</small>
+      </div>
+
+      <div class="p-inputgroup">
+        <span class="p-inputgroup-addon"><i class="pi pi-phone"></i></span>
+        <input type="text" pInputText formControlName="phone" placeholder="Număr de telefon">
+      </div>
+      <div *ngIf="form.get('phone')!.invalid && form.get('phone')!.dirty">
+        <small *ngIf="form.get('phone')!.hasError('required')" class="p-error">Numărul de telefon este obligatoriu</small>
+        <small *ngIf="form.get('phone')!.hasError('pattern')" class="p-error">Introdu un număr de telefon valid</small>
+      </div>
+
+  </section>
+
+  <button pButton pRipple type="button" label="Salvează"
+          class="p-button-raised p-button-danger"
+          [disabled]="form.invalid || !form.dirty"
+          (click)="updateUser()"></button>
+
+</form>
+<p-toast position="top-right"></p-toast>

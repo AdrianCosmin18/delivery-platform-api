@@ -1,0 +1,14 @@
+button{
+  margin-right: 10px;
+  margin-bottom: 5px;
+}
+
+.card{
+  display: flex;
+  flex-direction: row;
+}
+
+.info-item{
+  display: flex;
+  flex-direction: column;
+}

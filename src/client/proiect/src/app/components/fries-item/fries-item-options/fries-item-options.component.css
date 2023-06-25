@@ -1,0 +1,16 @@
+#elimina, #adauga {
+  margin-left: auto;
+  color: #f9c141;
+}
+
+.count{
+  margin-top: 30px;
+  display: flex;
+  justify-content: center;
+}
+
+.pi-minus-circle, .pi-plus-circle{
+  display: flex;
+  align-self: center;
+}
+

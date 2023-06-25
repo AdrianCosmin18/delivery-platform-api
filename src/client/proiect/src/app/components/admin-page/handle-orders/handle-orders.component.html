@@ -1,0 +1,202 @@
+
+
+<section class="container mt-5">
+
+  <section class="d-flex gap-3">
+
+    <button pButton pRipple type="button"
+            icon="pi pi-arrow-left"
+            class="p-button-text p-button-rounded p-button-secondary"
+            routerLink="/adminPage"
+    ></button>
+    <h3 class="d-flex align-items-center" style="margin: 0;">Manipularea comenzilor</h3>
+  </section>
+
+
+  <h6 class="text-muted mt-5">în această secțiune sunt prezente toate comenzile plasate de fiecare user care utilizează aplicația.</h6>
+  <h6 class="text-muted">Rolul adminului este să mute o comandă dintr-un status in altul în cazul in care aceasta a trecut de etapa curentă.</h6>
+  <h6 class="text-muted mb-5">ATENȚIE! Fiecare admin poate muta orice comandă dintr-o stare in alta, asa ca asigurați-vă că selectați coamnda corectă.</h6>
+
+
+  <p-tabView>
+    <p-tabPanel header="{{placedOrder}}">
+
+      <div class="col-6">
+        <p-dropdown [options]="cities"
+                    [(ngModel)]="citySelected"
+                    placeholder="Alege orașul"
+                    optionLabel="name"
+                    (onChange)="filterOrders()"
+                    [style]="{'width': '100%'}"
+                    [showClear]="true"></p-dropdown>
+      </div>
+
+      <section class="container-xl mt-5">
+
+        <h3 *ngIf="orderInPlacedOrderState.length === 0"
+            class="d-flex justify-content-center"
+            style="color: gray; margin-top: 30px;">Nu exista comenzi recente</h3>
+
+        <article class="container container-orders">
+          <div *ngFor="let order of orderInPlacedOrderState"
+               class="history-order-item"
+               [order]="order"
+               [stateOrderMessageAdmin]="'plată confirmată'"
+               [currentStateOrderAdmin]="placedOrder"
+               (emitUpdateOrderStatusAdmin)="reloadOrderStates()"
+          ></div>
+        </article>
+      </section>
+
+
+    </p-tabPanel>
+    <p-tabPanel header="{{paymentConfirmed}}">
+
+      <div class="col-6">
+        <p-dropdown [options]="cities"
+                    [(ngModel)]="citySelected"
+                    placeholder="Alege orașul"
+                    optionLabel="name"
+                    (onChange)="filterOrders()"
+                    [style]="{'width': '100%'}"
+                    [showClear]="true"></p-dropdown>
+      </div>
+
+      <section class="container-xl mt-5">
+
+        <h3 *ngIf="ordersInPaymentConfirmedState.length === 0"
+            class="d-flex justify-content-center"
+            style="color: gray; margin-top: 30px;">Nu există comenzi recente</h3>
+
+        <article class="container container-orders">
+          <div *ngFor="let order of ordersInPaymentConfirmedState"
+               class="history-order-item"
+               [order]="order"
+               [stateOrderMessageAdmin]="'comandă în preparare'"
+               [currentStateOrderAdmin]="paymentConfirmed"
+               (emitUpdateOrderStatusAdmin)="reloadOrderStates()"
+          ></div>
+        </article>
+      </section>
+
+   </p-tabPanel>
+    <p-tabPanel header="{{orderInPreparation}}">
+
+      <div class="col-6">
+        <p-dropdown [options]="cities"
+                    [(ngModel)]="citySelected"
+                    placeholder="Alege orașul"
+                    optionLabel="name"
+                    (onChange)="filterOrders()"
+                    [style]="{'width': '100%'}"
+                    [showClear]="true"></p-dropdown>
+      </div>
+
+      <section class="container-xl mt-5">
+
+        <h3 *ngIf="ordersInPreparationState.length === 0"
+            class="d-flex justify-content-center"
+            style="color: gray; margin-top: 30px;">Nu exista comenzi recente</h3>
+
+        <article class="container container-orders">
+          <div *ngFor="let order of ordersInPreparationState"
+               class="history-order-item"
+               [order]="order"
+               [stateOrderMessageAdmin]="'comandă în curs de livrare'"
+               [currentStateOrderAdmin]="orderInPreparation"
+               (emitUpdateOrderStatusAdmin)="reloadOrderStates()"
+          ></div>
+        </article>
+      </section>
+
+    </p-tabPanel>
+    <p-tabPanel header="{{orderInDelivery}}">
+
+      <div class="col-6">
+        <p-dropdown [options]="cities"
+                    [(ngModel)]="citySelected"
+                    placeholder="Alege orașul"
+                    optionLabel="name"
+                    (onChange)="filterOrders()"
+                    [style]="{'width': '100%'}"
+                    [showClear]="true"></p-dropdown>
+      </div>
+
+      <section class="container-xl mt-5">
+
+        <h3 *ngIf="ordersInDeliveryState.length === 0"
+            class="d-flex justify-content-center"
+            style="color: gray; margin-top: 30px;">Nu există comenzi recente</h3>
+
+        <article class="container container-orders">
+          <div *ngFor="let order of ordersInDeliveryState"
+               class="history-order-item"
+               [order]="order"
+               [stateOrderMessageAdmin]="'comandă livrată'"
+               [currentStateOrderAdmin]="orderInDelivery"
+               (emitUpdateOrderStatusAdmin)="reloadOrderStates()"
+          ></div>
+        </article>
+      </section>
+
+    </p-tabPanel>
+    <p-tabPanel header="{{orderDelivered}}">
+
+      <div class="col-6">
+        <p-dropdown [options]="cities"
+                    [(ngModel)]="citySelected"
+                    placeholder="Alege orașul"
+                    optionLabel="name"
+                    (onChange)="filterOrders()"
+                    [style]="{'width': '100%'}"
+                    [showClear]="true"></p-dropdown>
+      </div>
+
+
+      <section class="container-xl mt-5">
+
+        <h3 *ngIf="finalizedOrders.length === 0"
+            class="d-flex justify-content-center"
+            style="color: gray; margin-top: 30px;">Nu există comenzi recente</h3>
+
+        <article class="container container-orders">
+          <div *ngFor="let order of finalizedOrders"
+               class="history-order-item"
+               [order]="order"
+               [currentStateOrderAdmin]="orderDelivered"
+          ></div>
+        </article>
+      </section>
+
+    </p-tabPanel>
+    <p-tabPanel header="{{cancelOrder}}">
+
+      <div class="col-6">
+        <p-dropdown [options]="cities"
+                    [(ngModel)]="citySelected"
+                    placeholder="Alege orașul"
+                    optionLabel="name"
+                    (onChange)="filterOrders()"
+                    [style]="{'width': '100%'}"
+                    [showClear]="true"></p-dropdown>
+      </div>
+
+      <section class="container-xl mt-5">
+
+        <h3 *ngIf="canceledOrders.length === 0"
+            class="d-flex justify-content-center"
+            style="color: gray; margin-top: 30px;">Nu există comenzi recente</h3>
+
+        <article class="container container-orders">
+          <div *ngFor="let order of canceledOrders"
+               class="history-order-item"
+               [order]="order"
+               [currentStateOrderAdmin]="cancelOrder"
+          ></div>
+        </article>
+      </section>
+
+    </p-tabPanel>
+  </p-tabView>
+
+</section>

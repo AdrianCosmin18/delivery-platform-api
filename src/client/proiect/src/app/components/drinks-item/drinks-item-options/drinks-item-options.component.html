@@ -1,0 +1,47 @@
+<img alt="Card" src="{{image}}" style="width: 200px; display: flex;justify-self: center; align-self: center">
+<h5 *ngIf="drinkList[0].ingredients !== ''">{{drinkList[0].ingredients}}</h5>
+
+<p-selectButton (click)="getDrinkTypePrice()" [options]="optionDrink" [(ngModel)]="optionSelected" optionLabel="icon">
+  <ng-template let-item>
+    <div class="template" style="width: 100px; height: 80px;">
+      <p>{{drinkList[item].description.split(",")[0]}}</p>
+      <p style="display: flex; justify-content: flex-end;">{{drinkList[item].price}} lei</p>
+    </div>
+  </ng-template>
+</p-selectButton>
+
+<div class="mt-4">
+  <p-accordion class="accord" *ngIf="this.drinkList[0].ingredients !== ''" [multiple]="true">
+    <p-accordionTab [disabled]="!chosenSize">
+
+      <ng-template pTemplate="header">
+        Extra <span id="adauga">Alege maxim {{ingredientsDB.length}} articole</span>
+      </ng-template>
+
+      <section class="app-ingredient"
+               *ngFor="let ingredient of ingredientsDB"
+               [ingredient]="ingredient"
+               [message]="extraIngredientMessage"
+               (action)="addExtraIngredient($event)"></section>
+    </p-accordionTab>
+  </p-accordion>
+</div>
+
+<section class="count">
+  <i class="pi pi-minus-circle"
+     style="font-size: 2rem; cursor: {{piMinusCursor}}"
+     [ngStyle]="{color: piMinusColor}"
+     (click)="decreaseDrinkCounter()"></i>
+  <button pButton pRipple class="p-button-text  p-button-secondary"
+          label="{{drinkCounter}}" [disabled]="true"></button>
+  <i class="pi pi-plus-circle" style="font-size: 2rem; color: #b5393a; cursor: pointer"
+     (click)="increaseDrinkCounter()"></i>
+</section>
+
+
+<div style="display: flex; justify-content: center; margin-top: 10px;">
+  <button pButton pRipple type="button" [disabled]="!chosenSize"
+          label="Adaugă {{drinkCounter}} pentru {{roundNumber((drinkPrice * drinkCounter).toFixed(2))}} lei"
+          class="p-button-rounded p-button-secondary"
+          (click)="addToCart()"></button>
+</div>

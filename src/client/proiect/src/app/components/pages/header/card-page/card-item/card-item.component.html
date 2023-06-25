@@ -1,0 +1,45 @@
+<div class="card mb-3">
+  <div class="row g-0">
+    <div class="col-md-3 d-flex justify-content-center align-items-center">
+      <img src="{{src}}" class="img-fluid rounded-start" style="width: 60px;">
+    </div>
+    <div class="col-md-6 d-flex justify-content-start align-items-center">
+      <h5 style="font-size: 18px; margin: 0px;">{{card.cardType}} {{card.cardNumber}}</h5>
+    </div>
+    <div class="col-md-3 d-flex justify-content-center align-items-center">
+      <button *ngIf="!isAPlacedOrder"
+              pButton pRipple type="button" icon="pi pi-trash"
+              class="p-button-rounded p-button-danger p-button-outlined"
+              pTooltip="Șterge cardul" tooltipPosition="top"
+              (click)="deleteCard()"
+      ></button>
+
+      <button *ngIf="isAPlacedOrder"
+              pButton pRipple type="button" icon="pi pi-eject"
+              class="p-button-rounded p-button-warning p-button-outlined"
+              pTooltip="Selectează cardul pentru livrarea curentă" tooltipPosition="top"
+              (click)="selectCardToPlaceOrder()"
+      ></button>
+    </div>
+    <div class="col-md-3"></div>
+    <div class="col-md-6 d-flex justify-content-start align-items-center">
+      <p class="text-muted">Expira in: {{expiry}}</p>
+    </div>
+    <div class="col-md-3"></div>
+
+    <p-divider></p-divider>
+
+    <div class="col-md-12 d-flex justify-content-center">
+      <div class="d-flex align-items-center" style="margin-bottom: 15px;">
+        <button pButton pRipple type="button"
+                icon="pi pi-check"
+                class="p-button-rounded p-button-secondary"
+                [ngClass]="textColor"
+                (click)="makeMainCard()"
+                pTooltip="{{tooltipMessage}}" tooltipPosition="top"
+        ></button>
+        <label style="margin-left: 10px;">Card principal</label>
+      </div>
+    </div>
+  </div>
+</div>

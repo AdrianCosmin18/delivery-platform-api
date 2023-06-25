@@ -1,0 +1,13 @@
+.container-orders{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 30px;
+  row-gap: 30px;
+  margin-top: 5%;
+}
+@media (max-width: 790px){
+  .container-orders{
+    grid-template-columns: 1fr;
+
+  }
+}

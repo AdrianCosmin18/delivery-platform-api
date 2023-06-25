@@ -1,0 +1,16 @@
+section{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+/*article{*/
+/*  margin-top: 10%;*/
+/*  display: flex;*/
+/*  gap: 10%;*/
+/*}*/
+
+span{
+  font-size: 30px;
+}

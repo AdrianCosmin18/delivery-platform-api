@@ -1,0 +1,42 @@
+<div class="card h-100" role="button" (click)="checkOrder()" style="border-color: {{borderColor}}">
+  <div class="card-header d-flex justify-content-between">
+    <p style="margin: 0;">ID Comanda <strong> #{{order.id}}</strong></p>
+    <h5 class="d-flex align-items-center"
+    style="margin: 0px;">{{status}}</h5>
+  </div>
+  <ul class="list-group list-group-flush">
+    <li class="list-group-item"
+        *ngIf="hasNotRoute('/historyOrders')"
+        >Nume client: <strong>{{order.username}}</strong></li>
+
+    <li class="list-group-item">Comandă plasată: <strong>{{order.placedOrderTime | date: 'dd/MM/yyyy HH:mm'}}</strong></li>
+
+    <li class="list-group-item"
+        *ngIf="hasNotRoute('/historyOrders') && currentStateOrderAdmin === 'Plati confimrate'"
+        >Plată confirmată: <strong>{{order.paymentConfirmed | date: 'dd/MM/yyyy HH:mm'}}</strong></li>
+
+    <li class="list-group-item"
+        *ngIf="hasNotRoute('/historyOrders') && currentStateOrderAdmin === 'Comenzi in preparare'"
+        >Comandă în preparare: <strong>{{order.orderInPreparation | date: 'dd/MM/yyyy HH:mm'}}</strong></li>
+
+    <li class="list-group-item"
+        *ngIf="hasNotRoute('/historyOrders') && currentStateOrderAdmin === 'Comenzi in curs de livrare'"
+        >Comandă gata de ridicare și livrare: <strong>{{order.orderInDelivery | date: 'dd/MM/yyyy HH:mm'}}</strong></li>
+
+    <li class="list-group-item"
+        *ngIf="hasNotRoute('/historyOrders') && currentStateOrderAdmin === 'Comenzi livrate'"
+        >Comandă livrată: <strong>{{order.deliverTime | date: 'dd/MM/yyyy HH:mm'}}</strong></li>
+
+    <li class="list-group-item"
+        *ngIf="hasNotRoute('/historyOrders') && currentStateOrderAdmin === 'Comenzi anulate'"
+        >Comandă anulată: <strong>{{order.canceledOrder | date: 'dd/MM/yyyy HH:mm'}}</strong></li>
+
+
+
+    <li class="list-group-item">Livrare la {{order.addressToString}}</li>
+    <li class="list-group-item">Plata cu cardul: <strong>{{order.cardNumber}}</strong></li>
+  </ul>
+  <div class="card-footer">
+    Total: <strong>{{order.amount}} lei</strong>
+  </div>
+</div>
