@@ -18,10 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.example.deliveryapp.constants.Consts.BURGER_SHOP;
@@ -132,7 +129,7 @@ public class RestaurantServiceImpl implements RestaurantService {
         Restaurant restaurant = this.restaurantRepo.getRestaurantByName(restaurantName)
                 .orElseThrow(() -> new DeliveryCustomException(Constants.RESTAURANT_NOT_FOUND_BY_NAME_EXCEPTION.getMessage()));
 
-        List<Product> products = restaurant.getProducts().stream().filter(product -> product.getType().equals(foodType)).collect(Collectors.toList());
+        List<Product> products = restaurant.getProducts().stream().filter(product -> product.getType().equals(foodType)).sorted(Comparator.comparingLong(Product::getId)).collect(Collectors.toList());
         if(products.isEmpty()){
             return new ArrayList<>();
         }else{
