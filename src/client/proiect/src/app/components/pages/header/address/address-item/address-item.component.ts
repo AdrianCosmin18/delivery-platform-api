@@ -5,6 +5,7 @@ import {DialogService, DynamicDialogConfig, DynamicDialogRef} from "primeng/dyna
 import {FormType} from "../../../../../constants/constants";
 import {ConfirmationService} from "primeng/api";
 import {CustomerService} from "../../../../../services/customer.service";
+import {LoadingScreenService} from "../../../../../services/loading-screen.service";
 
 @Component({
   selector: '.address-item',
@@ -27,7 +28,8 @@ export class AddressItemComponent implements OnInit {
     private config: DynamicDialogConfig,
     public ref: DynamicDialogRef,
     private confirmationService: ConfirmationService,
-    private customerService: CustomerService
+    private customerService: CustomerService,
+    private loadingScreenService: LoadingScreenService
   ) { }
 
   ngOnInit(): void {
@@ -55,13 +57,16 @@ export class AddressItemComponent implements OnInit {
       rejectLabel: 'Nu',
       key: 'delAddress',
       accept: () => {
+        this.loadingScreenService.setLoading(true);
         this.customerService.deleteAddress(this.email, this.address.id).subscribe({
           next: () => {
+            this.loadingScreenService.setLoading(false);
             const summary = 'Adresa a fost ștearsă cu succes';
             const detail = this.address.street;
             this.emitDeleteAddress.emit({summary, detail});
           },
           error: err => {
+            this.loadingScreenService.setLoading(false);
             alert(err);
           }
         })

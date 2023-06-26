@@ -6,6 +6,7 @@ import {Store} from "@ngrx/store";
 import * as fromApp from "../../../../store/app.reducer";
 import {CustomerService} from "../../../../services/customer.service";
 import {DynamicDialogConfig, DynamicDialogRef} from "primeng/dynamicdialog";
+import {LoadingScreenService} from "../../../../services/loading-screen.service";
 
 @Component({
   selector: 'app-change-password',
@@ -29,6 +30,7 @@ export class ChangePasswordComponent implements OnInit, OnDestroy {
     private customerService: CustomerService,
     public config: DynamicDialogConfig,
     public ref: DynamicDialogRef,
+    private loadingScreenService: LoadingScreenService
   ) { }
 
   ngOnInit(): void {
@@ -52,12 +54,14 @@ export class ChangePasswordComponent implements OnInit, OnDestroy {
 
       this.notificationService.onError('modifyPassword', 'Parola nouă nu poate fi identică cu cea veche');
     }else{
-
+      this.loadingScreenService.setLoading(true);
       this.customerService.changePassword(this.email, actualPassword, newPassword).subscribe({
         next: () => {
+          this.loadingScreenService.setLoading(false);
           this.notificationService.onSuccess('modifyPassword', 'Parolă modificată');
           this.ref.close();
         }, error: err => {
+          this.loadingScreenService.setLoading(false);
           this.notificationService.onError('modifyPassword', 'Parola curentă este incorectă');
         }
       })

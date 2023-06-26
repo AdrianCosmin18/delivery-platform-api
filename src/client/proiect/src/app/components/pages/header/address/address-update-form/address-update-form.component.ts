@@ -10,6 +10,7 @@ import * as fromApp from "../../../../../store/app.reducer";
 import {Observable} from "rxjs";
 import {MessageService} from "primeng/api";
 import {ErrorMessages, FormType} from "../../../../../constants/constants";
+import {LoadingScreenService} from "../../../../../services/loading-screen.service";
 
 @Component({
   selector: 'app-address-update-form',
@@ -34,7 +35,8 @@ export class AddressUpdateFormComponent implements OnInit {
     private cityService: CityService,
     private userService: CustomerService,
     private store: Store<fromApp.AppState>,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private loadingScreenService: LoadingScreenService
   ) { }
 
   ngOnInit(): void {
@@ -114,14 +116,16 @@ export class AddressUpdateFormComponent implements OnInit {
     this.auth$ = this.store.select("auth");
     this.auth$.subscribe(value => {
       const email = value.email;
-
+        this.loadingScreenService.setLoading(true);
         this.userService.updateAddress(email, this.address.id, updatedAddress as Address).subscribe({
           next: () => {
+            this.loadingScreenService.setLoading(false);
             const message = 'Adresă actualizată cu succes';
             this.cancelDialogService(message);
           },
 
           error: err => {
+            this.loadingScreenService.setLoading(false);
             this.messageService.add({severity: 'error', summary: `${err}`})
           }
         })
@@ -149,14 +153,16 @@ export class AddressUpdateFormComponent implements OnInit {
     this.auth$ = this.store.select("auth");
     this.auth$.subscribe(value => {
       const email = value.email;
-
+      this.loadingScreenService.setLoading(true);
       this.userService.addAddress(email, newAddress as Address).subscribe({
         next: () => {
+          this.loadingScreenService.setLoading(false);
           const message = 'Adresă nouă adaugată';
           this.cancelDialogService(message);
         },
 
         error: err => {
+          this.loadingScreenService.setLoading(false);
           if(err === ErrorMessages.USER_ALREADY_OWN_ADDRESS_EXCEPTION){
             this.messageService.add({severity: 'error', summary: `Ai deja această adresă înregistrată`})}
         }

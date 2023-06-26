@@ -9,6 +9,7 @@ import {SelectCourierComponent} from "./select-courier/select-courier.component"
 import {Observable, Subscription} from "rxjs";
 import {Store} from "@ngrx/store";
 import * as fromApp from "../../../../store/app.reducer";
+import {LoadingScreenService} from "../../../../services/loading-screen.service";
 
 @Component({
   selector: 'app-handle-order-item',
@@ -32,6 +33,7 @@ export class HandleOrderItemComponent implements OnInit {
     public dialogService: DialogService,
     private orderService: OrderService,
     private store: Store<fromApp.AppState>,
+    private loadingScreenService: LoadingScreenService
   ) { }
 
   ngOnInit(): void {
@@ -83,23 +85,26 @@ export class HandleOrderItemComponent implements OnInit {
   }
 
   changeStateToConfirmedPayment(){
+    this.loadingScreenService.setLoading(true);
     this.orderService.putOrderInPaymentConfirmationState(this.orderId).subscribe({
       next: () => {
+        this.loadingScreenService.setLoading(false);
         this.close(`Starea comenzii #${this.orderId} modificata cu success`);
       }
     })
   }
 
   changeStateToPreparation(){
+    this.loadingScreenService.setLoading(true);
     this.orderService.putOrderInPreparationState(this.orderId).subscribe({
       next: () => {
+        this.loadingScreenService.setLoading(false);
         this.close(`Starea comenzii #${this.orderId} modificata cu success`);
       }
     })
   }
 
   selectCourier(){
-
     const ref = this.dialogService.open(SelectCourierComponent, {
       header: `Curieri`,
       width: '40%',
@@ -107,9 +112,10 @@ export class HandleOrderItemComponent implements OnInit {
 
     ref.onClose.subscribe(courierId => {
       if(courierId){
-
+        this.loadingScreenService.setLoading(true);
         this.orderService.putOrderInDeliveryState(this.orderId, courierId).subscribe({
           next: () => {
+            this.loadingScreenService.setLoading(false);
             this.close(`Comanda #${this.orderId} a fost asignată curierului`);
           }
         });

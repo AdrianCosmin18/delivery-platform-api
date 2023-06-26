@@ -16,6 +16,8 @@ import {Constants} from "../../../constants/constants";
 import {Route, Router} from "@angular/router";
 import {NotificationService} from "../../../services/notification.service";
 import {OrderRequest} from "../../../interfaces/OrderRequest";
+import {LoadingDialogComponent} from "../../loading-dialog/loading-dialog.component";
+import {LoadingScreenService} from "../../../services/loading-screen.service";
 
 @Component({
   selector: 'app-place-order',
@@ -66,7 +68,8 @@ export class PlaceOrderComponent implements OnInit, OnDestroy {
     private userService: CustomerService,
     public dialogService: DialogService,
     private router: Router,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private loadingScreenService: LoadingScreenService
   ) { }
 
   ngOnInit(): void {
@@ -282,8 +285,10 @@ export class PlaceOrderComponent implements OnInit, OnDestroy {
       this.messageService.add({key:'notSelected', severity:'error', summary: 'Selectează adresa de livrare !'})
     }else{
 
+      this.loadingScreenService.setLoading(true);
       this.userService.placeOrder(this.createOrderRequest()).subscribe({
         next: () => {
+          this.loadingScreenService.setLoading(false);
           this.loading = true;
           setTimeout(() => {
             this.loading = false;
@@ -293,6 +298,7 @@ export class PlaceOrderComponent implements OnInit, OnDestroy {
             this.notificationService.onInfo('placedOrder', 'Comandă plasată cu succes', 'Pentru mai multe detalii acesează Istoric comenzi');
           }, 3000);
         }, error: err => {
+          this.loadingScreenService.setLoading(false);
           this.notificationService.onError('placedOrder', 'A apărut o eroare la plasarea comenzii');
         }
       });

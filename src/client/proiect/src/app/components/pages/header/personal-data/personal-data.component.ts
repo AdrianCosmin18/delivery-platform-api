@@ -11,6 +11,7 @@ import * as fromApp from "../../../../store/app.reducer";
 import {NotificationService} from "../../../../services/notification.service";
 import * as Actions from "../../../../store/auth/auth.actions";
 import {Router} from "@angular/router";
+import {LoadingScreenService} from "../../../../services/loading-screen.service";
 
 @Component({
   selector: 'app-personal-data',
@@ -33,7 +34,8 @@ export class PersonalDataComponent implements OnInit {
     private messageService: MessageService,
     private store: Store<fromApp.AppState>,
     private notificationService: NotificationService,
-    private router:Router
+    private router:Router,
+    private loadingScreenService: LoadingScreenService
   ) { }
 
   ngOnInit(): void {
@@ -84,9 +86,11 @@ export class PersonalDataComponent implements OnInit {
       password: ''
     }
 
+    this.loadingScreenService.setLoading(true);
     // @ts-ignore
     this.userService.updateCustomerByEmail(this.email, user).subscribe({
       next: () => {
+        this.loadingScreenService.setLoading(false);
         // this.messageService.add({severity:'success', summary:'Datele au fost salvate'});
         this.store.dispatch(new Actions.Logout());
         this.notificationService
@@ -96,6 +100,7 @@ export class PersonalDataComponent implements OnInit {
         this.ref.close();
       },
       error: err => {
+        this.loadingScreenService.setLoading(false);
         if(err === ErrorMessages.USER_ALREADY_EXISTS_BY_EMAIL_EXCEPTION){
           this.notificationService.onError("modifyUserInfo", 'Există deja un cont cu acest mail');
         }else if (err === ErrorMessages.USER_ALREADY_EXISTS_PHONE_EXCEPTION){

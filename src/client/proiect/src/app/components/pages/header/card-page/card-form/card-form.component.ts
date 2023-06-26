@@ -1,16 +1,14 @@
-import { Component, OnInit } from '@angular/core';
-import {FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {Address} from "../../../../../interfaces/address";
-import {City} from "../../../../../interfaces/city";
+import {Component, OnInit} from '@angular/core';
+import {AbstractControl, FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {Observable} from "rxjs";
-import {ErrorMessages, FormType} from "../../../../../constants/constants";
+import {ErrorMessages} from "../../../../../constants/constants";
 import {Card} from "../../../../../interfaces/card";
 import {DynamicDialogConfig, DynamicDialogRef} from "primeng/dynamicdialog";
-import {CityService} from "../../../../../services/city.service";
 import {CustomerService} from "../../../../../services/customer.service";
 import {Store} from "@ngrx/store";
 import * as fromApp from "../../../../../store/app.reducer";
 import {MessageService} from "primeng/api";
+import {LoadingScreenService} from "../../../../../services/loading-screen.service";
 
 @Component({
   selector: 'app-card-form',
@@ -20,8 +18,8 @@ import {MessageService} from "primeng/api";
 export class CardFormComponent implements OnInit {
   public form!: FormGroup;
   public card!: Card;
-  public months!: any;
-  public years!: any;
+  public months!: Month[];
+  public years!: Year[];
   private auth$!: Observable<{ email: string; }>;
   public monthSelected!: string;
   public yearSelected!: number;
@@ -32,16 +30,19 @@ export class CardFormComponent implements OnInit {
     private ref: DynamicDialogRef,
     private userService: CustomerService,
     private store: Store<fromApp.AppState>,
-    private messageService: MessageService) { }
+    private messageService: MessageService,
+    private loadingScreenService: LoadingScreenService
+    ) { }
 
   ngOnInit(): void {
 
-    this.initForm();
     this.initMonthDropdown();
     this.initYearDropdown();
+    this.initForm();
   }
 
   initForm(){
+
     this.form = this.formBuilder.group({
       cardType: [''],
       cardNumber: ['',
@@ -56,8 +57,8 @@ export class CardFormComponent implements OnInit {
           Validators.pattern(/^[A-Za-z\s]{6,50}$/)
         ]
       ],
-      expiryMonth: ['', [Validators.required]],
-      expiryYear: ['', [Validators.required]],
+      expiryMonth: [this.getMonthByNumber() , [Validators.required]],
+      expiryYear: [this.getYearByNumber(), [Validators.required]],
       securityCode: ['',
         [
           Validators.required,
@@ -65,7 +66,7 @@ export class CardFormComponent implements OnInit {
         ]
       ],
       isDefault: [false]
-    })
+    });
   }
 
   initMonthDropdown(){
@@ -105,6 +106,43 @@ export class CardFormComponent implements OnInit {
     ]
   }
 
+  getMonthByNumber(){
+    let month = new Date().getMonth() + 1;
+    // @ts-ignore
+    return this.months.find((month: Month) => month.value === month);
+  }
+
+  getYearByNumber(){
+    let currentYear = new Date().getFullYear();
+    // @ts-ignore
+    return this.years.find((year: Year) => year.value === currentYear);
+  }
+
+  validateExpiryMonth(currentMonth: number, currentYear: number) {
+    return (control: AbstractControl) => {
+      const selectedMonth = +control.value;
+      const selectedYear = this.form.get('expiryYear')?.value ? +this.form.get('expiryYear')?.value : null;
+
+      if (selectedYear === currentYear && selectedMonth < currentMonth) {
+        return { expiredDate: true };
+      }
+
+      return null;
+    };
+  }
+
+  validateExpiryYear(currentYear: number) {
+    return (control: AbstractControl) => {
+      const selectedYear = +control.value;
+
+      if (selectedYear < currentYear) {
+        return { expiredDate: true };
+      }
+
+      return null;
+    };
+  }
+
   addCard(){
 
     let number = this.form.get("cardNumber")?.value;
@@ -134,12 +172,15 @@ export class CardFormComponent implements OnInit {
     this.auth$ = this.store.select("auth");
     this.auth$.subscribe(value => {
       const email = value.email;
+      this.loadingScreenService.setLoading(true);
       this.userService.addCard(email, newCard as Card).subscribe({
         next: response => {
+          this.loadingScreenService.setLoading(false);
           const message = 'Card nou adăugat';
           this.cancelDialogService(message);
         },
         error: err => {
+          this.loadingScreenService.setLoading(false);
           if(err === ErrorMessages.USER_CARD_ALREADY_EXISTS_EXCEPTION){
             this.messageService.add({severity: 'error', summary: `Ai deja acest card înregistrat`});
           }
@@ -152,4 +193,13 @@ export class CardFormComponent implements OnInit {
   cancelDialogService(message: string){
     this.ref.close(message);
   }
+}
+
+export interface Month{
+  name: string;
+  value: number;
+}
+
+export interface Year{
+  value: number;
 }

@@ -13,6 +13,7 @@ import {CourierService} from "../../../../../../services/courier.service";
 import {Courier} from "../../../../../../interfaces/courier";
 import {DialogService, DynamicDialogConfig, DynamicDialogRef} from "primeng/dynamicdialog";
 import {InfoCourierComponent} from "./info-courier/info-courier.component";
+import {LoadingScreenService} from "../../../../../../services/loading-screen.service";
 
 @Component({
   selector: 'app-history-order-item-details',
@@ -42,6 +43,7 @@ export class HistoryOrderItemDetailsComponent implements OnInit, OnDestroy {
     public ref: DynamicDialogRef,
     public config: DynamicDialogConfig,
     public dialogService: DialogService,
+    private loadingScreenService: LoadingScreenService
 
   ) { }
 
@@ -100,10 +102,10 @@ export class HistoryOrderItemDetailsComponent implements OnInit, OnDestroy {
   }
 
   confirmReceivedOrder() {
-
+    this.loadingScreenService.setLoading(true);
     this.userService.confirmReceivedOrder(this.email, this.orderId).subscribe({
       next: value => {
-
+        this.loadingScreenService.setLoading(false);
         this.loading = true;
         setTimeout(() => {
           this.loading = false;
@@ -114,7 +116,6 @@ export class HistoryOrderItemDetailsComponent implements OnInit, OnDestroy {
   }
 
   cancelOrder(){
-
     this.confirmationService.confirm({
       message: 'Sunteți sigur că doriți să anulați comanda ?',
       header: 'Confirmation',
@@ -123,9 +124,10 @@ export class HistoryOrderItemDetailsComponent implements OnInit, OnDestroy {
       icon: 'pi pi-exclamation-triangle',
       key:'cancelOrder',
       accept: () => {
-
+        this.loadingScreenService.setLoading(true);
         this.userService.cancelOrder(this.email, this.orderId).subscribe({
           next: () => {
+            this.loadingScreenService.setLoading(false);
             this.loading = true;
             setTimeout(() => {
               this.loading = false;

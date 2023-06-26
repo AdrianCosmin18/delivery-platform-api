@@ -5,6 +5,7 @@ import {cleanPackageJson} from "@angular/compiler-cli/ngcc/src/packages/build_ma
 import {ConfirmationService} from "primeng/api";
 import {CustomerService} from "../../../../../services/customer.service";
 import {DynamicDialogRef} from "primeng/dynamicdialog";
+import {LoadingScreenService} from "../../../../../services/loading-screen.service";
 
 @Component({
   selector: '.app-card-item',
@@ -26,6 +27,7 @@ export class CardItemComponent implements OnInit {
     private confirmationService: ConfirmationService,
     private userService: CustomerService,
     public ref: DynamicDialogRef,
+    private loadingScreenService: LoadingScreenService
   ) { }
 
   ngOnInit(): void {
@@ -61,12 +63,16 @@ export class CardItemComponent implements OnInit {
   }
 
   deleteCard() {
+    this.loadingScreenService.setLoading(true);
+
     this.userService.deleteCard(this.email, this.card.id).subscribe({
       next: () => {
+        this.loadingScreenService.setLoading(false);
         const summary = `Cardul ${this.card.cardNumber} a fost șters cu succes`;
         this.emitDeleteCard.emit(summary);
       },
       error: err => {
+        this.loadingScreenService.setLoading(false);
         alert(err);
       }
     })

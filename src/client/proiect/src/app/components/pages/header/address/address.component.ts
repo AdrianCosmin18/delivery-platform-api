@@ -11,6 +11,7 @@ import {UserCredentials} from "../../../../interfaces/user-credentials";
 import {Address} from "../../../../interfaces/address";
 import {AddressUpdateFormComponent} from "./address-update-form/address-update-form.component";
 import {FormType} from "../../../../constants/constants";
+import {LoadingScreenService} from "../../../../services/loading-screen.service";
 
 @Component({
   selector: 'app-address',
@@ -36,8 +37,8 @@ export class AddressComponent implements OnInit, OnDestroy {
     private formBuilder: FormBuilder,
     private messageService: MessageService,
     private store: Store<fromApp.AppState>,
-    private primengConfig: PrimeNGConfig
-
+    // private primengConfig: PrimeNGConfig,
+    private loadingScreenService: LoadingScreenService
   ) { }
 
   ngOnInit(): void {
@@ -62,7 +63,7 @@ export class AddressComponent implements OnInit, OnDestroy {
         next: value => {
           this.addresses = value;
           this.lenAddresses = this.addresses.length;
-          this.primengConfig.ripple = true;
+          // this.primengConfig.ripple = true;
           console.log(this.addresses);
         },
         error: err => {
@@ -72,9 +73,11 @@ export class AddressComponent implements OnInit, OnDestroy {
   }
 
   setAsMainAddress(addressId: number){
+    this.loadingScreenService.setLoading(true);
     this.userService.setAddressAsMainAddress(this.email, addressId).subscribe({
       next: () => {
-        this.messageService.add({severity:'success', summary: `Ai o noua adresa principala`, detail: 'Message Content'});
+        this.loadingScreenService.setLoading(false);
+        this.messageService.add({severity:'success', summary: `Ai o noua adresa principala`});
         this.getAddresses();
       }
     })
@@ -82,7 +85,7 @@ export class AddressComponent implements OnInit, OnDestroy {
 
   updatedAddress(message: any){
     if(message){
-      this.messageService.add({severity:'success', summary: `${message}`, detail: 'Message Content'});
+      this.messageService.add({severity:'success', summary: `${message}`});
     }
     this.getAddresses();
   }

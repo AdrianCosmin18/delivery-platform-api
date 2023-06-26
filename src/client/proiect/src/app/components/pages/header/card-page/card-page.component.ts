@@ -9,6 +9,7 @@ import {AddressUpdateFormComponent} from "../address/address-update-form/address
 import {FormType} from "../../../../constants/constants";
 import {DialogService, DynamicDialogConfig, DynamicDialogRef} from "primeng/dynamicdialog";
 import {CardFormComponent} from "./card-form/card-form.component";
+import {LoadingScreenService} from "../../../../services/loading-screen.service";
 
 @Component({
   selector: 'app-card-page',
@@ -31,6 +32,7 @@ export class CardPageComponent implements OnInit {
     private dialogService: DialogService,
     private config: DynamicDialogConfig,
     public ref: DynamicDialogRef,
+    private loadingScreenService: LoadingScreenService
   ) { }
 
   ngOnInit(): void {
@@ -73,8 +75,10 @@ export class CardPageComponent implements OnInit {
   }
 
   setAsMainCard(cardId: number) {
+    this.loadingScreenService.setLoading(true);
     this.userService.setCardAsMainCard(this.email, cardId).subscribe({
       next: () => {
+        this.loadingScreenService.setLoading(false);
         this.messageService.add({severity:'success', summary: `Ai un nou card principal`});
         this.getCards();
       }
