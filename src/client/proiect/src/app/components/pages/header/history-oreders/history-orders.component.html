@@ -1,6 +1,6 @@
-<section class="container-xl mt-5">
+<section class="container-xl mt-5" [ngClass]="{'vh': orders.length <= 2}">
 
-  <h2 *ngIf="orders.length > 0">Comenzile mele</h2>
+  <h2 class="mb-5" *ngIf="orders.length > 0">Comenzile mele</h2>
 
 
   <h3 *ngIf="orders.length === 0"

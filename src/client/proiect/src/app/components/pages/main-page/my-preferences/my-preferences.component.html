@@ -1,5 +1,6 @@
 
-<section class="container mt-5">
+<section class="container mt-5"
+         [ngClass]="{'vh': (activeTab === 0 && burgers.length === 0) || (activeTab === 1 && fries.length === 0) || (activeTab === 2 && sauces.length === 0)}">
 
   <section class="d-flex gap-3">
 
@@ -11,7 +12,7 @@
     <h3 class="d-flex align-items-center" style="margin: 0;">Preferințele mele</h3>
   </section>
 
-  <p-tabView>
+  <p-tabView (onChange)="onTabChange($event)">
     <p-tabPanel header="Burgeri">
 
       <p-multiSelect [options]="ingredientsBurgers"

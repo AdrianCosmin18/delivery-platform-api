@@ -1,4 +1,5 @@
-<section class="container mt-5">
+<section class="container mt-5"
+         [ngClass]="{'vh': filteredBurgers.length === 0 && filteredFries.length === 0 && filteredSauces.length === 0}">
 
   <section class="d-flex gap-3">
 

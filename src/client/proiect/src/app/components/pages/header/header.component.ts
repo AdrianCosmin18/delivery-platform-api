@@ -159,17 +159,6 @@ export class HeaderComponent implements OnInit {
     this.count = JSON.parse(localStorage.getItem(Constants.ITEM_LIST) || "[]").length;
   }
 
-  // getCities():void{
-  //   this.cityService.getCities().subscribe({
-  //     next:value => {
-  //       this.cities = value;
-  //     },
-  //     error:err => {
-  //       alert("Something went wrong");
-  //     }
-  //   })
-  // }
-
   openPersonalData(): void{
 
     const ref = this.dialogService.open(PersonalDataComponent, {

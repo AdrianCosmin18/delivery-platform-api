@@ -8,6 +8,7 @@ import * as AuthAction from "./auth.actions";
 import {AuthorityModel} from "../../models/authority-model";
 import {ErrorMessages, Roles} from "../../constants/constants";
 import {NotificationService} from "../../services/notification.service";
+import {LoadingScreenService} from "../../services/loading-screen.service";
 
 
 @Injectable(
@@ -17,7 +18,8 @@ export class AuthEffects{
   constructor(
     private action$: Actions,
     private authService: AuthService,
-    private notificationService : NotificationService
+    private notificationService : NotificationService,
+    private loadingScreenService: LoadingScreenService
   ) {
   }
 
@@ -27,6 +29,7 @@ export class AuthEffects{
     return  this.action$.pipe(
       ofType(AuthActions.LOGIN_START),
       switchMap((authData: AuthActions.LoginStart) => {
+        this.loadingScreenService.setLoading(true);
         let user: User = {
           email: authData.payload.email,
           password: authData.payload.password,
@@ -44,6 +47,8 @@ export class AuthEffects{
               }else if(arrAuth?.some(elem => elem.authority === Roles.ROLE_ADMIN)){
                 role = Roles.ROLE_ADMIN;
               }
+
+              this.loadingScreenService.setLoading(false);
               this.notificationService.onSuccess('loginSuccess','Te-ai logat cu success');
               return new AuthAction.AuthenticationSuccess({
                 email: response.body!.email,
@@ -53,6 +58,7 @@ export class AuthEffects{
               })
             }),
             catchError(err => {
+              this.loadingScreenService.setLoading(false);
               this.notificationService.onError('loginFailed','Mail sau parolă incorectă');
               return handleError(err);
             })
@@ -65,6 +71,7 @@ export class AuthEffects{
     return this.action$.pipe(
       ofType(AuthActions.REGISTER_START),
       switchMap((authData: AuthActions.RegisterStart) => {
+        this.loadingScreenService.setLoading(true);
         let user: User = {
           email: authData.payload.email,
           password: authData.payload.password,
@@ -83,6 +90,7 @@ export class AuthEffects{
                 role = Roles.ROLE_ADMIN;
               }
 
+              this.loadingScreenService.setLoading(false);
               this.notificationService.onSuccess('loginSuccess','Ți-ai creat cont cu success');
               return new AuthAction.AuthenticationSuccess({
                 email: value.body!.email,
@@ -92,6 +100,7 @@ export class AuthEffects{
               })
             }),
             catchError(err => {
+              this.loadingScreenService.setLoading(false);
               if(err === ErrorMessages.USER_ALREADY_EXISTS_BY_EMAIL_EXCEPTION) {
                 this.notificationService.onError('registerFailed', 'Există deja un cont cu acest mail');
               } else if(err === ErrorMessages.USER_ALREADY_EXISTS_PHONE_EXCEPTION){

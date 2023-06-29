@@ -1,4 +1,4 @@
-<section>
+<section [ngClass]="{'vh': drinkArray.length === 0}">
   <article class="container">
     <div class="drink-item"
          *ngFor="let drink of drinkArray"

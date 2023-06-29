@@ -1,5 +1,5 @@
 
-<section>
+<section [ngClass]="{'vh': burgers.length === 0}">
   <article class="container">
     <div class="burger-item"
          *ngFor="let burger of burgers"

@@ -42,6 +42,7 @@ export class AddressComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
+    this.loadingScreenService.setLoading(true);
     this.getInfoFromParent();
     this.getInfoUser();
   }
@@ -64,10 +65,12 @@ export class AddressComponent implements OnInit, OnDestroy {
           this.addresses = value;
           this.lenAddresses = this.addresses.length;
           // this.primengConfig.ripple = true;
-          console.log(this.addresses);
+          this.loadingScreenService.setLoading(false);
+
         },
         error: err => {
-          this.messageService.add({severity:'error', summary: err.error.message, detail: 'Message Content'});
+          this.loadingScreenService.setLoading(false);
+          this.messageService.add({severity:'error', summary: err.error.message});
         }
       })
   }

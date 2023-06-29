@@ -1,4 +1,4 @@
-<section>
+<section [ngClass]="{'vh': sauces.length === 0}">
   <article class="container">
     <div class="sauce-item"
          *ngFor="let sauce of sauces"

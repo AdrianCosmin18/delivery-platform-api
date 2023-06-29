@@ -23,6 +23,8 @@ export class MyPreferencesComponent implements OnInit {
   public selectedSauceIngredient: any[] = [];
   public sauces: Product[] = [];
 
+  public activeTab = 0;
+
 
 
   constructor(
@@ -118,5 +120,10 @@ export class MyPreferencesComponent implements OnInit {
         alert("Smth went wrong to get sauces");
       }
     })
+  }
+
+  onTabChange(event: any) {
+    this.activeTab = event.index;
+    console.log(this.activeTab);
   }
 }

@@ -114,15 +114,17 @@
 
       </p-card>
 
+      <button pButton pRipple type="button" label="Trimite comanda"
+              iconPos="right" icon="pi pi-arrow-right"
+              [loading]="loading" (click)="load()"
+              style="margin-left: auto; width: 193px; "
+              class="p-button-rounded p-button-danger"></button>
+
     </div>
 
   </section>
 
-  <button pButton pRipple type="button" label="Trimite comanda"
-          iconPos="right" icon="pi pi-arrow-right"
-          [loading]="loading" (click)="load()"
-          style="float: right"
-          class="p-button-rounded p-button-danger"></button>
+
 
 
 </div>
