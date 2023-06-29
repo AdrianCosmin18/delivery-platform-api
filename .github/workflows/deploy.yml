@@ -77,17 +77,17 @@ jobs:
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
-      - name: Update and commit app version in docker-compose.yaml
-        run: |
-          BUILD_NUMBER=${{ steps.build-number.outputs.BUILD_NUMBER }}
-          echo -e "Current elasticbeanstalk/docker-compose.yml\n$(cat elasticbeanstalk/docker-compose.yml)"
-          sed -i -E 's_(AdrianCosmin18/delivery-platform-api:)([^"]*)_\1'${BUILD_NUMBER}'_' elasticbeanstalk/docker-compose.yml
-          echo -e "Current elasticbeanstalk/docker-compose.yml\n$(cat elasticbeanstalk/docker-compose.yml)"
-          git config user.name github-actions
-          git config user.email github-actions@github.com
-          git add .
-          git commit -m "new app version: ${BUILD_NUMBER}"
-          git push
+#      - name: Update and commit app version in docker-compose.yaml
+#        run: |
+#          BUILD_NUMBER=${{ steps.build-number.outputs.BUILD_NUMBER }}
+#          echo -e "Current elasticbeanstalk/docker-compose.yml\n$(cat elasticbeanstalk/docker-compose.yml)"
+#          sed -i -E 's_(AdrianCosmin18/delivery-platform-api:)([^"]*)_\1'${BUILD_NUMBER}'_' elasticbeanstalk/docker-compose.yml
+#          echo -e "Current elasticbeanstalk/docker-compose.yml\n$(cat elasticbeanstalk/docker-compose.yml)"
+#          git config user.name github-actions
+#          git config user.email github-actions@github.com
+#          git add .
+#          git commit -m "new app version: ${BUILD_NUMBER}"
+#          git push
 
       - uses: 8398a7/action-slack@v3
         with:
