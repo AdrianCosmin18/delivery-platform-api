@@ -293,7 +293,9 @@ export class PlaceOrderComponent implements OnInit, OnDestroy {
           setTimeout(() => {
             this.loading = false;
 
-            this.router.navigate(['/mainPage']);
+            if(this.router.url.includes("/placeOrder")){
+              this.router.navigate(['/mainPage']);
+            }
             this.store.dispatch(new Action.EmptyList());
             this.notificationService.onInfo('placedOrder', 'Comandă plasată cu succes', 'Pentru mai multe detalii acesează Istoric comenzi');
           }, 3000);

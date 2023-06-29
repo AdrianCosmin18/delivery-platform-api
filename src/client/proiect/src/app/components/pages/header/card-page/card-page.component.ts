@@ -36,6 +36,7 @@ export class CardPageComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.loadingScreenService.setLoading(true);
     this.getInfoFromParent();
     this.getCards();
   }
@@ -53,6 +54,7 @@ export class CardPageComponent implements OnInit {
         next: response => {
           this.cards = response;
           console.log(this.cards);
+          this.loadingScreenService.setLoading(false);
         }
       })
     })

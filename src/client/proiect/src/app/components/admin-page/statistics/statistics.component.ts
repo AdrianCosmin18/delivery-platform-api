@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {OrderItemService} from "../../../services/order-item.service";
+import {LoadingScreenService} from "../../../services/loading-screen.service";
 
 @Component({
   selector: 'app-statistics',
@@ -11,10 +12,10 @@ export class StatisticsComponent implements OnInit {
   public baseData: any;
   public horizontalOptions: any;
 
-  constructor(private orderItemService: OrderItemService) { }
+  constructor(private orderItemService: OrderItemService, private loadingScreenService: LoadingScreenService) { }
 
   ngOnInit(): void {
-
+    this.loadingScreenService.setLoading(true);
     this.getMapProducts();
   }
 
@@ -28,6 +29,7 @@ export class StatisticsComponent implements OnInit {
 
         this.initData();
         this.initOptions();
+        this.loadingScreenService.setLoading(false);
       },
       error: err => {
         alert(err.error.message);
