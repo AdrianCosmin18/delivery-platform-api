@@ -105,8 +105,8 @@ const appRoutes: Routes = [
   {path: "intolerance", component: IntoleranceFoodComponent},
   {path: "adminPage", component: AdminPageComponent, canActivate: [AuthGuard, AdminGuard]},
   {path: "adminPage/handleOrders", component: HandleOrdersComponent, canActivate: [AuthGuard, AdminGuard]},
-  {path: "adminPage/statistics", component: StatisticsComponent, canActivate: [AuthGuard, AdminGuard]}
-
+  {path: "adminPage/statistics", component: StatisticsComponent, canActivate: [AuthGuard, AdminGuard]},
+  {path: '**', redirectTo: "/mainPage", pathMatch: "full"},
 ]
 
 @NgModule({
