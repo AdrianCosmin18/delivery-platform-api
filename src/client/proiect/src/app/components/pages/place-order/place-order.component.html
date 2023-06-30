@@ -4,12 +4,12 @@
 
   <section class="main d-flex gap-2">
 
-    <div class="d-flex flex-column gap-2" style="width: 100%">
+    <div class="div1 d-flex flex-column gap-2">
 
-      <p-card [style]="{'width': '100%', 'margin-bottom': '2em', 'padding': '0px'}">
-        <section class="d-flex flex-row gap-3" style="">
-          <i class="pi pi-map-marker" style="font-size: 2em;"></i>
-          <h4 style="margin: 0px; margin-right: auto">Livrare la adresa: </h4>
+      <p-card>
+        <section class="d-flex flex-row gap-3">
+          <i class="pi pi-map-marker"></i>
+          <h4 id="addressH4">Livrare la adresa: </h4>
           <button pButton pRipple type="button"
                   icon="pi pi-replay"
                   class="p-button-rounded p-button-warning"
@@ -17,14 +17,14 @@
                   (click)="selectAddress()"
           ></button>
         </section>
-        <p *ngIf="hasSelectedAddress" style="margin: 0px;">{{toStringAddress}}</p>
-        <p *ngIf="!hasSelectedAddress" style="margin: 0px; color: red">{{noAddressMessage}}</p>
+        <p class="addressSelected" *ngIf="hasSelectedAddress">{{toStringAddress}}</p>
+        <p class="addressSelected red-text" *ngIf="!hasSelectedAddress">{{noAddressMessage}}</p>
       </p-card>
 
-      <p-card [style]="{'width': '100%', 'margin-bottom': '2em', 'padding': '0px'}">
-        <section class="d-flex flex-row gap-3" style="">
-          <i class="pi pi-credit-card" style="font-size: 2em;"></i>
-          <h4 style="margin: 0px; margin-right: auto">Plată: </h4>
+      <p-card>
+        <section class="d-flex flex-row gap-3">
+          <i class="pi pi-credit-card"></i>
+          <h4 id="cardH4">Plată: </h4>
           <button pButton pRipple type="button"
                   icon="pi pi-replay"
                   class="p-button-rounded p-button-warning"
@@ -33,25 +33,25 @@
           ></button>
         </section>
 
-        <p *ngIf="hasSelectedCard" style="margin: 0px;">{{toStringCard}}</p>
-        <p *ngIf="!hasSelectedCard" style="margin: 0px; color: red">{{noCardMessage}}</p>
+        <p class="cardSelected" *ngIf="hasSelectedCard">{{toStringCard}}</p>
+        <p class="cardSelected red-text" *ngIf="!hasSelectedCard">{{noCardMessage}}</p>
       </p-card>
 
 
       <span class="p-float-label">
         <textarea [(ngModel)]="commentText" id="float-input" rows="5" cols="30" pInputTextarea></textarea>
-        <label for="float-input" style="font-size: 15px;">Comentarii</label>
+        <label id="labelComments" for="float-input">Comentarii</label>
       </span>
 
-      <p-card [style]="{'width': '100%', 'margin-bottom': '2em'}">
+      <p-card>
         <ng-template pTemplate="header">
           <div class="d-flex align-items-center gap-3">
-            <img style="width: 50px; height: 50px;" src="./assets/delivery_guy.png">
-            <h5 style="margin: 0;">Tips pe bon? Alege o variantă:</h5>
+            <img id="imgTips" src="./assets/delivery_guy.png">
+            <h5 id="tipsH5">Tips pe bon? Alege o variantă:</h5>
           </div>
 
         </ng-template>
-        <div class="d-flex justify-content-around">
+        <div class="d-flex justify-content-around" style="border: 2px solid red;">
           <button pButton pRipple type="button" label="2 LEI" class="p-button-secondary"
                   [ngClass]="tip2" (click)="clickTipsButton2Lei()"></button>
 
@@ -70,7 +70,7 @@
 
     </div>
 
-    <div class="d-flex flex-column gap-2" style="width: 100%">
+    <div class="div2 d-flex flex-column gap-2">
 
       <p-accordion>
         <p-accordionTab header="Sumar ({{items.length}} produse)" [selected]="true">
@@ -84,40 +84,39 @@
         </p-accordionTab>
       </p-accordion>
 
-      <p-card [style]="{'width': '100%', 'margin-bottom': '2em'}">
+      <p-card>
         <ng-template pTemplate="header">
           <div class="d-flex justify-content-between gap-3">
-            <h5 style="margin: 0; margin-left: 10px;">Total produse</h5>
-            <h5 style="margin: 0; margin-right: 10px;">{{totalAmountProducts()}} lei</h5>
+            <h5 id="totalProducts">Total produse</h5>
+            <h5 id="totalProductsValue">{{totalAmountProducts()}} lei</h5>
           </div>
         </ng-template>
 
         <div *ngIf="totalAmountProducts() < 100" class="d-flex flex-column">
           <div class="d-flex justify-content-between gap-3">
-            <p style="margin: 0; ">Taxă transport</p>
-            <p style="margin: 0;">{{transportPrice}} lei</p>
+            <p class="transport">Taxă transport</p>
+            <p class="transport">{{transportPrice}} lei</p>
           </div>
           <p>Fără taxă transport pentru comenzi peste 100 lei</p>
         </div>
 
           <div *ngIf="tipPrice > 0" class="d-flex justify-content-between gap-3">
-            <p style="margin: 0; ">Tips</p>
-            <p style="margin: 0;">{{tipPrice}} lei</p>
+            <p class="transport" style="margin: 0; ">Tips</p>
+            <p class="transport">{{tipPrice}} lei</p>
           </div>
 
         <p-divider></p-divider>
 
         <div class="d-flex justify-content-between gap-3">
-          <h3 style="margin: 0; ">TOTAL</h3>
-          <h3 style="margin: 0;">{{totalPrice}} lei</h3>
+          <h3 class="transport">TOTAL</h3>
+          <h3 class="transport">{{totalPrice}} lei</h3>
         </div>
 
       </p-card>
 
-      <button pButton pRipple type="button" label="Trimite comanda"
+      <button id="placeOrderButton" pButton pRipple type="button" label="Trimite comanda"
               iconPos="right" icon="pi pi-arrow-right"
               [loading]="loading" (click)="load()"
-              style="margin-left: auto; width: 193px; "
               class="p-button-rounded p-button-danger"></button>
 
     </div>

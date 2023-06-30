@@ -4,7 +4,7 @@ import {config, Observable, Subscription} from "rxjs";
 import {DialogService, DynamicDialogConfig, DynamicDialogRef} from "primeng/dynamicdialog";
 import {CustomerService} from "../../../../services/customer.service";
 import {FormBuilder} from "@angular/forms";
-import {MessageService, PrimeNGConfig} from "primeng/api";
+import {ConfirmationService, MessageService, PrimeNGConfig} from "primeng/api";
 import {Store} from "@ngrx/store";
 import * as fromApp from "../../../../store/app.reducer";
 import {UserCredentials} from "../../../../interfaces/user-credentials";
@@ -38,7 +38,10 @@ export class AddressComponent implements OnInit, OnDestroy {
     private messageService: MessageService,
     private store: Store<fromApp.AppState>,
     // private primengConfig: PrimeNGConfig,
-    private loadingScreenService: LoadingScreenService
+    private loadingScreenService: LoadingScreenService,
+    private confirmationService: ConfirmationService,
+    private customerService: CustomerService,
+
   ) { }
 
   ngOnInit(): void {
@@ -105,14 +108,40 @@ export class AddressComponent implements OnInit, OnDestroy {
 
     ref.onClose.subscribe((message) => {
       if(message){
-        this.messageService.add({severity:'success', summary: `${message}`, detail: 'Message Content'});
+        this.messageService.add({severity:'success', summary: `${message}`});
       }
       this.getAddresses();
     });
   }
 
-  deleteAddress({summary, detail}: any) {
-    this.messageService.add({severity:'info', summary: summary, detail: detail});
+  deleteAddress({id, street}: any) {
+    this.confirmationService.confirm({
+      message: 'Sunteți sigur că doriți să ștergeți această adresă?',
+      header: 'Șterge adresa',
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: 'Da',
+      rejectLabel: 'Nu',
+      key: 'delAddress',
+      accept: () => {
+        this.loadingScreenService.setLoading(true);
+        this.customerService.deleteAddress(this.email, Number(id)).subscribe({
+
+          next: () => {
+            this.getAddresses();
+            this.loadingScreenService.setLoading(false);
+            const summary = 'Adresa a fost ștearsă cu succes';
+            this.messageService.add({severity:'info', summary: summary, detail: street});
+
+          },
+          error: err => {
+            this.loadingScreenService.setLoading(false);
+            alert(err);
+          }
+        })
+      }
+    })
+
+    // this.messageService.add({severity:'info', summary: summary, detail: detail});
     this.getAddresses();
   }
 

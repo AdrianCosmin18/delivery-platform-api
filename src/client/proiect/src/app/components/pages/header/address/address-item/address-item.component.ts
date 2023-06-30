@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {Address} from "../../../../../interfaces/address";
 import {AddressUpdateFormComponent} from "../address-update-form/address-update-form.component";
 import {DialogService, DynamicDialogConfig, DynamicDialogRef} from "primeng/dynamicdialog";
@@ -6,6 +6,8 @@ import {FormType} from "../../../../../constants/constants";
 import {ConfirmationService} from "primeng/api";
 import {CustomerService} from "../../../../../services/customer.service";
 import {LoadingScreenService} from "../../../../../services/loading-screen.service";
+import {Confirmation} from "primeng/api/confirmation";
+import {Observable, Subject} from "rxjs";
 
 @Component({
   selector: '.address-item',
@@ -23,14 +25,14 @@ export class AddressItemComponent implements OnInit {
   public favoriteColor = 'p-button-secondary p-button-outlined';
   public tooltipMessage = '';
 
+  public subjConfirmService: Observable<Confirmation> = new Subject();
+
   constructor(
     private dialogService: DialogService,
     private config: DynamicDialogConfig,
     public ref: DynamicDialogRef,
-    private confirmationService: ConfirmationService,
-    private customerService: CustomerService,
     private loadingScreenService: LoadingScreenService
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     if(this.address.isDefault){
@@ -49,29 +51,9 @@ export class AddressItemComponent implements OnInit {
   }
 
   deleteAddress() {
-    this.confirmationService.confirm({
-      message: 'Sunteți sigur că doriți să ștergeți această adresă?',
-      header: 'Șterge adresa',
-      icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Da',
-      rejectLabel: 'Nu',
-      key: 'delAddress',
-      accept: () => {
-        this.loadingScreenService.setLoading(true);
-        this.customerService.deleteAddress(this.email, this.address.id).subscribe({
-          next: () => {
-            this.loadingScreenService.setLoading(false);
-            const summary = 'Adresa a fost ștearsă cu succes';
-            const detail = this.address.street;
-            this.emitDeleteAddress.emit({summary, detail});
-          },
-          error: err => {
-            this.loadingScreenService.setLoading(false);
-            alert(err);
-          }
-        })
-      }
-    })
+    const id = this.address.id;
+    const street = this.address.street
+    this.emitDeleteAddress.emit({id, street});
   }
 
   openUpdateAddressForm(): void{
