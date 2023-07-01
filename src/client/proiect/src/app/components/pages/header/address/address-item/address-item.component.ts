@@ -25,8 +25,6 @@ export class AddressItemComponent implements OnInit {
   public favoriteColor = 'p-button-secondary p-button-outlined';
   public tooltipMessage = '';
 
-  public subjConfirmService: Observable<Confirmation> = new Subject();
-
   constructor(
     private dialogService: DialogService,
     private config: DynamicDialogConfig,
