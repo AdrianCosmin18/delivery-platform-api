@@ -22,7 +22,26 @@ import {LoadingScreenService} from "../../../../../../services/loading-screen.se
 })
 export class HistoryOrderItemDetailsComponent implements OnInit, OnDestroy {
   public orderId: number = -1;
-  public order!: Order;
+  public order: Order = {
+    id: -1,
+    courierId: -1,
+    amount: 0,
+    status: '',
+    deliverTime: '',
+    placedOrderTime: '',
+    paymentConfirmed: '',
+    orderInPreparation: '',
+    orderInDelivery: '',
+    canceledOrder: '',
+    productsAmount: 0,
+    deliveryTax: 0,
+    tipsTax: 0,
+    addressToString: '',
+    city: '',
+    cardNumber: '',
+    username: '',
+    commentsSection: ''
+  };
   public orderItems: OrderItem[] = [];
 
   private auth$!: Observable<{email: string}>;

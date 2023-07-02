@@ -51,19 +51,22 @@
           </div>
 
         </ng-template>
-        <div class="d-flex justify-content-around" style="border: 2px solid red;">
-          <button pButton pRipple type="button" label="2 LEI" class="p-button-secondary"
-                  [ngClass]="tip2" (click)="clickTipsButton2Lei()"></button>
+        <ng-template pTemplate="content">
+          <div class=" tips ">
+            <button pButton pRipple type="button" label="2 LEI" class="p-button-secondary"
+                    [ngClass]="tip2" (click)="clickTipsButton2Lei()"></button>
 
-          <button pButton pRipple type="button" label="4 LEI" class="p-button-secondary"
-                  [ngClass]="tip4" (click)="clickTipsButton4Lei()"></button>
+            <button pButton pRipple type="button" label="4 LEI" class="p-button-secondary"
+                    [ngClass]="tip4" (click)="clickTipsButton4Lei()"></button>
 
-          <button pButton pRipple type="button" label="5 LEI" class="p-button-secondary"
-                  [ngClass]="tip5" (click)="clickTipsButton5Lei()"></button>
+            <button pButton pRipple type="button" label="5 LEI" class="p-button-secondary"
+                    [ngClass]="tip5" (click)="clickTipsButton5Lei()"></button>
 
-          <button pButton pRipple type="button" label="Altă sumă" class="p-button-secondary"
-                  [ngClass]="tipCustom" (click)="clickTipsButtonCustomeTip()"></button>
-        </div>
+            <button pButton pRipple type="button" label="Altă sumă" class="p-button-secondary"
+                    [ngClass]="tipCustom" (click)="clickTipsButtonCustomeTip()"></button>
+          </div>
+        </ng-template>
+
 
       </p-card>
 

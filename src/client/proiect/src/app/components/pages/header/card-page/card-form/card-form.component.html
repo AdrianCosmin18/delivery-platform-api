@@ -53,6 +53,7 @@
         <small *ngIf="(form.get('expiryMonth')?.hasError('required')) ||
                 (form.get('expiryYear')?.hasError('required'))" class="p-error">Selectarea datei de expirare este obligatorie</small>
       </div>
+      <small *ngIf="form.hasError('expiredDate')" class="p-error">Data este invalidă</small>
 
     </div>
 

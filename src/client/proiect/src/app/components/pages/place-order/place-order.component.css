@@ -61,8 +61,18 @@ p-card{
   width: 193px;
 }
 
+.tips{
+  display: flex !important;
+  justify-content: space-around !important;
+}
+
+:host ::ng-deep p-card .p-card-content {
+  width: 100%;
+}
+
 @media (max-width: 920px){
   .main{
     flex-direction: column;
+
   }
 }

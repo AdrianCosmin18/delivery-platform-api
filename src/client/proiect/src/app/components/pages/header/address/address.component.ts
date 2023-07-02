@@ -7,7 +7,6 @@ import {FormBuilder} from "@angular/forms";
 import {ConfirmationService, MessageService, PrimeNGConfig} from "primeng/api";
 import {Store} from "@ngrx/store";
 import * as fromApp from "../../../../store/app.reducer";
-import {UserCredentials} from "../../../../interfaces/user-credentials";
 import {Address} from "../../../../interfaces/address";
 import {AddressUpdateFormComponent} from "./address-update-form/address-update-form.component";
 import {FormType} from "../../../../constants/constants";
@@ -48,6 +47,10 @@ export class AddressComponent implements OnInit, OnDestroy {
     this.loadingScreenService.setLoading(true);
     this.getInfoFromParent();
     this.getInfoUser();
+
+    setTimeout(() =>{
+      this.loadingScreenService.setLoading(false);
+    }, 1000);
   }
 
   getInfoFromParent(){
@@ -68,11 +71,11 @@ export class AddressComponent implements OnInit, OnDestroy {
           this.addresses = value;
           this.lenAddresses = this.addresses.length;
           // this.primengConfig.ripple = true;
-          this.loadingScreenService.setLoading(false);
+          // this.loadingScreenService.setLoading(false);
 
         },
         error: err => {
-          this.loadingScreenService.setLoading(false);
+          // this.loadingScreenService.setLoading(false);
           this.messageService.add({severity:'error', summary: err.error.message});
         }
       })
@@ -83,7 +86,7 @@ export class AddressComponent implements OnInit, OnDestroy {
     this.userService.setAddressAsMainAddress(this.email, addressId).subscribe({
       next: () => {
         this.loadingScreenService.setLoading(false);
-        this.messageService.add({severity:'success', summary: `Ai o noua adresa principala`});
+        this.messageService.add({severity:'success', summary: `Ai o nouă adresă principală`});
         this.getAddresses();
       }
     })
@@ -99,7 +102,7 @@ export class AddressComponent implements OnInit, OnDestroy {
   addNewAddress() {
 
     const ref = this.dialogService.open(AddressUpdateFormComponent, {
-      header: 'Adauga adresa',
+      header: 'Adaugă adresă',
       width: '60%',
       data: {
         formType: FormType.ADD_FORM_ADDRESS,

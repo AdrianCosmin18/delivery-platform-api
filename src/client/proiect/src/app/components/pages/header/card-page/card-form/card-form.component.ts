@@ -1,5 +1,13 @@
 import {Component, OnInit} from '@angular/core';
-import {AbstractControl, FormBuilder, FormGroup, Validators} from "@angular/forms";
+import {
+  AbstractControl,
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  ValidationErrors,
+  ValidatorFn,
+  Validators
+} from "@angular/forms";
 import {Observable} from "rxjs";
 import {ErrorMessages} from "../../../../../constants/constants";
 import {Card} from "../../../../../interfaces/card";
@@ -57,8 +65,8 @@ export class CardFormComponent implements OnInit {
           Validators.pattern(/^[A-Za-z\s]{6,50}$/)
         ]
       ],
-      expiryMonth: [this.getMonthByNumber() , [Validators.required]],
-      expiryYear: [this.getYearByNumber(), [Validators.required]],
+      expiryMonth: ['', [Validators.required]],
+      expiryYear:  ['', [Validators.required]],
       securityCode: ['',
         [
           Validators.required,
@@ -66,7 +74,7 @@ export class CardFormComponent implements OnInit {
         ]
       ],
       isDefault: [false]
-    });
+    }, { validators: this.validateExpiryDate });
   }
 
   initMonthDropdown(){
@@ -143,6 +151,7 @@ export class CardFormComponent implements OnInit {
     };
   }
 
+
   addCard(){
 
     let number = this.form.get("cardNumber")?.value;
@@ -193,6 +202,31 @@ export class CardFormComponent implements OnInit {
   cancelDialogService(message: string){
     this.ref.close(message);
   }
+
+  validateExpiryDate(control: AbstractControl) {
+    if(control.value !== null){
+      // @ts-ignore
+      const expiryMonth = control.get('expiryMonth').value;
+      // @ts-ignore
+      const expiryYear = control.get('expiryYear').value;
+
+      if (!expiryMonth || !expiryYear) {
+        // Campurile sunt goale, deci nu afișăm eroarea
+        return null;
+      }
+
+      const currentDate = new Date();
+      const currentMonth = currentDate.getMonth() + 1; // Adaugă 1 deoarece indexul lunii începe de la 0
+
+      const currentYear = currentDate.getFullYear();
+
+      if (expiryYear < currentYear || (expiryYear === currentYear && expiryMonth < currentMonth)) {
+        return { expiredDate: true };
+      }
+    }
+    return null;
+  }
+
 }
 
 export interface Month{
@@ -203,3 +237,6 @@ export interface Month{
 export interface Year{
   value: number;
 }
+
+
+
