@@ -73,9 +73,14 @@ export class PlaceOrderComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
+    this.loadingScreenService.setLoading(true);
     this.getInfo();
     this.initCartList();
     this.totalSum();
+
+    setTimeout(() => {
+      this.loadingScreenService.setLoading(false);
+    }, 2000);
   }
 
   getInfo(){

@@ -5,7 +5,7 @@
 
   <article class="d-flex align-items-center order-group">
     <button type="button" pButton icon="pi pi-cart-plus"
-            label="Comanda mea"  [ngStyle]="{backgroundColor:'var(--primary-900)'}" (click)="openCart()" ></button>
+            label="Coșul meu"  [ngStyle]="{backgroundColor:'var(--primary-900)'}" (click)="openCart()" ></button>
   </article>
 
   <article *ngIf="loggedIn; else elseBlock" class="user-group">
