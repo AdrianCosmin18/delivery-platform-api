@@ -1,6 +1,0 @@
-/* You can add global styles to this file, and also import other style files */
-
-
-.vh{ /*in cazul in care pagina este goala => muta footerul mai jos*/
-  height: calc(70vh - 210px);
-}
