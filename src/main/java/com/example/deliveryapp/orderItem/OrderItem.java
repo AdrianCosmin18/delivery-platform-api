@@ -14,9 +14,6 @@ import javax.persistence.*;
 @Builder
 public class OrderItem {
 
-//    @EmbeddedId
-//    private OrderItemId id;
-
     @Id
     @SequenceGenerator(name = "order_item_seq", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "order_item_seq")
@@ -34,7 +31,6 @@ public class OrderItem {
     @Column(name = "lessIngredients")
     private String lessIngredients;// "ceapa, castraveti murati" - lista cu ingredientele pe care le scoatem din burger
 
-    //    @MapsId("ordeId")
     @ManyToOne
     @JoinColumn(
             name = "order_id",
@@ -43,7 +39,6 @@ public class OrderItem {
     )
     private Order order;
 
-    //    @MapsId("productId")
     @ManyToOne
     @JoinColumn(
             name = "product_id",

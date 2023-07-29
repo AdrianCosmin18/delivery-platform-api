@@ -18,15 +18,4 @@ public class EmailController {
         this.emailSenderService.sendEmail(emailMessage.getTo(), emailMessage.getSubject(), emailMessage.getMessage());
         return ResponseEntity.ok("Success");
     }
-
-//    @PostMapping("/send-email-attach")
-//    public ResponseEntity sendEmailAttach(@RequestBody EmailMessage emailMessage, @RequestParam(value = "file") String file) {
-//        try{
-//            this.emailSenderService.sendEmailWithAttach(emailMessage.getTo(), emailMessage.getSubject(), emailMessage.getMessage(), file);
-//            return ResponseEntity.ok("Success");
-//        }catch (MessagingException e){
-//            return ResponseEntity.ok("False");
-//        }
-//
-//    }
 }

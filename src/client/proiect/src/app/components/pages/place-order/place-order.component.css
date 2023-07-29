@@ -1,9 +1,0 @@
-.p-card .p-card-content {
-   padding: 0 !important;
-}
-
-@media (max-width: 920px){
-  .main{
-    flex-direction: column;
-  }
-}
