@@ -26,7 +26,14 @@ public class Util {
             "/delivery-app/courier",
             "/delivery-app/send-email",
             "/delivery-app/send-email-attach",
+            "/api/v1/students/login",
+            "/api/v1/students/register",
+            "/swagger-ui.html",
+            "/swagger-ui/**","/v3/**",
             "/**"
     };
+//    public static final String[] PUBLIC_URLS = { "/api/v1/students/login", "/api/v1/students/register","/swagger-ui.html","/swagger-ui/**","/v3/**",
+//    ;
+
     public static final String JWT_TOKEN_HEADER = "Jwt-Token";
 }
