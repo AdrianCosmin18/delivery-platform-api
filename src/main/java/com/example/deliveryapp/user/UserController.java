@@ -83,7 +83,6 @@ public class UserController {
 
     }
 
-
     @PostMapping
     public void addUser(@Valid @RequestBody UserDTO userDTO){
         this.userService.addUser(userDTO);
@@ -100,6 +99,12 @@ public class UserController {
         return new ResponseEntity<>(this.userService.getUserByEmail(email), HttpStatus.OK);
     }
 
+    @GetMapping("/get-user")
+    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
+    public ResponseEntity<UserDTO> getUser(){
+        return new ResponseEntity<>(this.userService.getUser(), HttpStatus.OK);
+    }
+
     @PostMapping("/add-restaurant-to-wishlist")
     @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     public void addRestaurantToWishlist(@RequestParam(value = "email")String email, @RequestParam(value = "restaurantName")String restaurantName){
@@ -114,8 +119,8 @@ public class UserController {
 
     @PostMapping("/add-address")
     @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
-    public void addAddress(@RequestParam(value = "email")String email, @RequestBody AddressDTO addressDTO){
-        this.userService.addAddress(email, addressDTO);
+    public void addAddress(@RequestBody AddressDTO addressDTO){
+        this.userService.addAddress(addressDTO);
     }
 
     @GetMapping("/get-user-addresses/{email}")

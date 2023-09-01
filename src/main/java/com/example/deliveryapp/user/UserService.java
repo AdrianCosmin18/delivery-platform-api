@@ -12,7 +12,9 @@ public interface UserService {
     void addRestaurantToWishlist(String email, String restaurantName);
     void removeRestaurantFromWishlist(String email, String restaurantName);
 
-    void addAddress(String email, AddressDTO addressDTO);
+//    void addAddress(String email, AddressDTO addressDTO);
+
+    void addAddress(AddressDTO addressDTO);
 
     void removeAddress(String email, AddressDTO addressDTO);
 
@@ -53,6 +55,8 @@ public interface UserService {
 
     UserDTO getUserByEmail(String email);
 
+    UserDTO getUser();
+
     User findByEmail(String email);
 
     Long findIdByUsername(String email);
@@ -65,7 +69,4 @@ public interface UserService {
 
     void changePassword(String email, String newPassword);
 
-//    boolean areProductsFromOtherRestaurantInCart(String email, String restaurantName, String currentProductName);
-
-//    void addProductToUserCart(String email, String restaurantName, String currentProductName, Integer quantity);
 }

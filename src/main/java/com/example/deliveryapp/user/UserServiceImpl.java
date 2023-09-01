@@ -2,9 +2,7 @@ package com.example.deliveryapp.user;
 
 import com.example.deliveryapp.DTOs.*;
 import com.example.deliveryapp.address.Address;
-import com.example.deliveryapp.address.AddressRepo;
 import com.example.deliveryapp.card.Card;
-import com.example.deliveryapp.card.CardRepo;
 import com.example.deliveryapp.city.City;
 import com.example.deliveryapp.city.CityRepo;
 import com.example.deliveryapp.constants.Constants;
@@ -23,6 +21,8 @@ import com.example.deliveryapp.restaurant.RestaurantRepo;
 import com.example.deliveryapp.security.security.UserRole;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -50,13 +50,9 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private CityRepo cityRepo;
     @Autowired
-    private CardRepo cardRepo;
-    @Autowired
     private ProductRepo productRepo;
     @Autowired
     private OrderRepo orderRepo;
-    @Autowired
-    private AddressRepo addressRepo;
     @Autowired
     private CourierRepo courierRepo;
     @Autowired
@@ -118,9 +114,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void addAddress(String email, AddressDTO addressDTO){
+    public void addAddress(AddressDTO addressDTO){
 
-        User user = this.userRepo.getUserByEmail(email)
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = auth.getPrincipal().toString();
+
+        User user = this.userRepo.getUserByEmail(username)
                 .orElseThrow(() -> new DeliveryCustomException(Constants.USER_ALREADY_EXISTS_BY_EMAIL_EXCEPTION.getMessage()));
 
         List<Address> userAddresses = user.getAddresses();
@@ -817,6 +816,17 @@ public class UserServiceImpl implements UserService {
     public UserDTO getUserByEmail(String email){
 
         User user = this.userRepo.getUserByEmail(email)
+                .orElseThrow(() -> new DeliveryCustomException(Constants.USER_NOT_FOUND_BY_EMAIL.getMessage()));
+
+        return this.mapper.map(user, UserDTO.class);
+    }
+
+    @Override
+    public UserDTO getUser(){
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = auth.getPrincipal().toString();
+        User user = this.userRepo.getUserByEmail(username)
                 .orElseThrow(() -> new DeliveryCustomException(Constants.USER_NOT_FOUND_BY_EMAIL.getMessage()));
 
         return this.mapper.map(user, UserDTO.class);

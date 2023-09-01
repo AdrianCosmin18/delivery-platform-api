@@ -1,5 +1,6 @@
 package com.example.deliveryapp.user;
 
+import com.example.deliveryapp.DTOs.AddressDTO;
 import com.example.deliveryapp.DTOs.UserDTO;
 import com.example.deliveryapp.exceptions.DeliveryCustomException;
 import com.example.deliveryapp.system.annotations.WithCosminUser;
@@ -16,17 +17,10 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MockMvcBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -95,7 +89,33 @@ class UserControllerTest {
     @WithCosminUser
     void shouldAddAddress() throws Exception{
 
+        AddressDTO addressDTO = AddressDTO.builder()
+                .cityName("Bucuresti")
+                .street("Aleea Castanelor")
+                .number(3)
+                .build();
+        UserDTO user = UserDTO.builder().email("cosmin@yahoo.com").build();
+
+        String addressJson = new ObjectMapper().writeValueAsString(addressDTO);
+
+
+        this.mock.perform(MockMvcRequestBuilders.post("/delivery-app/user/add-address?email={email}", user.getEmail())
+                .accept(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(addressDTO))
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated());
     }
+
+//    @Test
+//    @WithCosminUser
+//    void shouldDeleteAddress(){
+//        long addressId = 1L;
+//        UserDTO user = UserDTO.builder().email("cosmin@yahoo.com").build();
+//
+//        this.mock.perform(MockMvcRequestBuilders.delete("/delivery-app/user/delete-address/{email}/{addressId}", user.getEmail(), addressId))
+//                .andExpect(status().isOk())
+//                .
+//    }
 
 
 
