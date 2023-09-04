@@ -87,6 +87,19 @@ class UserControllerTest {
 
     @Test
     @WithCosminUser
+    void shouldGetUser() throws Exception{
+
+        UserDTO user = UserDTO.builder().email("cosminadrian1304@gmail.com").build();
+        when(this.userService.getUser()).thenReturn(user);
+
+        this.mock.perform(MockMvcRequestBuilders.get("/delivery-app/user/get-user")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().string(mapper.writeValueAsString(user)));
+    }
+
+    @Test
+    @WithCosminUser
     void shouldAddAddress() throws Exception{
 
         AddressDTO addressDTO = AddressDTO.builder()
@@ -94,16 +107,11 @@ class UserControllerTest {
                 .street("Aleea Castanelor")
                 .number(3)
                 .build();
-        UserDTO user = UserDTO.builder().email("cosmin@yahoo.com").build();
 
-        String addressJson = new ObjectMapper().writeValueAsString(addressDTO);
-
-
-        this.mock.perform(MockMvcRequestBuilders.post("/delivery-app/user/add-address?email={email}", user.getEmail())
-                .accept(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(addressDTO))
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated());
+        this.mock.perform(MockMvcRequestBuilders.post("/delivery-app/user/add-address")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(addressDTO)))
+                .andExpect(status().isOk());
     }
 
 //    @Test

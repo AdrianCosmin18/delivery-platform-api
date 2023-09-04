@@ -7,20 +7,28 @@ import com.example.deliveryapp.city.City;
 import com.example.deliveryapp.city.CityRepo;
 import com.example.deliveryapp.exceptions.DeliveryCustomException;
 import com.example.deliveryapp.order.OrderRepo;
+import com.example.deliveryapp.system.annotations.WithCosminUser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -110,7 +118,16 @@ class UserServiceImplTest {
         City city = new City("Bucuresti", "Romania");
 
         User user = new User();
-        user.setEmail("cosmin@yahoo.com");
+        user.setEmail("cosminadrian1304@gmail.com");
+        String username = "cosminadrian1304@gmail.com";
+
+
+        Authentication auth = mock(Authentication.class);
+        when(auth.getPrincipal()).thenReturn(username);
+        SecurityContext securityContext = mock(SecurityContext.class);
+        when(securityContext.getAuthentication()).thenReturn(auth);
+        SecurityContextHolder.setContext(securityContext);
+
         List<Address> addresses = new ArrayList<>();
         addresses.add(Address.builder().street("strada").number(4).city(city).isDefault(true).build());
 
@@ -122,7 +139,7 @@ class UserServiceImplTest {
                 .lastName("Nedelcu")
                 .firstName("Cosmin")
                 .password("parola")
-                .email("cosmin@yahoo.com")
+                .email("cosminadrian1304@gmail.com")
                 .build();
 
         AddressDTO addressDTO= AddressDTO.builder()
@@ -140,7 +157,7 @@ class UserServiceImplTest {
         when(this.userRepo.getUserByEmail(userDTO.getEmail())).thenReturn(Optional.of(user));
         when(this.cityRepo.getCityByName(addressDTO.getCityName())).thenReturn(Optional.of(city));
 
-        this.userService.addAddress(userDTO.getEmail(), addressDTO);
+        this.userService.addAddress(addressDTO);
         then(this.userRepo).should().save(userArgumentCaptor.capture());
         assertThat(userArgumentCaptor.getValue().getAddresses().get(0).getIsDefault()).isEqualTo(Boolean.FALSE);
     }
@@ -181,7 +198,7 @@ class UserServiceImplTest {
         when(this.cityRepo.getCityByName(addressDTO.getCityName())).thenReturn(Optional.of(city));
 
 
-        this.userService.addAddress(userDTO.getEmail(), addressDTO);
+        this.userService.addAddress(addressDTO);
         then(this.userRepo).should().save(userArgumentCaptor.capture());
         assertThat(userArgumentCaptor.getValue().getAddresses().get(0).getIsDefault()).isEqualTo(Boolean.TRUE);
     }
@@ -231,7 +248,7 @@ class UserServiceImplTest {
         when(this.userRepo.getUserByEmail(userDTO.getEmail())).thenReturn(Optional.of(user));
         when(this.cityRepo.getCityByName(addressDTO.getCityName())).thenReturn(Optional.of(city));
 
-        assertThrows(DeliveryCustomException.class, () -> this.userService.addAddress(userDTO.getEmail(), addressDTO));
+        assertThrows(DeliveryCustomException.class, () -> this.userService.addAddress(addressDTO));
     }
 
     @Test
