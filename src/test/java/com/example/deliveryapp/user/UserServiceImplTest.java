@@ -167,7 +167,15 @@ class UserServiceImplTest {
         City city = new City("Bucuresti", "Romania");
 
         User user = new User();
-        user.setEmail("cosmin@yahoo.com");
+        user.setEmail("cosminadrian1304@gmail.com");
+        String username = "cosminadrian1304@gmail.com";
+
+        Authentication auth = mock(Authentication.class);
+        when(auth.getPrincipal()).thenReturn(username);
+        SecurityContext securityContext = mock(SecurityContext.class);
+        when(securityContext.getAuthentication()).thenReturn(auth);
+        SecurityContextHolder.setContext(securityContext);
+
         List<Address> addresses = new ArrayList<>();
         addresses.add(Address.builder().street("strada").number(4).city(city).isDefault(true).build());
 
@@ -194,7 +202,7 @@ class UserServiceImplTest {
                 .cityName("Bucuresti")
                 .build();
 
-        when(this.userRepo.getUserByEmail(userDTO.getEmail())).thenReturn(Optional.of(user));
+        when(this.userRepo.getUserByEmail(username)).thenReturn(Optional.of(user));
         when(this.cityRepo.getCityByName(addressDTO.getCityName())).thenReturn(Optional.of(city));
 
 
@@ -208,7 +216,15 @@ class UserServiceImplTest {
         City city = new City("Bucuresti", "Romania");
 
         User user = new User();
-        user.setEmail("cosmin@yahoo.com");
+        user.setEmail("cosminadrian1304@gmail.com");
+        String username = "cosminadrian1304@gmail.com";
+
+        Authentication auth = mock(Authentication.class);
+        when(auth.getPrincipal()).thenReturn(username);
+        SecurityContext securityContext = mock(SecurityContext.class);
+        when(securityContext.getAuthentication()).thenReturn(auth);
+        SecurityContextHolder.setContext(securityContext);
+
         List<Address> addresses = new ArrayList<>();
         addresses.add(Address.builder()
                 .street("Aleea Callatis")
@@ -245,7 +261,7 @@ class UserServiceImplTest {
                 .isDefault(false)
                 .build();
 
-        when(this.userRepo.getUserByEmail(userDTO.getEmail())).thenReturn(Optional.of(user));
+        when(this.userRepo.getUserByEmail(username)).thenReturn(Optional.of(user));
         when(this.cityRepo.getCityByName(addressDTO.getCityName())).thenReturn(Optional.of(city));
 
         assertThrows(DeliveryCustomException.class, () -> this.userService.addAddress(addressDTO));

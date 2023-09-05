@@ -110,7 +110,7 @@ class UserControllerTest {
 
         this.mock.perform(MockMvcRequestBuilders.post("/delivery-app/user/add-address")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(mapper.writeValueAsString(addressDTO)))
+                .content(mapper.writeValueAsString(addressDTO))) //diferenta intre mock-ul de aici si mock-ul de mai sus
                 .andExpect(status().isOk());
     }
 
