@@ -120,7 +120,7 @@ public class UserServiceImpl implements UserService {
         String username = auth.getPrincipal().toString();
 
         User user = this.userRepo.getUserByEmail(username)
-                .orElseThrow(() -> new DeliveryCustomException(Constants.USER_ALREADY_EXISTS_BY_EMAIL_EXCEPTION.getMessage()));
+                .orElseThrow(() -> new DeliveryCustomException(Constants.USER_NOT_FOUND_BY_EMAIL.getMessage()));
 
         List<Address> userAddresses = user.getAddresses();
 
@@ -182,9 +182,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void removeAddress(String email, long addressId){
+    public void removeAddress(long addressId){
 
-        User user = this.userRepo.getUserByEmail(email)
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = auth.getPrincipal().toString();
+
+        User user = this.userRepo.getUserByEmail(username)
                 .orElseThrow(() -> new DeliveryCustomException(Constants.USER_NOT_FOUND_BY_EMAIL.getMessage()));
 
         List<Address> userAddresses = user.getAddresses();

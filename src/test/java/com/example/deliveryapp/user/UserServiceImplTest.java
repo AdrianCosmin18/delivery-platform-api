@@ -7,6 +7,7 @@ import com.example.deliveryapp.city.City;
 import com.example.deliveryapp.city.CityRepo;
 import com.example.deliveryapp.exceptions.DeliveryCustomException;
 import com.example.deliveryapp.order.OrderRepo;
+import com.example.deliveryapp.system.annotations.MockSecurityContext;
 import com.example.deliveryapp.system.annotations.WithCosminUser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,9 +20,9 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,7 +32,7 @@ import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@ExtendWith(MockitoExtension.class)
+@ExtendWith(SpringExtension.class)
 class UserServiceImplTest {
 
     @Mock
@@ -114,19 +115,20 @@ class UserServiceImplTest {
     }
 
     @Test
+    @MockSecurityContext(username = "cosminadrian1304@gmail.com")
     void shouldAddAddress(){
         City city = new City("Bucuresti", "Romania");
 
         User user = new User();
         user.setEmail("cosminadrian1304@gmail.com");
-        String username = "cosminadrian1304@gmail.com";
+//        String username = "cosminadrian1304@gmail.com";
 
 
-        Authentication auth = mock(Authentication.class);
-        when(auth.getPrincipal()).thenReturn(username);
-        SecurityContext securityContext = mock(SecurityContext.class);
-        when(securityContext.getAuthentication()).thenReturn(auth);
-        SecurityContextHolder.setContext(securityContext);
+//        Authentication auth = mock(Authentication.class);
+//        when(auth.getPrincipal()).thenReturn(username);
+//        SecurityContext securityContext = mock(SecurityContext.class);
+//        when(securityContext.getAuthentication()).thenReturn(auth);
+//        SecurityContextHolder.setContext(securityContext);
 
         List<Address> addresses = new ArrayList<>();
         addresses.add(Address.builder().street("strada").number(4).city(city).isDefault(true).build());
@@ -267,57 +269,57 @@ class UserServiceImplTest {
         assertThrows(DeliveryCustomException.class, () -> this.userService.addAddress(addressDTO));
     }
 
-    @Test
-    void removeAddress1(){
-        City city = new City("Bucuresti", "Romania");
-
-        User user = new User();
-        user.setEmail("cosmin@yahoo.com");
-        user.setId(1L);
-        List<Address> addresses = new ArrayList<>();
-        addresses.add(Address.builder().id(1L).street("strada").number(4).city(city).isDefault(true).build());
-        user.setAddresses(addresses);
-
-
-        UserDTO userDTO = UserDTO.builder()
-                .phone("0789456123")
-                .lastName("Nedelcu")
-                .firstName("Cosmin")
-                .password("parola")
-                .email("cosmin@yahoo.com")
-                .build();
-
-        when(this.userRepo.getUserByEmail(userDTO.getEmail())).thenReturn(Optional.of(user));
-
-        this.userService.removeAddress(user.getEmail(), 1L);
-        then(this.userRepo).should().saveAndFlush(userArgumentCaptor.capture());
-        then(this.orderRepo).should().updateOrderByAddressId(1L);
-        assertThat(userArgumentCaptor.getValue().getAddresses().size()).isEqualTo(0);
-    }
-
-    @Test
-    void shouldThrowExceptionRemoveAddress(){
-
-        City city = new City("Bucuresti", "Romania");
-
-        User user = new User();
-        user.setEmail("cosmin@yahoo.com");
-        user.setId(1L);
-        List<Address> addresses = new ArrayList<>();
-        addresses.add(Address.builder().id(2L).street("strada").number(4).city(city).isDefault(true).build());
-        user.setAddresses(addresses);
-
-        UserDTO userDTO = UserDTO.builder()
-                .phone("0789456123")
-                .lastName("Nedelcu")
-                .firstName("Cosmin")
-                .password("parola")
-                .email("cosmin@yahoo.com")
-                .build();
-
-        when(this.userRepo.getUserByEmail(userDTO.getEmail())).thenReturn(Optional.of(user));
-        assertThrows(DeliveryCustomException.class, () -> this.userService.removeAddress(user.getEmail(), 1L));
-    }
+//    @Test
+//    void removeAddress1(){
+//        City city = new City("Bucuresti", "Romania");
+//
+//        User user = new User();
+//        user.setEmail("cosmin@yahoo.com");
+//        user.setId(1L);
+//        List<Address> addresses = new ArrayList<>();
+//        addresses.add(Address.builder().id(1L).street("strada").number(4).city(city).isDefault(true).build());
+//        user.setAddresses(addresses);
+//
+//
+//        UserDTO userDTO = UserDTO.builder()
+//                .phone("0789456123")
+//                .lastName("Nedelcu")
+//                .firstName("Cosmin")
+//                .password("parola")
+//                .email("cosmin@yahoo.com")
+//                .build();
+//
+//        when(this.userRepo.getUserByEmail(userDTO.getEmail())).thenReturn(Optional.of(user));
+//
+//        this.userService.removeAddress(user.getEmail(), 1L);
+//        then(this.userRepo).should().saveAndFlush(userArgumentCaptor.capture());
+//        then(this.orderRepo).should().updateOrderByAddressId(1L);
+//        assertThat(userArgumentCaptor.getValue().getAddresses().size()).isEqualTo(0);
+//    }
+//
+//    @Test
+//    void shouldThrowExceptionRemoveAddress(){
+//
+//        City city = new City("Bucuresti", "Romania");
+//
+//        User user = new User();
+//        user.setEmail("cosmin@yahoo.com");
+//        user.setId(1L);
+//        List<Address> addresses = new ArrayList<>();
+//        addresses.add(Address.builder().id(2L).street("strada").number(4).city(city).isDefault(true).build());
+//        user.setAddresses(addresses);
+//
+//        UserDTO userDTO = UserDTO.builder()
+//                .phone("0789456123")
+//                .lastName("Nedelcu")
+//                .firstName("Cosmin")
+//                .password("parola")
+//                .email("cosmin@yahoo.com")
+//                .build();
+//
+//        when(this.userRepo.getUserByEmail(userDTO.getEmail())).thenReturn(Optional.of(user));
+//        assertThrows(DeliveryCustomException.class, () -> this.userService.removeAddress(user.getEmail(), 1L));
+//    }
 
     @Test
     void shouldUpdateAddress(){

@@ -93,9 +93,9 @@ class UserControllerTest {
         when(this.userService.getUser()).thenReturn(user);
 
         this.mock.perform(MockMvcRequestBuilders.get("/delivery-app/user/get-user")
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(content().string(mapper.writeValueAsString(user)));
+                        .accept(MediaType.APPLICATION_JSON)) // ce specificam noi
+                .andExpect(status().isOk())// ce se asteapta la returnare
+                .andExpect(content().string(mapper.writeValueAsString(user))); // ce se asteapta la returnare
     }
 
     @Test
@@ -109,9 +109,9 @@ class UserControllerTest {
                 .build();
 
         this.mock.perform(MockMvcRequestBuilders.post("/delivery-app/user/add-address")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(mapper.writeValueAsString(addressDTO))) //diferenta intre mock-ul de aici si mock-ul de mai sus
-                .andExpect(status().isOk());
+                .contentType(MediaType.APPLICATION_JSON) //specificam ce trimitem noi
+                .content(mapper.writeValueAsString(addressDTO)))//specificam ce trimitem noi
+                .andExpect(status().isOk()); // ce se asteapta la returnare
     }
 
 //    @Test
