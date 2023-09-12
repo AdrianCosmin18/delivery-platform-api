@@ -129,12 +129,6 @@ public class UserController {
         return new ResponseEntity<List<AddressDTO>>(this.userService.getUserAddresses(email), HttpStatus.OK);
     }
 
-    @DeleteMapping("/delete-address/{email}")
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
-    public void deleteAddress(@PathVariable String email, @RequestBody AddressDTO addressDTO){
-        this.userService.removeAddress(email, addressDTO);
-    }
-
     @DeleteMapping("/delete-address/{addressId}")
     @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     public void deleteAddress(@PathVariable long addressId){
@@ -191,7 +185,7 @@ public class UserController {
 
     @GetMapping("/has-user-main-card/{email}")
     @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
-    public boolean setAsMainCard(@PathVariable String email){
+    public boolean isAnyMainCard(@PathVariable String email){
         return this.userService.isAnyMainCard(email);
     }
 
