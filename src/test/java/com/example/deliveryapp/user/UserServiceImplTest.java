@@ -115,7 +115,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    @MockSecurityContext(username = "cosminadrian1304@gmail.com")
+    @MockSecurityContext
     void shouldAddAddress(){
         City city = new City("Bucuresti", "Romania");
 
