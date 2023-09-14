@@ -159,7 +159,7 @@ class UserServiceImplTest {
         when(this.userRepo.getUserByEmail(userDTO.getEmail())).thenReturn(Optional.of(user));
         when(this.cityRepo.getCityByName(addressDTO.getCityName())).thenReturn(Optional.of(city));
 
-        this.userService.addAddress(addressDTO);
+        this.userService.addAddress(user.getEmail(), addressDTO);
         then(this.userRepo).should().save(userArgumentCaptor.capture());
         assertThat(userArgumentCaptor.getValue().getAddresses().get(0).getIsDefault()).isEqualTo(Boolean.FALSE);
     }
@@ -208,7 +208,7 @@ class UserServiceImplTest {
         when(this.cityRepo.getCityByName(addressDTO.getCityName())).thenReturn(Optional.of(city));
 
 
-        this.userService.addAddress(addressDTO);
+        this.userService.addAddress(user.getEmail(), addressDTO);
         then(this.userRepo).should().save(userArgumentCaptor.capture());
         assertThat(userArgumentCaptor.getValue().getAddresses().get(0).getIsDefault()).isEqualTo(Boolean.TRUE);
     }
@@ -266,7 +266,7 @@ class UserServiceImplTest {
         when(this.userRepo.getUserByEmail(username)).thenReturn(Optional.of(user));
         when(this.cityRepo.getCityByName(addressDTO.getCityName())).thenReturn(Optional.of(city));
 
-        assertThrows(DeliveryCustomException.class, () -> this.userService.addAddress(addressDTO));
+        assertThrows(DeliveryCustomException.class, () -> this.userService.addAddress(user.getEmail(), addressDTO));
     }
 
 //    @Test

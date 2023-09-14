@@ -114,12 +114,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void addAddress(AddressDTO addressDTO){
+    public void addAddress(String email, AddressDTO addressDTO){
 
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String username = auth.getPrincipal().toString();
+//        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+//        String username = auth.getPrincipal().toString();
 
-        User user = this.userRepo.getUserByEmail(username)
+        User user = this.userRepo.getUserByEmail(email)
                 .orElseThrow(() -> new DeliveryCustomException(Constants.USER_NOT_FOUND_BY_EMAIL.getMessage()));
 
         List<Address> userAddresses = user.getAddresses();

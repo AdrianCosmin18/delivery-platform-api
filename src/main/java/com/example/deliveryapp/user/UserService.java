@@ -14,7 +14,7 @@ public interface UserService {
 
 //    void addAddress(String email, AddressDTO addressDTO);
 
-    void addAddress(AddressDTO addressDTO);
+    void addAddress(String email, AddressDTO addressDTO);
 
     void removeAddress(String email, AddressDTO addressDTO);
 

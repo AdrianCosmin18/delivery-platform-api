@@ -2,9 +2,13 @@ package com.example.deliveryapp.user;
 
 import com.example.deliveryapp.DTOs.*;
 import com.example.deliveryapp.address.Address;
+import com.example.deliveryapp.email.EmailSenderService;
 import com.example.deliveryapp.exceptions.DeliveryCustomException;
+import com.example.deliveryapp.security.jwt.JWTTokenProvider;
+import com.example.deliveryapp.system.annotations.MockSecurityContext;
 import com.example.deliveryapp.system.annotations.WithCosminUser;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.aspectj.lang.annotation.Aspect;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,11 +16,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -30,14 +36,20 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@ExtendWith(MockitoExtension.class)
+@WebMvcTest(UserController.class)
 class UserControllerTest {
 
     @Mock
-    private UserServiceImpl userService;
+    private UserService userService;
 
     @Mock
     private AuthenticationManager authenticationManager;
+
+    @Mock
+    private JWTTokenProvider jwtTokenProvider;
+
+    @Mock
+    private EmailSenderService emailSenderService;
 
     @Autowired
     private MockMvc mock;
@@ -104,7 +116,8 @@ class UserControllerTest {
     }
 
     @Test
-    @WithCosminUser
+//    @WithCosminUser
+//    @MockSecurityContext(username = "cosminadrian1304@gmail.com")
     void shouldAddAddress() throws Exception{
 
         AddressDTO addressDTO = AddressDTO.builder()
