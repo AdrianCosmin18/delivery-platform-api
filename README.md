@@ -28,7 +28,11 @@
    
    Databse: MySQL
 
-4)  Application arhitecture
+4)  Diagram db
+
+
+![image](https://github.com/AdrianCosmin18/delivery-platform-api/assets/91340261/eb3dc1eb-f2dc-4cb3-a395-68bbdbedea40)
+
 
 
 
