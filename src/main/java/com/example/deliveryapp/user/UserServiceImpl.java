@@ -285,7 +285,6 @@ public class UserServiceImpl implements UserService {
         //functie care seteaza o adresa ca fiind principala =>
         //celelalte vor deveni neprincipale
 
-
         User user = this.userRepo.getUserByEmail(email)
                 .orElseThrow(() -> new DeliveryCustomException(Constants.USER_ALREADY_EXISTS_BY_EMAIL_EXCEPTION.getMessage()));
 
