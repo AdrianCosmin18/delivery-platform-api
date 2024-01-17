@@ -34,8 +34,9 @@
 ![image](https://github.com/AdrianCosmin18/delivery-platform-api/assets/91340261/eb3dc1eb-f2dc-4cb3-a395-68bbdbedea40)
 
 
+5) Bussiness requirments and Features descriptions
 
 
-
+[Autentificare și înregistrare.md](https://github.com/AdrianCosmin18/delivery-platform-api/files/13963495/Autentificare.i.inregistrare.md)
 
 
