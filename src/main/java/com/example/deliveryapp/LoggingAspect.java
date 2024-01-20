@@ -2,6 +2,7 @@ package com.example.deliveryapp;
 
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
+import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.reflect.MethodSignature;
@@ -23,10 +24,18 @@ public class LoggingAspect {
     }
 
     @AfterReturning("execution(* com.example.deliveryapp.user.UserServiceImpl.*(..))")
-    public void afterLogger(JoinPoint joinPoint) {
+    public void afterReturningLogger(JoinPoint joinPoint) {
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
         String methodName = signature.getName();
         System.out.printf("Service function '%s' ended with success!%n", methodName);
         System.out.println("Return function type finished: " + signature.getReturnType());
+    }
+
+    @AfterThrowing(value = "execution(* com.example.deliveryapp.user.UserServiceImpl.*(..))", throwing = "error")
+    public void afterThrowingLogger(JoinPoint joinPoint, Throwable error){
+        MethodSignature signature = (MethodSignature) joinPoint.getSignature();
+        String methodName = signature.getName();
+        System.out.printf("Service function '%s' ended with error!%n", methodName);
+        System.out.printf("Error message: %s", error.getMessage());
     }
 }
